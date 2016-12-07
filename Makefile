@@ -1,5 +1,5 @@
 CXXFLAGS = $(tulip-config --cxxflags)
 LIBS = $(tulip-config --libs)
 
-all:
-	g++ -std=c++14 $(CXXFLAGS) *.cpp $(LIBS)
+%.o: %.cpp
+	g++ -std=c++11 $(CXXFLAGS) -c $< $(LIBS)

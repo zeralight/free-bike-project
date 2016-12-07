@@ -1,5 +1,5 @@
-#ifndef RELATION.HPP
-#define RELATION.HPP
+#ifndef RELATION_HPP
+#define RELATION_HPP
 
 
 class Relation
