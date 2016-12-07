@@ -17,7 +17,7 @@ private:
 public: 
   Entity(std::string , char * [],char * [], int );
   ~Entity();
-  int newEntityInstance(char ** , void * , int);
+  int newEntityInstance(char *[] , char *[] , int);
   int deleteEntityInstance();
   int editEntityInstance();
 };

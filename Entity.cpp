@@ -24,23 +24,43 @@ Entity::~Entity()
   g->clear();
 }
   
-int Entity::newEntityInstance(char ** nameProperty, void * valueProperty, int len)
+int Entity::newEntityInstance(char * nameProperty[], char * valueProperty[], int len)
 {
   node n = g->addNode();
   for(int i=0; i<this->len; i++)
-    property[i]->setNodeValue(n, NULL);
-  for(i=0; i<len; i++)
+    property[i]->setNodeStringValue(n,"");
+  for(int i=0; i<len; i++)
     {
-      while(strcmp(property[i]->PropertyInterface::getName(), nameProperty[i]))
+      while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
 	{
-	  property[i]->setNodeValue(n, valueProperty[i]);
+	  property[i]->setNodeStringValue(n, valueProperty[i]);
 	} 
     }
   
 }
 
-int Entity::deleteEntityInstance()
+int Entity::deleteEntityInstance(char * nameProperty[], char * valueProperty[], int len)
 {
+  bool b, b2;
+  Iterator<node> *itNodes = graph->getNodes();
+  while(itNodes->hasNext())
+    {
+      b=true;
+      node n = itNodes->next(); 
+      for(int i=0; i<len; i++)
+	{
+	  b2=false;
+	  while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
+	    {
+	      if() //test si la prop=prop du noeud
+		;
+	    } 
+	  if(!b2)
+	    b=false;
+	}
+      if (b)
+	delNode(n,true);
+    }
 }
 
 int Entity::editEntityInstance()
