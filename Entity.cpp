@@ -6,7 +6,7 @@
 
 using namespace tlp;
 
-Entity::Entity(std::string name, char * nameProperty[], char * typeProperty[], int len)
+Entity::Entity(const std::string name, const char * nameProperty[], const char * typeProperty[], int len)
 {
   this->len=len;
   for(int i=0; i<len; i++)
@@ -24,7 +24,7 @@ Entity::~Entity()
   g->clear();
 }
   
-int Entity::newEntityInstance(char * nameProperty[], char * valueProperty[], int len)
+int Entity::newEntityInstance(const char * nameProperty[], const char * valueProperty[], int len)
 {
   node n = g->addNode();
   for(int i=0; i<this->len; i++)
@@ -38,7 +38,7 @@ int Entity::newEntityInstance(char * nameProperty[], char * valueProperty[], int
     }
 }
 
-int Entity::deleteEntityInstance(char * nameProperty[], char * valueProperty[], int len)
+int Entity::deleteEntityInstance(const char * nameProperty[], const char * valueProperty[], int len)
 {
   const node[] l;
   int lenL=getNode(nameProperty, valueProperty, len, l);
@@ -48,7 +48,7 @@ int Entity::deleteEntityInstance(char * nameProperty[], char * valueProperty[], 
   }
 }
 
-int Entity::editEntityInstance(char * nameProperty[], char * valueProperty[], int len)
+int Entity::editEntityInstance(const char * nameProperty[], const char * valueProperty[], int len)
 {
   const node[] l;
   int lenL=getNode(nameProperty, valueProperty, len, l);
@@ -65,7 +65,7 @@ int Entity::editEntityInstance(char * nameProperty[], char * valueProperty[], in
   }
 }
 
-int Entity::getNode(char * nameProperty[], char * valueProperty[], int len, node[] l)
+int Entity::getEntityInsatance(const char * nameProperty[], const char * valueProperty[], int len, node[] l)
 {
   l =[];
   lenL =0
