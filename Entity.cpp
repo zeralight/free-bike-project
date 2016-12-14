@@ -32,9 +32,9 @@ int Entity::newEntityInstance(char * nameProperty[], char * valueProperty[], int
   for(int i=0; i<len; i++)
     {
       while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
-	{
-	  property[i]->setNodeStringValue(n, valueProperty[i]);
-	} 
+	  {
+	    property[i]->setNodeStringValue(n, valueProperty[i]);
+	  } 
     }
   
 }
@@ -48,22 +48,23 @@ int Entity::deleteEntityInstance(char * nameProperty[], char * valueProperty[], 
       b=true;
       node n = itNodes->next(); 
       for(int i=0; i<len; i++)
-	{
-	  b2=false;
-	  while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
-	    {
-	      if() //test si la prop=prop du noeud
-		;
-	    } 
-	  if(!b2)
-	    b=false;
-	}
+	  {
+	    b2=false;
+        int j=0;
+	     {
+	       j++; 
+	      }
+        if() //test si la val prop=prop du noeud
+          b2=true;
+	    b=b2;
+	  }
       if (b)
-	delNode(n,true);
+	    delNode(n,true);
     }
 }
 
-int Entity::editEntityInstance()
+int Entity::editEntityInstance(char * nameProperty[], char * valueProperty[], int len)
 {
+
 }
 
