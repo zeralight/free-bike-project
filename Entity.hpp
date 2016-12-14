@@ -15,11 +15,13 @@ private:
   int len;
   
 public: 
-  Entity(std::string , char * [],char * [], int );
+  Entity(std::string , const char * [], const char * [], int );
   ~Entity();
-  int newEntityInstance(char *[] , char *[] , int);
-  int deleteEntityInstance(char * nameProperty[], char * valueProperty[], int len);
-  int editEntityInstance(char * nameProperty[], char * valueProperty[], int len);
+  int newEntityInstance(const char *[] ,const char *[] , int);
+  int deleteEntityInstance(const char * nameProperty[], const char * valueProperty[], int len);
+  int editEntityInstance(const char * nameProperty[], const char * valueProperty[], int len);
+private:
+  int getEntityInstance(const char * nameProperty[], const char * valueProperty[], int len, node[] l)
 };
 
 #endif
