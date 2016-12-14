@@ -18,8 +18,8 @@ public:
   Entity(std::string , char * [],char * [], int );
   ~Entity();
   int newEntityInstance(char *[] , char *[] , int);
-  int deleteEntityInstance();
-  int editEntityInstance();
+  int deleteEntityInstance(char * nameProperty[], char * valueProperty[], int len);
+  int editEntityInstance(char * nameProperty[], char * valueProperty[], int len);
 };
 
 #endif
