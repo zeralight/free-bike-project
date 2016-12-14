@@ -1,7 +1,6 @@
 from selenium import webdriver
 import os
 import time
-import urllib
 
 def start_browser():
     """
