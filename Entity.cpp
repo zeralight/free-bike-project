@@ -36,7 +36,6 @@ int Entity::newEntityInstance(char * nameProperty[], char * valueProperty[], int
 	    property[i]->setNodeStringValue(n, valueProperty[i]);
 	  } 
     }
-  
 }
 
 int Entity::deleteEntityInstance(char * nameProperty[], char * valueProperty[], int len)
@@ -51,6 +50,7 @@ int Entity::deleteEntityInstance(char * nameProperty[], char * valueProperty[], 
 	  {
 	    b2=false;
         int j=0;
+        while(j<this.len && !property[j]->PropertyInterface::getName().compare(nameProperty[i]))
 	     {
 	       j++; 
 	      }
