@@ -2,6 +2,7 @@
 #define ENTITY_HPP
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
+#include <tulip/Node.h>
 
 using namespace tlp;
 
@@ -15,13 +16,12 @@ private:
   int len;
   
 public: 
-  Entity(std::string , const char * [], const char * [], int );
+  Entity(Graph* G, std::string ,const char * [], const char * [], int );
   ~Entity();
-  int newEntityInstance(const char *[] ,const char *[] , int);
-  int deleteEntityInstance(const char * nameProperty[], const char * valueProperty[], int len);
-  int editEntityInstance(const char * nameProperty[], const char * valueProperty[], int len);
-private:
-  int getEntityInstance(const char * nameProperty[], const char * valueProperty[], int len, node[] l)
+  int newEntityInstance(const char *[] , const char *[] , int);
+  int deleteEntityInstance(const char *[] , const char *[] , int);
+  int editEntityInstance(const char *[] , const char *[] , int);
+  int getEntityInstance(const char * [], const char * [], int , struct node*);
 };
 
 #endif
