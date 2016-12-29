@@ -25,7 +25,7 @@ Relation::~Relation()
 {
   g->clear();
 }
-  
+
 int Relation::newRelationInstance(const char * nameProperty[], const char * valueProperty[], const node n1, const node n2, int len)
 {
   struct edge e = g->addEdge(n1,n2);
@@ -42,7 +42,7 @@ int Relation::newRelationInstance(const char * nameProperty[], const char * valu
 
 int Relation::deleteRelationInstance(const char * nameProperty[], const char * valueProperty[], int len)
 {
-  struct Edge* l;
+  struct edge* l;
   int lenL=this->getRelationInstance(nameProperty, valueProperty, len, l);
   for (int i=0; i<lenL; i++)
     {
@@ -52,7 +52,7 @@ int Relation::deleteRelationInstance(const char * nameProperty[], const char * v
 
 int Relation::editRelationInstance(const char * nameProperty[], const char * valueProperty[], int len)
 {
-  struct Edge* l;
+  struct edge* l;
   int lenL=this->getRelationInstance(nameProperty, valueProperty, len, l);
   for (int j=0; j<lenL; j++)
     {
@@ -71,11 +71,11 @@ int Relation::getRelationInstance(const char * nameProperty[], const char * valu
 {
   int lenL =0;
   bool b, b2;
-  Iterator<Edge> *itEdges = this->g->getEdges();
+  Iterator<edge> *itEdges = this->g->getEdges();
   while(itEdges->hasNext())
     {
       b=true;
-      struct Edge e = itEdges->next(); 
+      struct edge e = itEdges->next(); 
       for(int i=0; i<len; i++)
 	{
 	  b2=false;
