@@ -15,7 +15,7 @@ private:
   int len;
   
 public: 
-  Entity(std::string , const char * [], const char * [], int );
+  Entity(std::string , const char * [], const char * [], int);
   ~Entity();
   int newEntityInstance(const char *[] ,const char *[] , int);
   int deleteEntityInstance(const char * nameProperty[], const char * valueProperty[], int len);

@@ -8,14 +8,14 @@ using namespace tlp;
 
 Entity::Entity(const std::string name, const char * nameProperty[], const char * typeProperty[], int len)
 {
-  this->len=len;
+  this->len = len;
   for(int i=0; i<len; i++)
     {
       strcpy(this->nameProperty[i],nameProperty[i]);
       strcpy(this->typeProperty[i],typeProperty[i]);
     }
   g->Graph::addSubGraph(name);
-  for(int i=0; i<len; i++)
+  for(int i = 0; i < len; i++)
     property[i]=g->getLocalProperty(nameProperty[i], typeProperty[i]);
 }
 
@@ -65,7 +65,7 @@ int Entity::editEntityInstance(const char * nameProperty[], const char * valuePr
   }
 }
 
-int Entity::getEntityInsatance(const char * nameProperty[], const char * valueProperty[], int len, node[] l)
+int Entity::getEntityInstance(const char * nameProperty[], const char * valueProperty[], int len, node[] l)
 {
   l =[];
   lenL =0

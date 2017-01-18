@@ -1,19 +1,24 @@
 #ifndef DATABASE_HPP
 #define DATABASE_HPP
 
+#define DB_NB_ENTITIES_DEFAULT 1
+#define DB_NB_RELATIONS_DEFAULT 1
 
-class DataBase{
-  static Entity* EntityTab;
-  static Relation* RelationTab;
+class DataBase {
+  Entity ** entities;
+  Relation ** relations;
+  Graph * graph;
 
-  DataBase();
+  DataBase(char *);
   ~DataBase();
   
   public:
   addEntity();
-  deleteEntity();
+  delEntity();
   addRelation();
-  deleteRelation();
+  delRelation();
+  insert();
+  remove();
   int importDataBase();
   int exportDataBase();
 
