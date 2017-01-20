@@ -1,26 +1,26 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
+
 #include <tulip/TlpTools.h>
-#include <tulip/Graph.h>
+#include <tulip/GraphImpl.h>
 #include <tulip/Node.h>
 
 using namespace tlp;
 
-class Entity
-{
+class Entity : public GraphImpl {
 private:
-  char * nameProperty[]; 
-  char * typeProperty[];
-  PropertyInterface* property[];
-  Graph * g;
-  int len;
+  std::string name;
+  std::string * attrNames; 
+  std::string * attrTypes;
+  //PropertyInterface ** properties;
+  int nAttr;
   
 public: 
-  Entity(Graph* G, std::string ,const char * [], const char * [], int );
+  Entity(const std::string, const std::string [], const std::string [], int);
   ~Entity();
-  int newEntityInstance(const char *[] , const char *[] , int);
-  int deleteEntityInstance(const char *[] , const char *[] , int);
-  int editEntityInstance(const char *[] , const char *[] , int);
+  int newEntityInstance(const char * [] , const char * [] , int);
+  int deleteEntityInstance(const char * [] , const char * [] , int);
+  int editEntityInstance(const char * [] , const char * [] , int);
   int getEntityInstance(const char * [], const char * [], int , struct node*);
 };
 
