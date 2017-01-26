@@ -34,7 +34,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  void newEntity(std::string name, const AttrType & attributes, int nAttr);
+  virtual void newEntity(std::string name, const AttrType & attributes, int nAttr) =0;
 
   
   /**
@@ -48,7 +48,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  const tlp::node * newNode(std::string entityName, const AttrValue & values[], int nVal);
+  virtual const tlp::node * newNode(std::string entityName, const AttrValue & values[], int nVal) =0;
 
   
   /**
@@ -61,7 +61,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  const tlp::node * newNode(const Attr & attributes[], int nAttr);
+  virtual const tlp::node * newNode(const Attr & attributes[], int nAttr) =0;
 
   
   /**
@@ -85,7 +85,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const AttrType * attributes, int nAttr);
+  virtual void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const AttrType * attributes, int nAttr) =0;
 
   
   /**
@@ -100,7 +100,7 @@ public:
    * @param nVal number of indicated attributes (size of 'values')
    *
    **/
-  void newEdge(std::string relationName, const tlp::node & src, const tlp::node & dst, const AttrValue & values[], int nVal);
+  virtual void newEdge(std::string relationName, const tlp::node & src, const tlp::node & dst, const AttrValue & values[], int nVal) =0;
 
   
   /**
@@ -115,7 +115,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  void newEdge(std::string name, const tlp::node & src, const tlp::node & dst, const Attr & attributes[], int nAttr);
+  virtual void newEdge(std::string name, const tlp::node & src, const tlp::node & dst, const Attr & attributes[], int nAttr) =0;
 
   
   /**
@@ -125,7 +125,7 @@ public:
    *
    * @return 
    **/
-  int saveDB(std::string path) const;
+  virtual int saveDB(std::string path) const =0;
 
   
   /**
@@ -135,7 +135,7 @@ public:
    *
    * @return Database * : a pointer to the loaded Database object 
    **/
-  Database * loadDB(std::string path) const;
+  virtual Database * loadDB(std::string path) const =0;
 };
 
 
