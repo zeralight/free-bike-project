@@ -5,12 +5,13 @@
 #include <tulip/Node.h>
 #include <tulip/Edge.h>
 
-#include <DBTools.hpp>
+#include "DBTools.hpp"
 
 /**
  * @brief This class is the core of the Database Management System.
  *
  * Remark : The file <DBTools.hpp> must be inserted in order to use certain data types like : Attr, AttrType and AttrValue.
+ *          See this file for more details on its use.
  *
  **/
 class Database {
@@ -47,7 +48,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  const node * newNode(std::string entityName, const AttrValue & values[], int nVal);
+  const tlp::node * newNode(std::string entityName, const AttrValue & values[], int nVal);
 
   
   /**
@@ -60,7 +61,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  const node * newNode(const Attr & attributes[], int nAttr);
+  const tlp::node * newNode(const Attr & attributes[], int nAttr);
 
   
   /**
@@ -99,7 +100,7 @@ public:
    * @param nVal number of indicated attributes (size of 'values')
    *
    **/
-  void newEdge(std::string relationName, const node & src, const node & dst, const AttrValue & values[], int nVal);
+  void newEdge(std::string relationName, const tlp::node & src, const tlp::node & dst, const AttrValue & values[], int nVal);
 
   
   /**
@@ -114,7 +115,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  void newEdge(std::string name, const node & src, const node & dst, const Attr & attributes[], int nAttr);
+  void newEdge(std::string name, const tlp::node & src, const tlp::node & dst, const Attr & attributes[], int nAttr);
 
   
   /**

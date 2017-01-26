@@ -16,12 +16,14 @@ struct AttrValue {
   AttrValue (std::string label, T value);
 };
 
+
 struct AttrType {
   std::string label;
   std::string type;
 
   AttrType (std::string label, std::string type);
 };
+
 
 template <class T>
 struct Attr {

@@ -7,6 +7,7 @@
 
 using namespace tlp;
 
+// "Personne", ["Nom", "Prenom", "Age"], ["string", "string", "int"] 
 Entity::Entity(Graph* G, const std::string name, const char * nameProperty[], const char * typeProperty[], int len)
 {
   this->len=len;
@@ -15,7 +16,7 @@ Entity::Entity(Graph* G, const std::string name, const char * nameProperty[], co
       strcpy(this->nameProperty[i],nameProperty[i]);
       strcpy(this->typeProperty[i],typeProperty[i]);
     }
-  g= G->Graph::addSubGraph(name);
+  g = G->Graph::addSubGraph(name);
   for(int i=0; i<len; i++)
     property[i]=g->getLocalProperty(nameProperty[i], typeProperty[i]);
 }
@@ -24,7 +25,8 @@ Entity::~Entity()
 {
   g->clear();
 }
-  
+
+//["Nom", "Prenom"] ["Roger", "Hanin"], 2
 int Entity::newEntityInstance(const char * nameProperty[], const char * valueProperty[], int len)
 {
   struct node n = g->addNode();
