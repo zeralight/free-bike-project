@@ -8,6 +8,13 @@
 #define STRING "string"
 #define DATE "date"
 
+/* 
+ * List of acceptable constraints for the attributes 
+ * They can be combined using the | operator
+ */
+#define UNIQUE 1 << 0
+#define NOT_NULL 1 << 1
+
 template <class T>
 struct AttrValue {
   std::string label;
@@ -22,6 +29,7 @@ struct AttrType {
   std::string type;
 
   AttrType (std::string label, std::string type);
+  AttrType (std::string label, std::string type, int constraints);
 };
 
 
