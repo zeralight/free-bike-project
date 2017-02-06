@@ -27,10 +27,11 @@ class DatabaseImpl: public Database {
   const Result * newNode(std::string entityName, const AttrValue values[], int nVal);
   const Result * newNode(const Attr attributes[], int nAttr) ;
   void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const AttrType attributes[], int nAttr);
-  void newEdge(std::string relationName, const Result src, const Result dst, const AttrValue values[], int nVal);
-  void newEdge(std::string name, const Result src, const Result dst, const Attr attributes[], int nAttr);
+
+  void newEdge(std::string relationName, const Result * src, const Result * dst, const AttrValue values[], int nVal);
+  void newEdge(std::string name, const Result * src, const Result * dst, const Attr attributes[], int nAttr);
   int saveDB(std::string path) const;
-  Database * loadDB(std::string path) const;
+  Database * loadDB(std::string path, const std::string name) const;
 };
 
 #endif

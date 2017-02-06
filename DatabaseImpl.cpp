@@ -32,6 +32,7 @@ Result * DatabaseImpl::newNode(std::string entityName, const AttrValue values[],
 
 
 Result * DatabaseImpl::newNode(std::string name, const Attr attributes[], int nAttr){
+  //ajout d'un noeud qui n'appartient pas à une entité ?
 }
 
 
@@ -43,21 +44,30 @@ void DatabaseImpl::newRelation(std::string relationName, std::string entitySrc, 
 }
 
 
-void DatabaseImpl::newEdge(std::string relationName, const Result src, const Result dst, const AttrValue values[], int nVal){
+void DatabaseImpl::newEdge(std::string relationName, const Result * src, const Result * dst, const AttrValue values[], int nVal){
     Relation * r = getRelation(relationName);
     r->newRelationInstance(values, src, dst, nVal);
 }
 
 
-void DatabaseImpl::newEdge(std::string name, const Result src, const Result dst, const Attr attributes[], int nAttr){
+void DatabaseImpl::newEdge(std::string name, const Result * src, const Result * dst, const Attr attributes[], int nAttr){
+  //ajout d'un arc qui n'appartient pas à une relation ?
 }
 
 
 
 int DatabaseImpl::saveDB(std::string path) const {
+    PluginProgress * p;
+    bool i = saveGraph(G, path, p);
+    if (!i)
+        printf("Graph no save");
 }
 
 
 
-Database * DatabaseImpl::loadDB(std::string path) const {
+Database * DatabaseImpl::loadDB(std::string path, const std::string name) const {
+        PluginProgress * p;
+        G = loadGraph(path,	p);
+        this->name.assign(name);
+        //comment recuperer E et R ?
 }
