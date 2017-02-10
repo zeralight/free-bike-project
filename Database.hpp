@@ -6,7 +6,7 @@
 #include <tulip/Edge.h>
 
 #include "DBTools.hpp"
-#include "Result.h"
+#include "Result.hpp"
 
 /**
  * @brief This class is the core of the Database Management System.

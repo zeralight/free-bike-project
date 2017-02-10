@@ -16,9 +16,9 @@ class DatabaseImpl: public Database {
  private:
   Graph * G;
   std::string name;
-  Entity * E[];
+  Entity * E;
   int nbE;
-  Relation * R[];
+  Relation * R;
   int nbR;
 
  public:
@@ -31,7 +31,10 @@ class DatabaseImpl: public Database {
   void newEdge(std::string relationName, const Result * src, const Result * dst, const AttrValue values[], int nVal);
   void newEdge(std::string name, const Result * src, const Result * dst, const Attr attributes[], int nAttr);
   int saveDB(std::string path) const;
-  Database * loadDB(std::string path, const std::string name) const;
+  Database * loadDB(std::string path, const std::string name);
 };
+
+Relation getRelation(Relation * R, int nbR, std::string relationName);
+Entity getEntity(Entity * E, int nbE, std::string entityName);
 
 #endif
