@@ -11,7 +11,13 @@
 #include "Entity.hpp"
 #include "Relation.hpp"
 
-
+/**
+ * @brief This class is the implementation of the Database Management System describ in <Database.cpp>.
+ *
+ * Remark : The file <DBTools.hpp> must be inserted in order to use certain data types like : Attr, AttrType and AttrValue.
+ *          See this file for more details on its use.
+ *
+ **/
 class DatabaseImpl: public Database {
  private:
   Graph * G;

@@ -13,5 +13,5 @@ Database * newDB(std::string name){
 }
 
 void delDB(Database * db){
-  //pas de destructeur, necessaire ?
+  //pas de destructeur pour DatabaseImpl, necessaire ?
 }
