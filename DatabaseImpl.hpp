@@ -11,6 +11,8 @@
 #include "Entity.hpp"
 #include "Relation.hpp"
 
+using namespace tlp;
+
 /**
  * @brief This class is the implementation of the Database Management System describ in <Database.cpp>.
  *
@@ -21,7 +23,7 @@
 class DatabaseImpl: public Database {
  private:
   Graph * G;
-  std::string name;
+  std::string  name;
   Entity * E;
   int nbE;
   Relation * R;
@@ -29,6 +31,7 @@ class DatabaseImpl: public Database {
 
  public:
   DatabaseImpl(std::string name);
+  ~DatabaseImpl();
   void newEntity(std::string name, const AttrType attributes[], int nAttr);
   const Result * newNode(std::string entityName, const AttrValue values[], int nVal);
   const Result * newNode(const Attr attributes[], int nAttr) ;
