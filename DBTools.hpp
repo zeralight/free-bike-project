@@ -24,6 +24,16 @@
 //typedef int t_constr;
 
 
+/*
+ * @brief This class is an interface for the use of Attribute objects. 
+ * It provides a type / subtype relation between Attribute / Attr. 
+ * It may necessarily be used in order to manipulate arrays of Attr objects.
+ * 
+ * Example of typical use :
+ * @code
+ * Attribute * tab[2] = {new Attr("firstname"), new Attr("name")};
+ * @endcode
+ */
 class Attribute {
 public:
   virtual std::string getLabel() const =0;
@@ -44,6 +54,12 @@ protected:
 };
 
 
+/*
+ * Example of instanciation
+ * @code
+ * Attribute * attr = new Attr<INT>("age", 42);
+ * @endcode
+ */
 template <class T>
 class Attr : public virtual Attribute {
   std::string label;
