@@ -1,6 +1,13 @@
 #include <tulip/TlpTools.h>
 #include <tulip/Node.h>
 #include <tulip/Edge.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
 
 #include "DBTools.hpp"
 #include "Database.hpp"
@@ -9,7 +16,8 @@
 #include "Relation.hpp"
 #include "Result.hpp"
 
-using namespace std
+#define LEN 1000
+using namespace std;
 
 DatabaseImpl::DatabaseImpl(string name){
   Graph *G = newGraph();
@@ -32,7 +40,7 @@ DatabaseImpl::~DatabaseImpl(){
   G->tlp::Graph::~Graph();
 }
 
-void DatabaseImpl::newEntity(string name, const AttrType attributes[], int nAttr){
+void DatabaseImpl::newEntity(string name, const Attribute attributes[], int nAttr){
     int i;
     try{
       for(i=0; i<nbE; i++)
@@ -51,69 +59,17 @@ void DatabaseImpl::newEntity(string name, const AttrType attributes[], int nAttr
     }
 }
 
-Result * DatabaseImpl::newNode(string entityName, const AttrValue values[], int nVal){
+Result * DatabaseImpl::newNode(string entityName, const Attribute values[], int nVal){
   try{
     Entity e = getEntity(E, nbE, entityName);
     Result * r = e.newEntityInstance(values, nVal);
     return r;
-  }
+  }th, 0600);
+
   catch(string const& chaine)
   {
-    cerr << chaine << endl;
+     cerr << chaine << endl;
   }
-}
-
-Result * DatabaseImpl::newNode(string name, const Attr attributes[], int nAttr){
-  //ajout d'un noeud qui n'appartient pas à une entité ?
-}
-
-void DatabaseImpl::newRelation(string relationName, string entitySrc, string entityDst, const AttrType attributes[], int nAttr){
-    try{
-        for(i=0; i<nbE; i++)
-        {
-          if ((R[i].getName()).compare(name)==0)
-            throw string("ERREUR : Relation is already exist");
-        }
-
-        Relation r= new Relation(G, name, entitySrc, entityDst, attributes, nAttr);
-        nbR ++;
-        R=realloc(R, sizeof(Relation)*nbR);
-        R[nbR-1]=r;
-    }
-    catch(string const& chaine)
-    {
-      cerr << chaine << endl;
-    }
-}
-
-void DatabaseImpl::newEdge(string relationName, const Result * src, const Result * dst, const AttrValue values[], int nVal){
-    try{
-      Relation r = getRelation(R, nbR, relationName);
-      r.newRelationInstance(values, src, dst, nVal);
-    }
-    catch(string const& chaine)
-    {
-      cerr << chaine << endl;
-    }
-}
-
-void DatabaseImpl::newEdge(string name, const Result * src, const Result * dst, const Attr attributes[], int nAttr){
-  //ajout d'un arc qui n'appartient pas à une relation ?
-}
-
-
-
-int DatabaseImpl::saveDB(string path) const{
-  try{
-    PluginProgress * p;
-    bool i = saveGraph(G, path, p);
-      if (!i)
-        throw string("ERREUR : Graph no save");
-    }
-    catch(string const& chaine)
-    {
-       cerr << chaine << endl;
-    }
 }
 
 
@@ -121,12 +77,16 @@ int DatabaseImpl::saveDB(string path) const{
 Database * DatabaseImpl::loadDB(string path, const string name){
       try{
         PluginProgress * p;
-        G = loadGraph(path,	p);
+        string pathG ("/Graph");
+        string pathE ("/Entities");
+        string pathR ("/Relations");
+        G = loadGraph(path+pathG,	p);
               if (G==NULL)
             throw  string("ERREUR : Graph no load");
 
         this->name.assign(name);
-        //comment recuperer E et R ?
+        nbE = loadE(E, path+pathE );
+        nbR = loadR(R, path+pathR );
       }
       catch( string const& chaine)
       {
@@ -156,4 +116,75 @@ Entity getEntity(Entity * E, int nbE,  string entityName){
         return E[i];
     }
     throw string("ERREUR : Entity doesn't exist");
+}
+
+void saveE(Entity * E, int nbE, char * path ){
+  int fd=creat(path, 0600);
+  int err, err2, i;
+  if (fd==-1)
+    throw string("ERREUR : create save E");
+
+  char * c;
+  sprintf(c,"%d",nbE);
+  string nb (c);
+  err = write(fd, nb+"\n", string::size(nb)+2);
+  if (err==-1)
+    throw string("ERREUR : nb entities no save");
+
+  for(i=0;i<nbE; i++)
+  {
+    err = writeR(fd, E[i]); //a coder dans entity
+    err2 = write(fd, "\n", 2);
+    if (err==-1 || err2==-1)
+      throw string("ERREUR : one entity isn't save");
+  }
+  err=close(fd);
+  if (fd==-1)
+    throw string("ERREUR : close save E");
+}
+
+
+void saveR(Relation * R, int nbR, char * path ){
+    int fd=creat(path, 0600);
+    int err, err2, i;
+    if (fd==-1)
+      throw string("ERREUR : create save R");
+
+    char * c;
+    sprintf(c,"%d",nbR);
+    string nb (c);
+    err = write(fd, nb+"\n", string::size(nb)+2);
+    if (err==-1)
+      throw string("ERREUR : nb relation no save");
+
+    for(i=0;i<nbR; i++)
+    {
+      err = writeR(fd, R[i]); //a coder dans relation
+      err2 = write(fd, "\n", 2);
+      if (err==-1 || err2==-1)
+        throw string("ERREUR : one relation isn't save");
+    }
+    err=close(fd);
+    if (fd==-1)
+      throw string("ERREUR : close save R");
+}
+
+int loadE(Entity * E, char * path ){
+  FILE * fd=fopen(path, "r");
+  if (fd==NULL)
+    throw string("ERREUR : file E not found");
+
+  char b[LEN];
+  fgets(b, LEN, fd);
+  b[strlen(b)-3]='/0';
+  int nbE=atoi(b);
+  while (fgets(b, LEN, fd)!=NULL){
+    loadEntity(b);
+  }
+
+  fclose(fd);
+  return nbE;
+}
+
+int loadR(Relation * R, char * path ){
 }
