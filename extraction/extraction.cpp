@@ -5,39 +5,39 @@
 
 using namespace std;
 
-vector<vector<string> > parseCSVFile(char* csv_file)
+vector<vector<string> > parseCSVFile(char* csv_file) // csv_file : file name
 {
-  ifstream file(csv_file, ios::in);
-  if (file)
+  ifstream file(csv_file, ios::in); // Read-only .csv file opening
+  if (file) // If the opening succeeded
     {
-      vector<string> namesVarList;
-      char character;
+      vector<string> namesVarList; // Dynamic array declaration
+      char character; // Last character read
       int i=0;
-      while ( character != '\n' && file.get(character) )
+      while ( character != '\n' && file.get(character) ) // While it is the 1st line
 	{
-	  namesVarList.push_back("");
-	  while ( character != ',' && character != '\n' )
+	  namesVarList.push_back(""); // Creates a field
+	  while ( character != ',' && character != '\n' ) // While it is the 1st line and the same field
 	    {
-	      namesVarList[i] += character;
-	      file.get(character);
+	      namesVarList[i] += character; // Continues to write the field name
+	      file.get(character); // Reads the next character
 	    }
 	  i++;
 	}
-      vector<vector<string> > data;
+      vector<vector<string> > data; // Dynamic idimensional array for data
       for (int j=0; j<i; j++)
 	{
-	  data.push_back(vector<string>(1, namesVarList[j]));
+	  data.push_back(vector<string>(1, namesVarList[j])); // Creates as columns as fields in the table
 	}
-      i=0; int j=1; character='\0';
-      while ( !file.eof() && file.get(character) )
+      i=0; int j=1; character='\0'; // '\0' to avoid a falsifying '\n'
+      while ( !file.eof() && file.get(character) ) // While it's not the end of the file
 	{
-	  data[i].push_back("");
-	  while ( character != ',' && character != '\n' )
+	  data[i].push_back(""); // Creates a value
+	  while ( character != ',' && character != '\n' ) // While it is the same line and the same value
 	    {
-	      data[i][j] += character;
-	      file.get(character);
+	      data[i][j] += character; // Continues to write the value
+	      file.get(character); // Reads the next character
 	    }
-	  if ( character == ',' )
+	  if ( character == ',' ) // Manages the counters
 	    {
 	      i++;
 	    }
@@ -47,13 +47,13 @@ vector<vector<string> > parseCSVFile(char* csv_file)
 	      j++;
 	    }
 	}
-      return data;
+      return data; // Returns the table
     }
   else
     {
       cerr << "Error: can't open file" << endl;
-      vector<vector<string> > empty;
-      return empty;
+      vector<vector<string> > empty; // Creates an empty dynamic bidimensional array...
+      return empty; // ... to respect the type
     }
 }
 

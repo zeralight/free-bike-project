@@ -1,51 +1,70 @@
 #include <iostream>
 #include <cstring>
-#include "Entity.hpp"
+#include <cstdlib>
+
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
 #include <tulip/Node.h>
 
 #include <tulip/StringProperty.h>
 
+#include "Entity.hpp"
+#include "DBTools.hpp"
+
+#define TLPPROP_ENTITY_NAME "dbEntityName"
+
 using namespace tlp;
 
-Entity::Entity(const std::string name, const std::string attrNames[], const std::string attrTypes[], int nAttr) {
+Entity::Entity(const std::string name, const Attribute * const attr[], int nAttr) {
   int i;
-  //Affichage : voir src newGraph() (semble non nécessaire)
-
+  
   this->name = name;
   this->nAttr = nAttr;
-  this->attrNames = new std::string [nAttr];
-  this->attrTypes = new std::string [nAttr];
+  this->attr = (Attribute **) malloc(nAttr * sizeof(Attribute *));
+  this->g = newGraph();
 
+  StringProperty * propName = g->getLocalProperty<StringProperty>(TLPPROP_ENTITY_NAME);
+  propName->setAllNodeValue(name);
+  
   for(i = 0 ; i < nAttr ; i++) {
-    this->attrNames[i] = attrNames[i];
-    this->attrTypes[i] = attrTypes[i];
-    // Création de la propriété dans 'this'
-    getLocalProperty(attrNames[i], attrTypes[i]);
-  }  
+    this->attr[i] = attr[i]->clone();
+    g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName());
+  }
 }
 
 // Ai modifié GraphImpl : constructeur passé a virtual -> mauvaise idée de modifier les éléments de la librairie, trouver une autre solution
 Entity::~Entity() {
   int i;
-  delete [] attrNames;
-  delete [] attrTypes;
+  for (i = 0 ; i < nAttr ; i++)
+    delete attr[i];
+  
+  delete attr;
+  delete g;
 }
 
+
+Graph * Entity::getGraph() const {
+  return this->g;
+}
+
+
 /*
-int Entity::newEntityInstance(const char * attrNames[], const char * valueProperty[], int nAttr)
-{
-  struct node n = g->addNode();
-  for(int i=0; i<this->nAttr; i++)
-    property[i]->setNodeStringValue(n,"");
-  for(int i=0; i<nAttr; i++)
-    {
-      while(!property[i]->PropertyInterface::getName().compare(attrNames[i]))
-	{
-	  property[i]->setNodeStringValue(n, valueProperty[i]);
-	} 
+const node * Entity::newInstance(const Attribute * const attr[], int nAttr) {
+  int i;
+  node n = g->addNode();
+
+  if (isValid(attr, nAttr)) {
+    for(i = 0 ; i < this->nAttr ; i++)
+      property[i]->setNodeStringValue(n, "");
+    
+    for(int i=0; i<nAttr; i++) {
+      while(!property[i]->PropertyInterface::getName().compare(attrNames[i])) {
+	property[i]->setNodeStringValue(n, valueProperty[i]);
+      } 
     }
+  }
+  else
+    return NULL;
 }
 
 int Entity::deleteEntityInstance(const char * attrNames[], const char * valueProperty[], int len)
@@ -105,3 +124,7 @@ int Entity::getEntityInstance(const char * attrNames[], const char * valueProper
   return lenL;
 }
 */
+
+bool Entity::isValid(const Attribute * const attr[], int nAttr) const {
+  return true;
+}
