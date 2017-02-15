@@ -4,21 +4,21 @@
 #include "DBTools.hpp"
 
 template <>
-Attr<DOUBLE>::Attr() {
-  this->typeName = "double";
-}
-
-template <>
-Attr<BOOL>::Attr() {
-  this->typeName = "bool";
-}
-
-template <>
-Attr<INT>::Attr() {
+void Attr<INT>::init() {
   this->typeName = "int";
-}
+};
 
 template <>
-Attr<STRING>::Attr() {
+void Attr<DOUBLE>::init() {
+  this->typeName = "double";
+};
+
+template <>
+void Attr<BOOL>::init() {
+  this->typeName = "bool";
+};
+
+template <>
+void Attr<STRING>::init() {
   this->typeName = "string";
-}
+};

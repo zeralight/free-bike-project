@@ -4,13 +4,27 @@
 #include <iostream>
 #include <cstring>
 
+#include <tulip/StringProperty.h>
+#include <tulip/DoubleProperty.h>
+#include <tulip/IntegerProperty.h>
+#include <tulip/BooleanProperty.h>
+
 #define N_TYPES 4
 
 /* List of acceptable types for the attributes */
+enum db_types {
+  INT,
+  DOUBLE,
+  BOOL,
+  STRING
+};
+
+/*
 #define INT int
 #define DOUBLE double
 #define BOOL bool
 #define STRING std::string
+*/
 // DATE à rajouter pourquoi pas ?
 
 /* 
@@ -22,6 +36,33 @@
 #define NOT_NULL 1 << 1
 
 //typedef int t_constr;
+
+template <int T>
+struct Type;
+
+template <>
+struct Type<INT> {
+  typedef tlp::IntegerProperty propType;
+  typedef int type;
+};
+
+template <>
+struct Type<DOUBLE> {
+  typedef tlp::DoubleProperty propType;
+  typedef double type;
+};
+
+template <>
+struct Type<BOOL> {
+  typedef tlp::BooleanProperty propType;
+  typedef bool type;
+};
+
+template <>
+struct Type<STRING> {
+  typedef tlp::StringProperty propType;
+  typedef std::string type;
+};
 
 
 /*
@@ -45,6 +86,9 @@ public:
   virtual Attribute * operator=(const Attribute *) =0;
 
   virtual void print() const =0;
+
+  virtual void setProperty(void *) =0;
+  virtual void set(const void *) =0;
   
 protected:
   virtual void setLabel(const std::string &) =0;
@@ -60,16 +104,16 @@ protected:
  * Attribute * attr = new Attr<INT>("age", 42);
  * @endcode
  */
-template <class T>
+template <int T>
 class Attr : public virtual Attribute {
   std::string label;
   std::string typeName;
-  T value;
   int constraints;
 
-private:
-  Attr();
+  typename Type<T>::type value;
+  typename Type<T>::propType * prop;
 
+private:
   void setLabel(const std::string &newLabel);
   void setConstraints(int newConstraints);
   void setTypeName(const std::string &newTypeName);
@@ -77,9 +121,10 @@ private:
 
 public:
   Attr(const std::string &label);
-  Attr(const std::string &label, T value);
+  Attr(const std::string &label, typename Type<T>::type value);
   //Attr(const std::string &label, t_constr constraints);
 
+  
   Attribute * operator=(const Attribute * attr);
 
   std::string getLabel() const;
@@ -87,33 +132,38 @@ public:
   std::string getTypeName() const;
   void getValue(void * dst) const;
 
+  void setProperty(void *);
+  void set(const void *);
+
   Attribute * clone() const;
 
   void print() const;
+
+private:
+  void init();
 };
 
 
 /* Implémentation des templates */
 /**********************************************************************/
 
-template <class T>
+template <int T>
 Attr<T>::Attr (const std::string &label) {
-  *this = Attr();
-  std::cout << this->typeName << std::endl;
+  this->init(); // deux objets créés ? -> utiliser méthode privée plutot
   this->label = label;
   this->constraints = NONE;
 }
 
-template <class T>
-Attr<T>::Attr (const std::string &label, T value) {
-  *this = Attr();
+template <int T>
+Attr<T>::Attr (const std::string &label, typename Type<T>::type value) {
+  this->init();
   this->label = label;
   this->value = value;
   this->constraints = NONE;
 }
 
 /*
-template <class T>
+template <int T>
 Attr<T>::Attr (const std::string &label, t_constr constraints) {
   Attr();
   this->label = label;
@@ -121,7 +171,7 @@ Attr<T>::Attr (const std::string &label, t_constr constraints) {
 }
 */
 
-template <class T>
+template <int T>
 Attribute * Attr<T>::operator=(const Attribute * attr) {
   this->label = attr->getLabel();
   attr->getValue(&(this->value));
@@ -130,59 +180,69 @@ Attribute * Attr<T>::operator=(const Attribute * attr) {
   return this;
 }
 
-template <class T>
+template <int T>
 std::string Attr<T>::getLabel() const {
   return this->label;
 }
 
-template <class T>
+template <int T>
 int Attr<T>::getConstraints() const{
   return this->constraints;
 }
 
-template <class T>
+template <int T>
 std::string Attr<T>::getTypeName() const {
   return this->typeName;
 }
 
-template <class T>
+template <int T>
 void Attr<T>::getValue(void * dst) const {
-  T * _dst = (T *) dst;
+  typename Type<T>::type * _dst = (typename Type<T>::type *) dst;
   *_dst = this->value;
 }
 
-template <class T>
+template <int T>
 void Attr<T>::setLabel(const std::string &newLabel) {
   this->label = newLabel;
 }
 
-template <class T>
+template <int T>
 void Attr<T>::setConstraints(int newConstraints) {
   this->constraints = newConstraints;
 }
 
-template <class T>
+template <int T>
 void Attr<T>::setTypeName(const std::string &newTypeName) {
   this->typeName = newTypeName;
 }
 
-template <class T>
+template <int T>
 void Attr<T>::setValue(const void * newValue) {
-  const T * _newValue = (T *) newValue;
+  const typename Type<T>::type * _newValue = (typename Type<T>::type *) newValue;
   this->value = *_newValue;
 }
 
-template <class T>
+template <int T>
+void Attr<T>::setProperty(void * prop) {
+  this->prop = (typename Type<T>::propType *) prop;
+}
+
+template <int T>
+void Attr<T>::set(const void * value) {
+  typename Type<T>::type _value = *((typename Type<T>::type *) value);
+  this->prop->setAllNodeValue(_value);
+}
+
+template <int T>
 Attribute * Attr<T>::clone() const {
-  Attr<T> * tmp = new Attr<T>();
-  tmp->setLabel(this->label);
+  Attr<T> * tmp = new Attr<T>(this->label);
   tmp->setConstraints(this->constraints);
   tmp->setTypeName(this->typeName);
   tmp->setValue(&(this->value));
   return tmp;
 }
 
-template <class T>
+template <int T>
 void Attr<T>::print() const {
   std::cout << "== " + this->label + " ==" << std::endl;
   std::cout << "type\t\t" + this->typeName << std::endl;

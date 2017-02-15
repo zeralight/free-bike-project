@@ -28,7 +28,9 @@ Entity::Entity(const std::string name, const Attribute * const attr[], int nAttr
   
   for(i = 0 ; i < nAttr ; i++) {
     this->attr[i] = attr[i]->clone();
-    g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName());
+    this->attr[i]->setProperty(g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName()));
+    std::string tmp = "oua";
+    this->attr[i]->set(&tmp);
   }
 }
 

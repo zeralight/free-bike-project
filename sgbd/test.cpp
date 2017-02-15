@@ -4,8 +4,8 @@
 #include <tulip/Graph.h>
 #include <tulip/StringProperty.h>
 
-#include "Entity.hpp"
 #include "DBTools.hpp"
+#include "Entity.hpp"
 
 using namespace std;
 using namespace tlp;
@@ -46,10 +46,9 @@ int main() {
   edge e2 = graph->addEdge(n1,n2);
   edge e3 = graph->addEdge(n3,n1);
 
-  /*
-  StringProperty * prop = graph->getLocalProperty<StringProperty>("Prenom");
+  void * _prop = graph->getLocalProperty("Prenom", "string");
+  StringProperty * prop = (StringProperty *) _prop;
   prop->setAllNodeValue("César");
-  */
 
   bool tmp = saveGraph(graph, "test.tlp");
   if (!tmp)
