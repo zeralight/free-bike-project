@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 
+#include <tulip/Node.h>
 #include <tulip/StringProperty.h>
 #include <tulip/DoubleProperty.h>
 #include <tulip/IntegerProperty.h>
@@ -95,6 +96,9 @@ protected:
   virtual void setConstraints(int) =0;
   virtual void setTypeName(const std::string &) =0;
   virtual void setValue(const void *) =0;
+
+public:
+  virtual void setValue(tlp::node) const =0;
 };
 
 
@@ -110,6 +114,7 @@ class Attr : public virtual Attribute {
   std::string typeName;
   int constraints;
 
+public:
   typename Type<T>::type value;
   typename Type<T>::propType * prop;
 
@@ -117,7 +122,9 @@ private:
   void setLabel(const std::string &newLabel);
   void setConstraints(int newConstraints);
   void setTypeName(const std::string &newTypeName);
-  void setValue(const void * newValue);
+  void setValue(const void * value);
+
+  void set(const void * value);
 
 public:
   Attr(const std::string &label);
@@ -132,8 +139,8 @@ public:
   std::string getTypeName() const;
   void getValue(void * dst) const;
 
-  void setProperty(void *);
-  void set(const void *);
+  void setProperty(void * prop);
+  void setValue(tlp::node n) const ;
 
   Attribute * clone() const;
 
@@ -221,6 +228,12 @@ void Attr<T>::setValue(const void * newValue) {
   const typename Type<T>::type * _newValue = (typename Type<T>::type *) newValue;
   this->value = *_newValue;
 }
+
+template <int T>
+void Attr<T>::setValue(tlp::node n) const {
+  this->prop->setNodeValue(n, this->value);
+}
+
 
 template <int T>
 void Attr<T>::setProperty(void * prop) {

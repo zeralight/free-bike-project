@@ -27,29 +27,13 @@ int main() {
   //initialize the Tulip lib
   initTulipLib();
 
+  //create an entity
   Attribute * attr[3] = {new Attr<STRING>("Prenom"), new Attr<STRING>("Nom"), new Attr<STRING>("Nationalite")};
-
-  Attribute * tst[2] = {new Attr<INT>("banane", 3), new Attr<STRING>("fraise", "charlotte")};
-
-  //create an empty graph
   Entity * e = new Entity("Personne", attr, 3);
   Graph * graph = e->getGraph();
 
-  //add three nodes
-  node n1 = graph->addNode();
-  node n2 = graph->addNode();
-  node n3 = graph->addNode();
-  node n4 = graph->addNode();
-
-  //add three edges
-  edge e1 = graph->addEdge(n2,n3);
-  edge e2 = graph->addEdge(n1,n2);
-  edge e3 = graph->addEdge(n3,n1);
-
-  void * _prop = graph->getLocalProperty("Prenom", "string");
-  StringProperty * prop = (StringProperty *) _prop;
-  prop->setAllNodeValue("César");
-
+  //create new instancies of the entity
+  
   bool tmp = saveGraph(graph, "test.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;

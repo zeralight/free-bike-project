@@ -23,14 +23,11 @@ Entity::Entity(const std::string name, const Attribute * const attr[], int nAttr
   this->attr = (Attribute **) malloc(nAttr * sizeof(Attribute *));
   this->g = newGraph();
 
-  StringProperty * propName = g->getLocalProperty<StringProperty>(TLPPROP_ENTITY_NAME);
-  propName->setAllNodeValue(name);
-  
   for(i = 0 ; i < nAttr ; i++) {
     this->attr[i] = attr[i]->clone();
     this->attr[i]->setProperty(g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName()));
-    std::string tmp = "oua";
-    this->attr[i]->set(&tmp);
+
+    //initialisation ? ou Tulip le fait par défaut ?
   }
 }
 
@@ -50,25 +47,22 @@ Graph * Entity::getGraph() const {
 }
 
 
-/*
 const node * Entity::newInstance(const Attribute * const attr[], int nAttr) {
   int i;
-  node n = g->addNode();
+  node * n = (node *) malloc(sizeof(node));
+  *n = g->addNode();
 
   if (isValid(attr, nAttr)) {
-    for(i = 0 ; i < this->nAttr ; i++)
-      property[i]->setNodeStringValue(n, "");
-    
-    for(int i=0; i<nAttr; i++) {
-      while(!property[i]->PropertyInterface::getName().compare(attrNames[i])) {
-	property[i]->setNodeStringValue(n, valueProperty[i]);
-      } 
-    }
+    for(i = 0 ; i < nAttr ; i++)
+      attr[i]->setValue(*n);
+
+    return n;
   }
   else
     return NULL;
 }
 
+/*
 int Entity::deleteEntityInstance(const char * attrNames[], const char * valueProperty[], int len)
 {
   struct node* l;
