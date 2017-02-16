@@ -241,7 +241,6 @@ void Attr<T>::setValue(tlp::node n) const {
   this->prop->setNodeValue(n, this->value);
 }
 
-
 template <int T>
 void Attr<T>::setProperty(const void * prop) {
   this->prop = (typename Type<T>::propType *) prop;

@@ -64,17 +64,18 @@ const node * Entity::newInstance(Attribute * attr[], int nAttr) {
     return NULL;
 }
 
-/*
-int Entity::deleteEntityInstance(const char * attrNames[], const char * valueProperty[], int len)
-{
-  struct node* l;
-  int lenL=this->getEntityInstance(attrNames, valueProperty, len, l);
-  for (int i=0; i<lenL; i++)
-    {
-      this->g->Graph::delNode(l[i],true);
-    }
+int Entity::delInstance(Attribute * attr[], int nAttr) {
+  const node * n = this->getInstance(attr, nAttr);
+  
+  for (int i = 0; i < nAttr ; i++)
+    this->g->delNode(*n, true);
 }
 
+int Entity::delInstance(const node * n) {
+  this->g->delNode(*n, true);
+}
+
+/*
 int Entity::editEntityInstance(const char * attrNames[], const char * valueProperty[], int len)
 {
   struct node* l;
@@ -91,9 +92,11 @@ int Entity::editEntityInstance(const char * attrNames[], const char * valuePrope
 	}
     }
 }
+*/
 
-int Entity::getEntityInstance(const char * attrNames[], const char * valueProperty[], int len, struct node* l)
-{
+const node * Entity::getInstance(Attribute * attr[], int nAttr) const {
+  const node * n = (node *) malloc(1);
+  /*
   int lenL =0;
   bool b, b2;
   Iterator<node> *itNodes = this->g->getNodes();
@@ -119,9 +122,9 @@ int Entity::getEntityInstance(const char * attrNames[], const char * valueProper
           lenL++;
         }
     }
-  return lenL;
+  */
+  return n;
 }
-*/
 
 bool Entity::isValid(const Attribute * const attr[], int nAttr) const {
   return true;

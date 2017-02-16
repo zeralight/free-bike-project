@@ -8,6 +8,8 @@
 #include "DBTools.hpp"
 #include "Entity.hpp"
 
+#define N_NODE 4
+
 using namespace std;
 using namespace tlp;
 
@@ -37,20 +39,29 @@ int main() {
   T_STRING prenom;
   T_STRING nom;
   T_STRING nationalite;
-  for (int i = 0 ; i < 4 ; i++) {
+  const node * nList[N_NODE];
+  for (int i = 0 ; i < N_NODE ; i++) {
     prenom = "Roger";
-    nom = "Hanin" + std::to_string(i);
+    nom = "Hanin" + to_string(i);
     nationalite = "Israelienne";
     attr[0]->setValue(&prenom);
     attr[1]->setValue(&nom);
     attr[2]->setValue(&nationalite);
     
-    e->newInstance(attr, 3);
+    nList[i] = e->newInstance(attr, 3);
   }
   
   bool tmp = saveGraph(graph, "test.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
+
+  for (int i = 0 ; i < N_NODE ; i++)
+    e->delInstance(nList[i]);
+
+  tmp = saveGraph(graph, "test1.tlp");
+  if (!tmp)
+    cout << "Erreur lors de la sauvegarde" << endl;
+
 
   delete graph;
 

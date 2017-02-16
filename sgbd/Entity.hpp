@@ -25,9 +25,10 @@ public:
   Graph * getGraph() const;
 
   const node * newInstance(Attribute * attr[], int nAttr);
-  int delInstance(const char * [] , const char * [] , int);
+  int delInstance(Attribute * attr[], int nAttr);
+  int delInstance(const node * n);
   int editInstance(const char * [] , const char * [] , int);
-  int getInstance(const char * [], const char * [], int , struct node*) const;
+  const node * getInstance(Attribute * attr[], int nAttr) const;
 
 private:
   bool isValid(const Attribute * const attr[], int nAttr) const;
