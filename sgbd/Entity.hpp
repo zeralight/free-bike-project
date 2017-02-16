@@ -5,7 +5,7 @@
 #include <set>
 
 #include <tulip/TlpTools.h>
-#include <tulip/GraphImpl.h>
+#include <tulip/Graph.h>
 #include <tulip/Node.h>
 
 #include "DBTools.hpp"
