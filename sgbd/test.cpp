@@ -69,6 +69,19 @@ int main() {
   e->delInstance(nList[1]);
   e->delInstance(res);
 
+  // Modifies one instance
+  // Get all instancies of "Personne" for which 'Prenom' = 'Roger'
+  prenom = "Roger";
+  cond[0]->setLabel("Prenom");
+  cond[0]->setValue(&prenom);
+  res = e->getInstance(cond, 1);
+
+  // Change "Nationalite" value for all nodes in res
+  nationalite = "péruvienne";
+  cond[0]->setLabel("Nationalite");
+  cond[0]->setValue(&nationalite);
+  e->editInstance(res, cond, 1);
+
   tmp = saveGraph(graph, "test2.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;

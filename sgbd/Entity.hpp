@@ -15,10 +15,10 @@ using namespace tlp;
 class Entity {
 private:
   std::string name;
+  StringProperty * nameProp;
   Graph * g;
   std::unordered_map<std::string, Attribute *> attr;
   int nAttr;
-  //PropertyInterface ** properties;
   
 public: 
   Entity(const std::string &name, const Attribute * const attributes[], int nAttr);
@@ -28,10 +28,12 @@ public:
   Graph * getGraph() const;
 
   const node * newInstance(Attribute * attr[], int nAttr);
-  int delInstance(const std::set<node> * instList);
-  int delInstance(const node * n);
-  int editInstance(const char * [] , const char * [] , int);
+  void delInstance(const std::set<node> * nSet);
+  void delInstance(const node * n); // redondant ?
+  bool editInstance(std::set<node> * nSet, Attribute * attr[], int nAttr);
+  bool editInstance(node * n, Attribute * attr[], int nAttr);
   std::set<node> * getInstance(Attribute * attr[], int nAttr) const;
+  bool isInstance(const node * n) const;
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;
