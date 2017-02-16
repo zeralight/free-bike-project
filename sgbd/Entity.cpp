@@ -1,6 +1,9 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <unordered_map>
+#include <set>
+#include <iterator>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -20,12 +23,11 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
   
   this->name = name;
   this->nAttr = nAttr;
-  this->attr = (Attribute **) malloc(nAttr * sizeof(Attribute *));
   this->g = newGraph();
 
   for(i = 0 ; i < nAttr ; i++) {
-    this->attr[i] = attr[i]->clone();
-    this->attr[i]->setProperty(g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName()));
+    this->attr[attr[i]->getLabel()] = attr[i]->clone();
+    this->attr[attr[i]->getLabel()]->setProperty(g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName()));
 
     //initialisation ? ou Tulip le fait par défaut ?
   }
@@ -33,11 +35,8 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
 
 // Ai modifié GraphImpl : constructeur passé a virtual -> mauvaise idée de modifier les éléments de la librairie, trouver une autre solution
 Entity::~Entity() {
-  int i;
-  for (i = 0 ; i < nAttr ; i++)
-    delete attr[i];
-  
-  delete attr;
+  this->attr.clear();
+
   delete g;
 }
 
@@ -54,7 +53,7 @@ const node * Entity::newInstance(Attribute * attr[], int nAttr) {
 
   if (isValid(attr, nAttr)) {
     for(i = 0 ; i < nAttr ; i++) {
-      attr[i]->setProperty(this->attr[i]);
+      attr[i]->setProperty(this->attr[attr[i]->getLabel()]);
       attr[i]->setValue(*n);
     }
 
@@ -65,10 +64,15 @@ const node * Entity::newInstance(Attribute * attr[], int nAttr) {
 }
 
 int Entity::delInstance(Attribute * attr[], int nAttr) {
-  const node * n = this->getInstance(attr, nAttr);
+  std::set<node> * inst = this->getInstance(attr, nAttr);
+
+  for (auto it = inst->begin() ; it != inst->end() ; it++)
+    this->g->delNode(*it, true);
   
+  /*
   for (int i = 0; i < nAttr ; i++)
     this->g->delNode(*n, true);
+  */
 }
 
 int Entity::delInstance(const node * n) {
@@ -94,38 +98,41 @@ int Entity::editEntityInstance(const char * attrNames[], const char * valuePrope
 }
 */
 
-const node * Entity::getInstance(Attribute * attr[], int nAttr) const {
-  const node * n = (node *) malloc(1);
-  /*
-  int lenL =0;
-  bool b, b2;
-  Iterator<node> *itNodes = this->g->getNodes();
-  while(itNodes->hasNext())
-    {
-      b=true;
-      struct node n = itNodes->next(); 
-      for(int i=0; i<len; i++)
-	{
-	  b2=false;
-	  int j=0;
-	  while(j<this->len && !property[j]->PropertyInterface::getName().compare(attrNames[i]))
-	    {
-	      j++; 
-	    }
-	  if(property[j]->PropertyInterface::getNodeStringValue(n) == valueProperty[i] ) 
-	    b2=true;
-	  b=b2;
-	}
-      if (b)
-        {
-          l[lenL]=n;
-          lenL++;
-        }
+std::set<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
+  std::set<node> * res = new std::set<node>;
+  bool hasMatchingAttr;
+  Iterator<node> * itNodes;
+  node n;
+  
+  if (this->isValid(attr, nAttr)) {
+    itNodes = this->g->getNodes();
+    
+    while(itNodes->hasNext()) {
+      n = itNodes->next();
+      hasMatchingAttr = true;
+      
+      for(int i = 0 ; i < nAttr ; i++) {	
+	if (!attr[i]->isEqual(n))
+	  hasMatchingAttr = false;
+      }
+
+      if (hasMatchingAttr)
+	res->emplace(n);
     }
-  */
-  return n;
+  }
+  
+  return res;
 }
 
-bool Entity::isValid(const Attribute * const attr[], int nAttr) const {
+// modifie egalement les propriétés de attr si elle existe
+bool Entity::isValid(Attribute * attr[], int nAttr) const {
+  for (int i = 0 ; i < nAttr ; i++) {
+    auto it = this->attr.find(attr[i]->getLabel());
+    if (it == this->attr.end())
+      return false;
+
+    attr[i]->setProperty((*it).second);
+  }
+
   return true;
 }

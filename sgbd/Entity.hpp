@@ -1,6 +1,9 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
+#include <unordered_map>
+#include <set>
+
 #include <tulip/TlpTools.h>
 #include <tulip/GraphImpl.h>
 #include <tulip/Node.h>
@@ -13,7 +16,7 @@ class Entity {
 private:
   std::string name;
   Graph * g;
-  Attribute ** attr;
+  std::unordered_map<std::string, Attribute *> attr;
   int nAttr;
   //PropertyInterface ** properties;
   
@@ -28,10 +31,10 @@ public:
   int delInstance(Attribute * attr[], int nAttr);
   int delInstance(const node * n);
   int editInstance(const char * [] , const char * [] , int);
-  const node * getInstance(Attribute * attr[], int nAttr) const;
+  std::set<node> * getInstance(Attribute * attr[], int nAttr) const;
 
 private:
-  bool isValid(const Attribute * const attr[], int nAttr) const;
+  bool isValid(Attribute * attr[], int nAttr) const;
 };
 
 #endif

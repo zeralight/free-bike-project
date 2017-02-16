@@ -91,6 +91,7 @@ public:
   virtual void setValue(const void *) =0;
  
   virtual Attribute * clone() const =0;
+  virtual bool isEqual(tlp::node) const =0;
   virtual void print() const =0;
 
   virtual Attribute * operator=(const Attribute *) =0;
@@ -135,6 +136,7 @@ public:
   void setValue(const void * value);
 
   Attribute * clone() const;
+  bool isEqual(tlp::node n) const;
   void print() const;
 
   Attribute * operator=(const Attribute * attr);
@@ -147,7 +149,6 @@ private:
   void setValue(tlp::node n) const ;
   void set(const void * value);
   
-private:
   void init();
 };
 
@@ -264,6 +265,11 @@ Attribute * Attr<T>::clone() const {
   tmp->setTypeName(this->typeName);
   tmp->setValue(&(this->value));
   return tmp;
+}
+
+template <int T>
+bool Attr<T>::isEqual(tlp::node n) const {
+  return (this->value == this->prop->getNodeValue(n));
 }
 
 template <int T>
