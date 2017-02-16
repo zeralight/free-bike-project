@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -33,6 +34,19 @@ int main() {
   Graph * graph = e->getGraph();
 
   //create new instancies of the entity
+  T_STRING prenom;
+  T_STRING nom;
+  T_STRING nationalite;
+  for (int i = 0 ; i < 4 ; i++) {
+    prenom = "Roger";
+    nom = "Hanin" + std::to_string(i);
+    nationalite = "Israelienne";
+    attr[0]->setValue(&prenom);
+    attr[1]->setValue(&nom);
+    attr[2]->setValue(&nationalite);
+    
+    e->newInstance(attr, 3);
+  }
   
   bool tmp = saveGraph(graph, "test.tlp");
   if (!tmp)

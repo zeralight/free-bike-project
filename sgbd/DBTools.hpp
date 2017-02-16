@@ -10,6 +10,8 @@
 #include <tulip/IntegerProperty.h>
 #include <tulip/BooleanProperty.h>
 
+//#include "Entity.hpp"
+
 #define N_TYPES 4
 
 /* List of acceptable types for the attributes */
@@ -19,14 +21,12 @@ enum db_types {
   BOOL,
   STRING
 };
-
-/*
-#define INT int
-#define DOUBLE double
-#define BOOL bool
-#define STRING std::string
-*/
 // DATE à rajouter pourquoi pas ?
+
+#define T_INT Type<INT>::type
+#define T_DOUBLE Type<DOUBLE>::type
+#define T_BOOL Type<BOOL>::type
+#define T_STRING Type<STRING>::type
 
 /* 
  * List of acceptable constraints for the attributes 
@@ -36,7 +36,7 @@ enum db_types {
 #define UNIQUE 1 << 0
 #define NOT_NULL 1 << 1
 
-//typedef int t_constr;
+class Entity;
 
 template <int T>
 struct Type;
@@ -77,28 +77,31 @@ struct Type<STRING> {
  * @endcode
  */
 class Attribute {
+
+  friend Entity;
+  
 public:
   virtual std::string getLabel() const =0;
   virtual int getConstraints() const =0;
   virtual std::string getTypeName() const =0;
+  virtual void getProperty(void **) const =0;
   virtual void getValue(void *) const =0;
+
+  virtual void setLabel(const std::string &) =0;
+  virtual void setValue(const void *) =0;
  
   virtual Attribute * clone() const =0;
-  virtual Attribute * operator=(const Attribute *) =0;
-
   virtual void print() const =0;
 
-  virtual void setProperty(void *) =0;
-  virtual void set(const void *) =0;
+  virtual Attribute * operator=(const Attribute *) =0;
   
 protected:
-  virtual void setLabel(const std::string &) =0;
   virtual void setConstraints(int) =0;
   virtual void setTypeName(const std::string &) =0;
-  virtual void setValue(const void *) =0;
-
-public:
+  virtual void setProperty(const void *) =0;
+  virtual void setProperty(const Attribute *) =0;
   virtual void setValue(tlp::node) const =0;
+  virtual void set(const void *) =0;
 };
 
 
@@ -113,39 +116,37 @@ class Attr : public virtual Attribute {
   std::string label;
   std::string typeName;
   int constraints;
-
-public:
+  
   typename Type<T>::type value;
   typename Type<T>::propType * prop;
-
-private:
-  void setLabel(const std::string &newLabel);
-  void setConstraints(int newConstraints);
-  void setTypeName(const std::string &newTypeName);
-  void setValue(const void * value);
-
-  void set(const void * value);
 
 public:
   Attr(const std::string &label);
   Attr(const std::string &label, typename Type<T>::type value);
   //Attr(const std::string &label, t_constr constraints);
 
-  
-  Attribute * operator=(const Attribute * attr);
-
   std::string getLabel() const;
   int getConstraints() const;
   std::string getTypeName() const;
+  void getProperty(void **) const;
   void getValue(void * dst) const;
 
-  void setProperty(void * prop);
-  void setValue(tlp::node n) const ;
+  void setLabel(const std::string &newLabel);
+  void setValue(const void * value);
 
   Attribute * clone() const;
-
   void print() const;
 
+  Attribute * operator=(const Attribute * attr);
+
+private:
+  void setConstraints(int newConstraints);
+  void setTypeName(const std::string &newTypeName);
+  void setProperty(const void * prop);
+  void setProperty(const Attribute * attr);
+  void setValue(tlp::node n) const ;
+  void set(const void * value);
+  
 private:
   void init();
 };
@@ -203,6 +204,12 @@ std::string Attr<T>::getTypeName() const {
 }
 
 template <int T>
+void Attr<T>::getProperty(void ** dst) const {
+  typename Type<T>::propType ** _dst = (typename Type<T>::propType **) dst;
+  *_dst = this->prop;
+}
+
+template <int T>
 void Attr<T>::getValue(void * dst) const {
   typename Type<T>::type * _dst = (typename Type<T>::type *) dst;
   *_dst = this->value;
@@ -236,8 +243,13 @@ void Attr<T>::setValue(tlp::node n) const {
 
 
 template <int T>
-void Attr<T>::setProperty(void * prop) {
+void Attr<T>::setProperty(const void * prop) {
   this->prop = (typename Type<T>::propType *) prop;
+}
+
+template <int T>
+void Attr<T>::setProperty(const Attribute * attr) {
+  attr->getProperty((void **) &(this->prop));
 }
 
 template <int T>

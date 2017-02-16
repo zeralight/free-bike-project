@@ -15,7 +15,7 @@
 
 using namespace tlp;
 
-Entity::Entity(const std::string name, const Attribute * const attr[], int nAttr) {
+Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr) {
   int i;
   
   this->name = name;
@@ -47,14 +47,16 @@ Graph * Entity::getGraph() const {
 }
 
 
-const node * Entity::newInstance(const Attribute * const attr[], int nAttr) {
+const node * Entity::newInstance(Attribute * attr[], int nAttr) {
   int i;
   node * n = (node *) malloc(sizeof(node));
   *n = g->addNode();
 
   if (isValid(attr, nAttr)) {
-    for(i = 0 ; i < nAttr ; i++)
+    for(i = 0 ; i < nAttr ; i++) {
+      attr[i]->setProperty(this->attr[i]);
       attr[i]->setValue(*n);
+    }
 
     return n;
   }

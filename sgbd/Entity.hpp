@@ -18,13 +18,13 @@ private:
   //PropertyInterface ** properties;
   
 public: 
-  Entity(const std::string name, const Attribute * const attributes[], int nAttr);
+  Entity(const std::string &name, const Attribute * const attributes[], int nAttr);
   ~Entity();
 
   // Doit disparaitre ou passer private : debug
   Graph * getGraph() const;
 
-  const node * newInstance(const Attribute * const attr[], int nAttr);
+  const node * newInstance(Attribute * attr[], int nAttr);
   int delInstance(const char * [] , const char * [] , int);
   int editInstance(const char * [] , const char * [] , int);
   int getInstance(const char * [], const char * [], int , struct node*) const;
