@@ -33,7 +33,6 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
   }
 }
 
-// Ai modifié GraphImpl : constructeur passé a virtual -> mauvaise idée de modifier les éléments de la librairie, trouver une autre solution
 Entity::~Entity() {
   this->attr.clear();
 
@@ -63,16 +62,9 @@ const node * Entity::newInstance(Attribute * attr[], int nAttr) {
     return NULL;
 }
 
-int Entity::delInstance(Attribute * attr[], int nAttr) {
-  std::set<node> * inst = this->getInstance(attr, nAttr);
-
-  for (auto it = inst->begin() ; it != inst->end() ; it++)
+int Entity::delInstance(const std::set<node> * instSet) {
+  for (auto it = instSet->begin() ; it != instSet->end() ; it++)
     this->g->delNode(*it, true);
-  
-  /*
-  for (int i = 0; i < nAttr ; i++)
-    this->g->delNode(*n, true);
-  */
 }
 
 int Entity::delInstance(const node * n) {

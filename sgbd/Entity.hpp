@@ -28,7 +28,7 @@ public:
   Graph * getGraph() const;
 
   const node * newInstance(Attribute * attr[], int nAttr);
-  int delInstance(Attribute * attr[], int nAttr);
+  int delInstance(const std::set<node> * instList);
   int delInstance(const node * n);
   int editInstance(const char * [] , const char * [] , int);
   std::set<node> * getInstance(Attribute * attr[], int nAttr) const;

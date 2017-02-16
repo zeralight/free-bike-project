@@ -66,8 +66,8 @@ int main() {
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
 
-  for (int i = 0 ; i < 1 ; i++)
-    e->delInstance(nList[i]);
+  e->delInstance(nList[1]);
+  e->delInstance(res);
 
   tmp = saveGraph(graph, "test2.tlp");
   if (!tmp)
