@@ -12,50 +12,53 @@ int importChicago() {
   vector<vector<string> > stationsData = parseCSVFile("Divvy_Stations_2016_Q1Q2.csv");
   vector<vector<string> > tripsData = parseCSVFile("Divvy_Trips_2016_Q1.csv");
 
-
   // Creation of the database
   Database * chicagoDatabase = newDB("Chicago Database");
 
 
   // Creation of the entities
-  AttrType attrStation[4] = {AttrType("id", INT, UNIQUE), 
-			     AttrType("name", STRING), 
-			     AttrType("latitude", DOUBLE), 
-			     AttrType("longitude", DOUBLE)};
+  Attribute * attrStation[4] = {new Attr<INT>("id"), // UNIQUE 
+				new Attr<STRING>("name"), 
+				new Attr<DOUBLE>("latitude"), 
+				new Attr<DOUBLE>("longitude")};
   chicagoDatabase->newEntity("Station", attrStation, 4);
 
   chicagoDatabase->newEntity("Event", NULL, 0);
 
   chicagoDatabase->newEntity("Trip", NULL, 0);
 
-  AttrType attrBike[1] = {AttrType("id", INT, UNIQUE)};
+  Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
   chicagoDatabase->newEntity("Bike", attrBike, 1);
 
-  AttrType attrUser[2] = {AttrType("gender", INT, UNIQUE),
-			  AttrType("type", STRING)};
+  Attribute * attrUser[2] = {new Attr<INT>("gender"),
+			     new Attr<STRING>("type")};
   chicagoDatabase->newEntity("User", attrUser, 2);
 
-  AttrType attrDay[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("Day", NULL, 0);
+  /* A remettre quand il y aura le systeme des dates
+  Attribute * attrDay[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Day", attrDay, 1);
 
-  AttrType attrMonth[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("Month", NULL, 0);
+  Attribute * attrMonth[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Month", attrMonth, 1);
 
-  AttrType attrYear[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("Year", NULL, 0);
+  Attribute * attrYear[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Year", attrYear, 1);
 
-  AttrType attrMinute[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("Minute", NULL, 0);
+  Attribute * attrMinute[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Minute", attrMinute, 1);
+  
+  Attribute * attrHour[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Hour", attrHour, 1);
 
-  AttrType attrHour[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("Hour", NULL, 0);
+  Attribute * attrRootHour[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("RootHour", attrRootHour, 1);
 
-  AttrType attrRootHour[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("RootHour", NULL, 0);
-
-  AttrType attrRootDate[1] = {AttrType("value", STRING, UNIQUE)};
-  chicagoDatabase->newEntity("RootDate", NULL, 0);
-
+  Attribute * attrRootDate[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("RootDate", attrRootDate, 1);
+  */
+  // Provisoirement pour les dates :
+  Attribute * attrDate[1] = {new Attr<STRING>("value")};
+  chicagoDatabase->newEntity("Date", attrDate, 1);
 
   // Creation of the relationships
   chicagoDatabase->newRelation("takesPlace", "Event", "Station", NULL, 0);
@@ -102,50 +105,56 @@ int importChicago() {
   
 
   // Creation of the nodes and the edges
-  node * nodesStation[stationsData[0].size-1];
-  AttrValue valuesStation[4] = {AttrValue("id", 0),
-				AttrValue("name", ""),
-				AttrValue("latitude", 0.0),
-				AttrValue("longitude", 0.0)};
+  Result * nodesStation[stationsData[0].size-1];
+  T_INT id;
+  T_STRING name;
+  T_DOUBLE latitude;
+  T_DOUBLE longitude;
   for (int i=1; i<stationsData[0].size; i++) {
-    for (int j=0; j<4; j++) {
-      valuesStation[j].value = stationsData[j][i];
-    }
-    nodesStation[i-1] = chicagoDatabase->newNode("Station", valuesStations, 4);
+    id = stoi(stationsData[0][i]);
+    attrStation[0]->setValue(&id);
+    name = stationsData[1][i];
+    attrStation[1]->setValue(&name);
+    latitude = stod(stationsData[2][i]);
+    attrStation[2]->setValue(&latitude);
+    longitude = stod(stationsData[3][i]);
+    attrStation[3]->setValue(&longitude);
+    nodesStation[id] = chicagoDatabase->newNode("Station", attrStation, 4);
   }
 
   int numberLinesData = tripsData[0].size-1;
 
-  node * nodesBike[numberLinesData];
-  AttrValue valuesBike[1] = {AttrValue("id", 0)};
-  node * nodesUser[numberLinesData];
-  AttrValue valuesUser[2] = {AttrValue("gender", 0),
-			     AttrValue("type", "")};
-  node * nodesDate[numberLinesData]; // provisoire
-  AttrValue valuesDate[2] = {AttrValue("start", ""),
-			     AttrValue("stop", "")}; // provisoire
-  node * nodesTrip[numberLinesData];
-  node * nodesEvent[numberLinesData];
+  Result * nodesBike[numberLinesData];
+  Result * nodesUser[numberLinesData];
+  Result * nodesDate[2*numberLinesData]; // provisoire
+  Result * nodesTrip[numberLinesData];
+  Result * nodesEvent[2*numberLinesData];
+
+  ////////// FINIR LES CASTS
 
   for (int i=1; i<tripsData[0].size; i++) {
-    valuesBike[0].value = tripsData[3][i];
-    valuesUser[0].value = tripsData[10][i];
-    valuesUser[1].value = tripsData[9][i];
-    nodesBike[i-1] = chicagoDatabase->newNode("Bike", valuesBike, 1);
-    nodesUser[i-1] = chicagoDatabase->newNode("User", valuesUser, 2);
+    attrBike[0]->setValue(&tripsData[3][i]);
+    attrUser[0]->setValue(&tripsData[10][i]);
+    attrUser[1]->setValue(&tripsData[9][i]);
+    nodesBike[i-1] = chicagoDatabase->newNode("Bike", attrBike, 1);
+    nodesUser[i-1] = chicagoDatabase->newNode("User", attrUser, 2);
 
-    valuesDate[0].value = tripsData[1][i]; // provisoire
-    valuesDate[1].value = tripsData[2][i]; // provisoire
-    nodesDate[i-1] = chicagoDatabase->newNode("Date", valuesDate, 2); // provisoire
+    attrDate[0]->setValue(&tripsData[1][i]); // provisoire
+    nodesDate[2*(i-1)] = chicagoDatabase->newNode("Date", attrDate, 2); // provisoire
+    attrDate[0]->setValue(&tripsData[2][i]); // provisoire
+    nodesDate[2*(i-1)+1] = chicagoDatabase->newNode("Date", attrDate, 2); // provisoire
 
     nodesTrip[i-1] = chicagoDatabase->newNode("Trip", NULL, 0);
-    nodesEvent[i-1] = chicagoDatabase->newNode("Event", NULL, 0);
+    nodesEvent[2*(i-1)] = chicagoDatabase->newNode("Event", NULL, 0);
+    nodesEvent[2*(i-1)+1] = chicagoDatabase->newNode("Event", NULL, 0);
 
     chicagoDatabase->newEdge("uses", nodesTrip[i-1], nodesBike[i-1], NULL, 0);
     chicagoDatabase->newEdge("does", nodesUser[i-1], nodesTrip[i-1], NULL, 0);
-    chicagoDatabase->newEdge("departs", nodesTrip[i-1], nodesEvent[i-1], NULL, 0);
-    chicagoDatabase->newEdge("arrives", nodesTrip[i-1], nodesEvent[i-1], NULL, 0);
-    chicagoDatabase->newEdge("datesFrom", nodesEvent[i-1], nodesDate[i-1], NULL, 0);
-    chicagoDatabase->newEdge("takesPlace", nodesEvent[i-1], //, NULL, 0);
+    chicagoDatabase->newEdge("departs", nodesTrip[i-1], nodesEvent[2*(i-1)], NULL, 0);
+    chicagoDatabase->newEdge("arrives", nodesTrip[i-1], nodesEvent[2*(i-1)+1], NULL, 0);
+    chicagoDatabase->newEdge("datesFrom", nodesEvent[2*(i-1)], nodesDate[2*(i-1)], NULL, 0);
+    chicagoDatabase->newEdge("datesFrom", nodesEvent[2*(i-1)+1], nodesDate[2*(i-1)+1], NULL, 0);
+    chicagoDatabase->newEdge("takesPlace", nodesEvent[2*(i-1)], nodesStation[&tripsData[5][i]], NULL, 0);
+    chicagoDatabase->newEdge("takesPlace", nodesEvent[2*(i-1)+1], nodesStation[&tripsData[7][i]], NULL, 0);
   }
 }
