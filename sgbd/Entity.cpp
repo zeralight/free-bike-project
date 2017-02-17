@@ -15,14 +15,15 @@
 
 using namespace tlp;
 
+<<<<<<< HEAD
 Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr, Graph * g) {
-  this->g = g;
+  this->g = newGraph();
   
   // Initialize nodes with entity's name
   this->name = name;
   this->nameProp = this->g->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
   this->nameProp->setAllNodeValue(name);
-  
+
   // Creation of all properties
   this->nAttr = nAttr;
   for(int i = 0 ; i < nAttr ; i++) {
@@ -94,15 +95,15 @@ std::set<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
   bool hasMatchingAttr;
   Iterator<node> * itNodes;
   node n;
-  
+
   if (this->isValid(attr, nAttr)) {
     itNodes = this->g->getNodes();
-    
+
     while(itNodes->hasNext()) {
       n = itNodes->next();
       hasMatchingAttr = true;
-      
-      for(int i = 0 ; i < nAttr ; i++) {	
+
+      for(int i = 0 ; i < nAttr ; i++) {
 	if (!attr[i]->isEqual(n))
 	  hasMatchingAttr = false;
       }
@@ -111,7 +112,7 @@ std::set<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
 	res->emplace(n);
     }
   }
-  
+
   return res;
 }
 
@@ -131,3 +132,9 @@ bool Entity::isValid(Attribute * attr[], int nAttr) const {
 bool Entity::isInstance(const node * n) const {
   return this->g->isElement(*n);
 }
+
+std::string Entity::getName() const{
+  return name;
+}
+
+int Entity::writeEntity(int fd) const{}

@@ -40,7 +40,7 @@ DatabaseImpl::~DatabaseImpl(){
   G->tlp::Graph::~Graph();
 }
 
-void DatabaseImpl::newEntity(string name, const Attribute attributes[], int nAttr){
+void DatabaseImpl::newEntity(string name, const Attribute * const attributes[], int nAttr){
     int i;
     try{
       for(i=0; i<nbE; i++)
@@ -48,10 +48,10 @@ void DatabaseImpl::newEntity(string name, const Attribute attributes[], int nAtt
         if ((E[i].getName()).compare(name)==0)
           throw string("ERREUR : Entity is already exist");
       }
-      Entity e = new Entity(G, name, attributes, nAttr);
+      Entity * e = new Entity(name, attributes, nAttr);
       nbE ++;
-      E=realloc(E, sizeof(Entity)*nbE);
-      E[nbE-1]=e;
+      E=(Entity *)realloc(E, sizeof(Entity)*nbE);
+      E[nbE-1]=*e;
     }
     catch(string const& chaine)
     {
@@ -59,13 +59,12 @@ void DatabaseImpl::newEntity(string name, const Attribute attributes[], int nAtt
     }
 }
 
-Result * DatabaseImpl::newNode(string entityName, const Attribute values[], int nVal){
+Result * DatabaseImpl::newNode(string entityName, Attribute * attributes[], int nVal){
   try{
     Entity e = getEntity(E, nbE, entityName);
-    Result * r = e.newEntityInstance(values, nVal);
+    Result * r = e.newInstance(attributes, nVal);
     return r;
-  }th, 0600);
-
+  }
   catch(string const& chaine)
   {
      cerr << chaine << endl;
@@ -74,19 +73,29 @@ Result * DatabaseImpl::newNode(string entityName, const Attribute values[], int 
 
 
 
-Database * DatabaseImpl::loadDB(string path, const string name){
+Database * DatabaseImpl::loadDB(char * path, const string name){
       try{
         PluginProgress * p;
-        string pathG ("/Graph");
-        string pathE ("/Entities");
-        string pathR ("/Relations");
-        G = loadGraph(path+pathG,	p);
-              if (G==NULL)
+        char * pathG ="/Graph";
+        char * pathE ="/Entities";
+        char * pathR ="/Relations";
+        char * result;
+        strcpy(result,path);
+        strcat(result,pathG);
+        G = loadGraph(result,	p);
+        if (G==NULL)
             throw  string("ERREUR : Graph no load");
 
+        char * result1;
+        strcpy(result1,path);
+        strcat(result1,pathE);
+        char * result2;
+        strcpy(result2,path);
+        strcat(result2,pathR);
+
         this->name.assign(name);
-        nbE = loadE(E, path+pathE );
-        nbR = loadR(R, path+pathR );
+        nbE = loadE(E, result1);
+        nbR = loadR(R, result2 );
       }
       catch( string const& chaine)
       {
@@ -125,15 +134,14 @@ void saveE(Entity * E, int nbE, char * path ){
     throw string("ERREUR : create save E");
 
   char * c;
-  sprintf(c,"%d",nbE);
-  string nb (c);
-  err = write(fd, nb+"\n", string::size(nb)+2);
+  sprintf(c,"%d\n",nbE);
+  err = write(fd, c,strlen(c)+2);
   if (err==-1)
     throw string("ERREUR : nb entities no save");
 
   for(i=0;i<nbE; i++)
   {
-    err = writeR(fd, E[i]); //a coder dans entity
+    err = E[i].writeEntity(fd); //a coder dans entity
     err2 = write(fd, "\n", 2);
     if (err==-1 || err2==-1)
       throw string("ERREUR : one entity isn't save");
@@ -151,15 +159,14 @@ void saveR(Relation * R, int nbR, char * path ){
       throw string("ERREUR : create save R");
 
     char * c;
-    sprintf(c,"%d",nbR);
-    string nb (c);
-    err = write(fd, nb+"\n", string::size(nb)+2);
+    sprintf(c,"%d\n",nbR);
+    err = write(fd, c,strlen(c)+2);
     if (err==-1)
       throw string("ERREUR : nb relation no save");
 
     for(i=0;i<nbR; i++)
     {
-      err = writeR(fd, R[i]); //a coder dans relation
+      err = R[i].writeRelation(fd); //a coder dans relation
       err2 = write(fd, "\n", 2);
       if (err==-1 || err2==-1)
         throw string("ERREUR : one relation isn't save");
@@ -176,10 +183,12 @@ int loadE(Entity * E, char * path ){
 
   char b[LEN];
   fgets(b, LEN, fd);
-  b[strlen(b)-3]='/0';
+  b[strlen(b)-3]='\0';
   int nbE=atoi(b);
+  int i=0;
   while (fgets(b, LEN, fd)!=NULL){
-    loadEntity(b);
+    E[i].load(b);
+    i++;
   }
 
   fclose(fd);
@@ -187,4 +196,20 @@ int loadE(Entity * E, char * path ){
 }
 
 int loadR(Relation * R, char * path ){
+  FILE * fd=fopen(path, "r");
+  if (fd==NULL)
+    throw string("ERREUR : file R not found");
+
+  char b[LEN];
+  fgets(b, LEN, fd);
+  b[strlen(b)-3]='\0';
+  int nbR=atoi(b);
+  int i=0;
+  while (fgets(b, LEN, fd)!=NULL){
+    R[i].load(b);
+    i++;
+  }
+
+  fclose(fd);
+  return nbR;
 }

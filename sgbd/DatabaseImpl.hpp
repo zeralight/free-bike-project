@@ -32,14 +32,14 @@ class DatabaseImpl: public Database {
  public:
   DatabaseImpl(std::string name);
   ~DatabaseImpl();
-  void newEntity(std::string name, const Attribute attributes[], int nAttr);
-  const Result * newNode(std::string entityName, const Attribute values[], int nVal);
-  const Result * newNode(const Attribute attributes[], int nAttr) ;
-  void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const Attribute attributes[], int nAttr);
-  void newEdge(std::string relationName, const Result * src, const Result * dst, const Attribute values[], int nVal);
-  void newEdge(std::string name, const Result * src, const Result * dst, const Attribute attributes[], int nAttr);
+  void newEntity(std::string name, const Attribute * const attributes[], int nAttr);
+  Result * newNode(std::string entityName, Attribute * attributes[], int nVal);
+  /*const Result * newNode(const Attribute * const attributes[], int nAttr) ;*/
+  void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const Attribute * const attributes[], int nAttr);
+  void newEdge(std::string relationName, const Result * src, const Result * dst, const Attribute * const attributes[], int nVal);
+  /*void newEdge(std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr);*/
   int saveDB(std::string path) const;
-  Database * loadDB(std::string path, const std::string name);
+  Database * loadDB(char * path, const std::string name);
 };
 
 Relation getRelation(Relation * R, int nbR, std::string relationName);

@@ -12,6 +12,7 @@
 
 using namespace tlp;
 
+<<<<<<< HEAD
 Relation::Relation(const std::string &name, Entity * src, Entity * dst, const Attribute * const attr[], int nAttr, Graph * g) {
    this->g = g;
 
@@ -64,6 +65,20 @@ const edge * Relation::newInstance(const node * src, const node * dst, Attribute
 void Relation::delInstance(const std::vector<edge> * eSet) {
   for (auto it = eSet->begin() ; it != eSet->end() ; it++)
     this->g->delEdge(*it, true);
+=======
+Relation::Relation(Graph* G, const std::string name, const char * nameProperty[], const char * typeProperty[], int len)
+{
+  this->name.assign(name);
+  this->len=len;
+  for(int i=0; i<len; i++)
+    {
+      strcpy(this->nameProperty[i],nameProperty[i]);
+      strcpy(this->typeProperty[i],typeProperty[i]);
+    }
+  g= G->Graph::addSubGraph(name);
+  for(int i=0; i<len; i++)
+    property[i]=g->getLocalProperty(nameProperty[i], typeProperty[i]);
+>>>>>>> dcd4900c4d501b98b1dcc19f3dbc43eab80a31a7
 }
 
 
@@ -94,6 +109,7 @@ bool Relation::editInstance(std::vector<edge> * eSet, Attribute * attr[], int nA
   return res;
 }
 
+<<<<<<< HEAD
 
 std::vector<edge> * Relation::getInstance(Attribute * attr[], int Attr) const {
   std::vector<edge> * res = new std::vector<edge>;
@@ -114,6 +130,20 @@ std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attr
     res = getEdges(this->g, nA, nB, attr, nAttr, dir);
   
   return res;
+=======
+int Relation::newRelationInstance(const char * nameProperty[], const char * valueProperty[], const node n1, const node n2, int len)
+{
+  struct edge e = g->addEdge(n1,n2);
+  for(int i=0; i<this->len; i++)
+    property[i]->setEdgeStringValue(e,"");
+  for(int i=0; i<len; i++)
+    {
+      while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
+	{
+	  property[i]->setEdgeStringValue(e, valueProperty[i]);
+	}
+    }
+>>>>>>> dcd4900c4d501b98b1dcc19f3dbc43eab80a31a7
 }
 
 
@@ -127,6 +157,7 @@ std::vector<edge> * Relation::getInstance(const node * n, Attribute * attr[], in
   return res;
 }
 
+<<<<<<< HEAD
 
 bool Relation::isValid(Attribute * attr[], int nAttr) const {
    for (int i = 0 ; i < nAttr ; i++) {
@@ -143,4 +174,57 @@ bool Relation::isValid(Attribute * attr[], int nAttr) const {
 
 bool Relation::isInstance(const edge * e) const {
   return this->g->isElement(*e);
+=======
+int Relation::editRelationInstance(const char * nameProperty[], const char * valueProperty[], int len)
+{
+  struct edge* l;
+  int lenL=this->getRelationInstance(nameProperty, valueProperty, len, l);
+  for (int j=0; j<lenL; j++)
+    {
+      for(int i=0; i<len; i++)
+	{
+	  while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
+	    {
+	      property[i]->setEdgeStringValue(l[i], valueProperty[i]);
+	    }
+
+	}
+    }
 }
+
+int Relation::getRelationInstance(const char * nameProperty[], const char * valueProperty[], int len, struct edge* l)
+{
+  int lenL =0;
+  bool b, b2;
+  Iterator<edge> *itEdges = this->g->getEdges();
+  while(itEdges->hasNext())
+    {
+      b=true;
+      struct edge e = itEdges->next();
+      for(int i=0; i<len; i++)
+	{
+	  b2=false;
+	  int j=0;
+	  while(j<this->len && !property[j]->PropertyInterface::getName().compare(nameProperty[i]))
+	    {
+	      j++;
+	    }
+	  if(property[j]->PropertyInterface::getEdgeStringValue(e) == valueProperty[i] )
+	    b2=true;
+	  b=b2;
+	}
+      if (b)
+        {
+          l[lenL]=e;
+          lenL++;
+        }
+    }
+  return lenL;
+>>>>>>> dcd4900c4d501b98b1dcc19f3dbc43eab80a31a7
+}
+
+std::string Relation::getName() const{
+  return name;
+}
+
+int Relation::writeRelation(int fd) const{}

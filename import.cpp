@@ -101,7 +101,7 @@ int importChicago() {
   chicagoDatabase->newRelation("links", "Station", "Station", NULL, 0);
   
 
-  // Import of the datas into the database
+  // Creation of the nodes and the edges
   node * nodesStation[stationsData[0].size-1];
   AttrValue valuesStation[4] = {AttrValue("id", 0),
 				AttrValue("name", ""),
@@ -111,7 +111,7 @@ int importChicago() {
     for (int j=0; j<4; j++) {
       valuesStation[j].value = stationsData[j][i];
     }
-    node * nodesStation[i-1] = chicagoDatabase->newNode("Station", valuesStations, 4);
+    nodesStation[i-1] = chicagoDatabase->newNode("Station", valuesStations, 4);
   }
 
   int numberLinesData = tripsData[0].size-1;
@@ -121,13 +121,31 @@ int importChicago() {
   node * nodesUser[numberLinesData];
   AttrValue valuesUser[2] = {AttrValue("gender", 0),
 			     AttrValue("type", "")};
-  // Comment on fait pour "Day" ?
-  
+  node * nodesDate[numberLinesData]; // provisoire
+  AttrValue valuesDate[2] = {AttrValue("start", ""),
+			     AttrValue("stop", "")}; // provisoire
+  node * nodesTrip[numberLinesData];
+  node * nodesEvent[numberLinesData];
+
   for (int i=1; i<tripsData[0].size; i++) {
     valuesBike[0].value = tripsData[3][i];
     valuesUser[0].value = tripsData[10][i];
     valuesUser[1].value = tripsData[9][i];
-    
+    nodesBike[i-1] = chicagoDatabase->newNode("Bike", valuesBike, 1);
+    nodesUser[i-1] = chicagoDatabase->newNode("User", valuesUser, 2);
+
+    valuesDate[0].value = tripsData[1][i]; // provisoire
+    valuesDate[1].value = tripsData[2][i]; // provisoire
+    nodesDate[i-1] = chicagoDatabase->newNode("Date", valuesDate, 2); // provisoire
+
+    nodesTrip[i-1] = chicagoDatabase->newNode("Trip", NULL, 0);
+    nodesEvent[i-1] = chicagoDatabase->newNode("Event", NULL, 0);
+
+    chicagoDatabase->newEdge("uses", nodesTrip[i-1], nodesBike[i-1], NULL, 0);
+    chicagoDatabase->newEdge("does", nodesUser[i-1], nodesTrip[i-1], NULL, 0);
+    chicagoDatabase->newEdge("departs", nodesTrip[i-1], nodesEvent[i-1], NULL, 0);
+    chicagoDatabase->newEdge("arrives", nodesTrip[i-1], nodesEvent[i-1], NULL, 0);
+    chicagoDatabase->newEdge("datesFrom", nodesEvent[i-1], nodesDate[i-1], NULL, 0);
+    chicagoDatabase->newEdge("takesPlace", nodesEvent[i-1], //, NULL, 0);
   }
-  
 }
