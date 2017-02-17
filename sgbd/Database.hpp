@@ -6,7 +6,9 @@
 #include <tulip/Edge.h>
 
 #include "DBTools.hpp"
-#include "Result.hpp"
+//#include "Result.hpp"
+
+class Result;
 
 /**
  * @brief This class is the core of the Database Management System.
@@ -35,7 +37,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  virtual void newEntity(std::string name, const Attribute * const attributes[], int nAttr) =0;
+  virtual void newEntity(const std::string &name, const Attribute * const attributes[], int nAttr) =0;
 
 
   /**
@@ -49,7 +51,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  virtual Result * newNode(std::string entityName, Attribute * attributes[], int nVal) =0;
+  virtual Result * newNode(const std::string &entityName, Attribute * attributes[], int nVal) =0;
 
 
   /**
@@ -86,7 +88,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  virtual void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const Attribute * const attributes[], int nAttr) =0;
+  virtual void newRelation(const std::string &relationName, const std::string entitySrc, const std::string entityDst, const Attribute * const attributes[], int nAttr) =0;
 
 
   /**
@@ -101,7 +103,7 @@ public:
    * @param nVal number of indicated attributes (size of 'values')
    *
    **/
-  virtual void newEdge(std::string relationName, const Result * src, const Result * dst, const Attribute * const attributes[], int nVal) =0;
+  virtual void newEdge(const std::string &relationName, const Result * src, const Result * dst, const Attribute * const attributes[], int nVal) =0;
 
 
   /**
@@ -116,7 +118,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  /*virtual void newEdge(std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr) =0;*/
+  /*virtual void newEdge(const std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr) =0;*/
 
 
   /**
@@ -136,7 +138,7 @@ public:
    *
    * @return Database * : a pointer to the loaded Database object
    **/
-  virtual Database * loadDB(char * path, const std::string name) const =0;
+  virtual Database * loadDB(char * path, const std::string &name) const =0;
 };
 
 
@@ -147,7 +149,7 @@ public:
  *
  * @return Database * : pointer to the newly created Database object.
  **/
-Database * newDB(std::string name);
+Database * newDB(const std::string &name);
 
 
 /**

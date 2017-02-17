@@ -14,12 +14,12 @@
 #include "DatabaseImpl.hpp"
 #include "Entity.hpp"
 #include "Relation.hpp"
-#include "Result.hpp"
+//#include "Result.hpp"
 
 #define LEN 1000
 using namespace std;
 
-DatabaseImpl::DatabaseImpl(string name){
+DatabaseImpl::DatabaseImpl(const string &name){
   Graph *G = newGraph();
   this->name.assign(name);
   nbE=0;
@@ -40,7 +40,7 @@ DatabaseImpl::~DatabaseImpl(){
   G->tlp::Graph::~Graph();
 }
 
-void DatabaseImpl::newEntity(string name, const Attribute * const attributes[], int nAttr){
+void DatabaseImpl::newEntity(const string &name, const Attribute * const attributes[], int nAttr){
     int i;
     try{
       for(i=0; i<nbE; i++)
@@ -48,7 +48,8 @@ void DatabaseImpl::newEntity(string name, const Attribute * const attributes[], 
         if ((E[i].getName()).compare(name)==0)
           throw string("ERREUR : Entity is already exist");
       }
-      Entity * e = new Entity(name, attributes, nAttr);
+      Graph * entityGraph = this->G->addSubGraph(name);
+      Entity * e = new Entity(name, attributes, nAttr, entityGraph);
       nbE ++;
       E=(Entity *)realloc(E, sizeof(Entity)*nbE);
       E[nbE-1]=*e;
@@ -59,10 +60,13 @@ void DatabaseImpl::newEntity(string name, const Attribute * const attributes[], 
     }
 }
 
-Result * DatabaseImpl::newNode(string entityName, Attribute * attributes[], int nVal){
+
+Result * DatabaseImpl::newNode(const string &entityName, Attribute * attributes[], int nVal){
   try{
     Entity e = getEntity(E, nbE, entityName);
-    Result * r = e.newInstance(attributes, nVal);
+    const node * n = e.newInstance(attributes, nVal);
+    // ajout de n dans r
+    Result * r;
     return r;
   }
   catch(string const& chaine)
@@ -73,31 +77,33 @@ Result * DatabaseImpl::newNode(string entityName, Attribute * attributes[], int 
 
 
 
-Database * DatabaseImpl::loadDB(char * path, const string name){
+Database * DatabaseImpl::loadDB(const char * path, const string &name){
       try{
         PluginProgress * p;
-        char * pathG ="/Graph";
-        char * pathE ="/Entities";
-        char * pathR ="/Relations";
-        char * result;
-        strcpy(result,path);
-        strcat(result,pathG);
-        G = loadGraph(result,	p);
+        string pathG = "/Graph";
+        string pathE = "/Entities";
+        string pathR = "/Relations";
+        string result;
+        result = path;
+        result = result + pathG;
+	
+        G = loadGraph(result, p);
         if (G==NULL)
             throw  string("ERREUR : Graph no load");
 
-        char * result1;
-        strcpy(result1,path);
-        strcat(result1,pathE);
-        char * result2;
-        strcpy(result2,path);
-        strcat(result2,pathR);
+        string result1;
+        result1 = path;
+        result1 = result1 + pathE;
+	
+        string result2;
+        result2 = path;
+        result2 = result2 + pathR;
 
         this->name.assign(name);
-        nbE = loadE(E, result1);
-        nbR = loadR(R, result2 );
+        nbE = loadE(E, result1.c_str());
+        nbR = loadR(R, result2.c_str());
       }
-      catch( string const& chaine)
+      catch(string const &chaine)
       {
          cerr << chaine << endl;
       }
@@ -107,7 +113,7 @@ Database * DatabaseImpl::loadDB(char * path, const string name){
 
 
 
-Relation getRelation(Relation * R, int nbR,  string relationName){
+Relation getRelation(Relation * R, int nbR,  const string &relationName){
     int i;
     for(i=0; i<nbR; i++)
     {
@@ -117,7 +123,7 @@ Relation getRelation(Relation * R, int nbR,  string relationName){
     throw string("ERREUR : Relation doesn't exist");
 }
 
-Entity getEntity(Entity * E, int nbE,  string entityName){
+Entity getEntity(Entity * E, int nbE,  const string &entityName){
     int i;
     for(i=0; i<nbE; i++)
     {
@@ -127,7 +133,7 @@ Entity getEntity(Entity * E, int nbE,  string entityName){
     throw string("ERREUR : Entity doesn't exist");
 }
 
-void saveE(Entity * E, int nbE, char * path ){
+void saveE(Entity * E, int nbE, const char * path ){
   int fd=creat(path, 0600);
   int err, err2, i;
   if (fd==-1)
@@ -152,7 +158,7 @@ void saveE(Entity * E, int nbE, char * path ){
 }
 
 
-void saveR(Relation * R, int nbR, char * path ){
+void saveR(Relation * R, int nbR, const char * path ){
     int fd=creat(path, 0600);
     int err, err2, i;
     if (fd==-1)
@@ -176,7 +182,7 @@ void saveR(Relation * R, int nbR, char * path ){
       throw string("ERREUR : close save R");
 }
 
-int loadE(Entity * E, char * path ){
+int loadE(Entity * E, const char * path ){
   FILE * fd=fopen(path, "r");
   if (fd==NULL)
     throw string("ERREUR : file E not found");
@@ -195,7 +201,7 @@ int loadE(Entity * E, char * path ){
   return nbE;
 }
 
-int loadR(Relation * R, char * path ){
+int loadR(Relation * R, const char * path ){
   FILE * fd=fopen(path, "r");
   if (fd==NULL)
     throw string("ERREUR : file R not found");
