@@ -26,6 +26,7 @@ public:
   int getRelationInstance(const char * [], const char * [], int , struct edge*);
   std::string getName() const;
   int writeRelation(int fd) const;
+  int = loadR(char * path);
 };
 
 #endif

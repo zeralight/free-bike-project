@@ -39,7 +39,7 @@ class DatabaseImpl: public Database {
   void newEdge(std::string relationName, const Result * src, const Result * dst, const Attribute * const attributes[], int nVal);
   /*void newEdge(std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr);*/
   int saveDB(std::string path) const;
-  Database * loadDB(std::string path, const std::string name);
+  Database * loadDB(char * path, const std::string name);
 };
 
 Relation getRelation(Relation * R, int nbR, std::string relationName);

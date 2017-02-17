@@ -73,7 +73,7 @@ Result * DatabaseImpl::newNode(string entityName, Attribute * attributes[], int 
 
 
 
-Database * DatabaseImpl::loadDB(string path, const string name){
+Database * DatabaseImpl::loadDB(char * path, const string name){
       try{
         PluginProgress * p;
         string pathG ("/Graph");
@@ -83,9 +83,16 @@ Database * DatabaseImpl::loadDB(string path, const string name){
               if (G==NULL)
             throw  string("ERREUR : Graph no load");
 
+        char * result;
+        strcpy(result,path);
+        strcat(result,pathE);
+        char * result2;
+        strcpy(result2,path);
+        strcat(result2,pathR);
+
         this->name.assign(name);
-        nbE = loadE(E, path+pathE );
-        nbR = loadR(R, path+pathR );
+        nbE = loadE(E, result);
+        nbR = loadR(R, result2 );
       }
       catch( string const& chaine)
       {
@@ -126,7 +133,7 @@ void saveE(Entity * E, int nbE, char * path ){
   char * c;
   sprintf(c,"%d",nbE);
   string nb (c);
-  err = write(fd, nb+"\n", string::size(nb)+2);
+  err = write(fd, nb+"\n", nb.string::length()+2);
   if (err==-1)
     throw string("ERREUR : nb entities no save");
 
@@ -152,7 +159,7 @@ void saveR(Relation * R, int nbR, char * path ){
     char * c;
     sprintf(c,"%d",nbR);
     string nb (c);
-    err = write(fd, nb+"\n", string::size(nb)+2);
+    err = write(fd, nb+"\n", nb.string::length()+2);
     if (err==-1)
       throw string("ERREUR : nb relation no save");
 
