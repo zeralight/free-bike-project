@@ -10,6 +10,7 @@ using namespace tlp;
 
 Relation::Relation(Graph* G, const std::string name, const char * nameProperty[], const char * typeProperty[], int len)
 {
+  this->name.assign(name);
   this->len=len;
   for(int i=0; i<len; i++)
     {
@@ -36,7 +37,7 @@ int Relation::newRelationInstance(const char * nameProperty[], const char * valu
       while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
 	{
 	  property[i]->setEdgeStringValue(e, valueProperty[i]);
-	} 
+	}
     }
 }
 
@@ -61,8 +62,8 @@ int Relation::editRelationInstance(const char * nameProperty[], const char * val
 	  while(!property[i]->PropertyInterface::getName().compare(nameProperty[i]))
 	    {
 	      property[i]->setEdgeStringValue(l[i], valueProperty[i]);
-	    } 
-	  
+	    }
+
 	}
     }
 }
@@ -75,16 +76,16 @@ int Relation::getRelationInstance(const char * nameProperty[], const char * valu
   while(itEdges->hasNext())
     {
       b=true;
-      struct edge e = itEdges->next(); 
+      struct edge e = itEdges->next();
       for(int i=0; i<len; i++)
 	{
 	  b2=false;
 	  int j=0;
 	  while(j<this->len && !property[j]->PropertyInterface::getName().compare(nameProperty[i]))
 	    {
-	      j++; 
+	      j++;
 	    }
-	  if(property[j]->PropertyInterface::getEdgeStringValue(e) == valueProperty[i] ) 
+	  if(property[j]->PropertyInterface::getEdgeStringValue(e) == valueProperty[i] )
 	    b2=true;
 	  b=b2;
 	}
@@ -96,3 +97,9 @@ int Relation::getRelationInstance(const char * nameProperty[], const char * valu
     }
   return lenL;
 }
+
+std::string Relation::getName() const{
+  return name;
+}
+
+int Relation::writeRelation(int fd) const{}

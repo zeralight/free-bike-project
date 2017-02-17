@@ -10,19 +10,22 @@ using namespace tlp;
 class Relation
 {
 private:
-  char * nameProperty[]; 
+  char * nameProperty[];
   char * typeProperty[];
   PropertyInterface* property[];
   Graph * g;
   int len;
-  
-public: 
+  std::string name;
+
+public:
   Relation(Graph* G, std::string ,const char * [], const char * [], int );
   ~Relation();
   int newRelationInstance(const char *[] , const char *[] , const node, const node, int);
   int deleteRelationInstance(const char *[] , const char *[] , int);
   int editRelationInstance(const char *[] , const char *[] , int);
   int getRelationInstance(const char * [], const char * [], int , struct edge*);
+  std::string getName() const;
+  int writeRelation(int fd) const;
 };
 
 #endif

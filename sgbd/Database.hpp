@@ -35,7 +35,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  virtual void newEntity(std::string name, const Attribute attributes[], int nAttr) =0;
+  virtual void newEntity(std::string name, const Attribute * const attributes[], int nAttr) =0;
 
 
   /**
@@ -49,7 +49,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  virtual const Result * newNode(std::string entityName, const Attribute values[], int nVal) =0;
+  virtual Result * newNode(std::string entityName, Attribute * attributes[], int nVal) =0;
 
 
   /**
@@ -62,7 +62,7 @@ public:
    *
    * @return const node * : a pointer to the newly created node in the database
    **/
-  virtual const Result * newNode(const Attribute attributes[], int nAttr) =0;
+  /*virtual const Result * newNode(const Attribute * const attributes[], int nAttr) =0;*/
 
 
   /**
@@ -86,7 +86,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  virtual void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const Attribute attributes[], int nAttr) =0;
+  virtual void newRelation(std::string relationName, std::string entitySrc, std::string entityDst, const Attribute * const attributes[], int nAttr) =0;
 
 
   /**
@@ -101,7 +101,7 @@ public:
    * @param nVal number of indicated attributes (size of 'values')
    *
    **/
-  virtual void newEdge(std::string relationName, const Result * src, const Result * dst, const Attribute values[], int nVal) =0;
+  virtual void newEdge(std::string relationName, const Result * src, const Result * dst, const Attribute * const attributes[], int nVal) =0;
 
 
   /**
@@ -116,7 +116,7 @@ public:
    * @param nAttr number of attributes
    *
    **/
-  virtual void newEdge(std::string name, const Result * src, const Result * dst, const Attribute attributes[], int nAttr) =0;
+  /*virtual void newEdge(std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr) =0;*/
 
 
   /**

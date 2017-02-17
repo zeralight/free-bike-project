@@ -19,8 +19,8 @@ private:
   Graph * g;
   std::unordered_map<std::string, Attribute *> attr;
   int nAttr;
-  
-public: 
+
+public:
   Entity(const std::string &name, const Attribute * const attributes[], int nAttr);
   ~Entity();
 
@@ -34,6 +34,8 @@ public:
   bool editInstance(node * n, Attribute * attr[], int nAttr);
   std::set<node> * getInstance(Attribute * attr[], int nAttr) const;
   bool isInstance(const node * n) const;
+  std::string getName() const;
+  int writeEntity(int fd);
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;
