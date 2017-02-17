@@ -36,6 +36,7 @@ public:
   bool isInstance(const node * n) const;
   std::string getName() const;
   int writeEntity(int fd);
+  int = loadE(char * path);
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;

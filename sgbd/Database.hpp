@@ -126,7 +126,7 @@ public:
    *
    * @return
    **/
-  virtual int saveDB(std::string path) const =0;
+  virtual int saveDB(char * path) const =0;
 
 
   /**
@@ -136,7 +136,7 @@ public:
    *
    * @return Database * : a pointer to the loaded Database object
    **/
-  virtual Database * loadDB(std::string path, const std::string name) const =0;
+  virtual Database * loadDB(char * path, const std::string name) const =0;
 };
 
 
