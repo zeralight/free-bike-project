@@ -8,18 +8,15 @@
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
 #include <tulip/Node.h>
-
 #include <tulip/StringProperty.h>
 
 #include "Entity.hpp"
 #include "DBTools.hpp"
 
-#define PROP_ENTITY_NAME "dbEntityName"
-
 using namespace tlp;
 
-Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr) {
-  this->g = newGraph();
+Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr, Graph * g) {
+  this->g = g;
   
   // Initialize nodes with entity's name
   this->name = name;
@@ -30,7 +27,7 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
   this->nAttr = nAttr;
   for(int i = 0 ; i < nAttr ; i++) {
     this->attr[attr[i]->getLabel()] = attr[i]->clone();
-    this->attr[attr[i]->getLabel()]->setProperty(g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName()));
+    this->attr[attr[i]->getLabel()]->setProperty(this->g->getLocalProperty(attr[i]->getLabel(), attr[i]->getTypeName()));
 
     //initialisation ? ou Tulip le fait par défaut ?
   }
@@ -50,7 +47,7 @@ Graph * Entity::getGraph() const {
 
 const node * Entity::newInstance(Attribute * attr[], int nAttr) {
   node * n = (node *) malloc(sizeof(node));
-  *n = g->addNode();
+  *n = this->g->addNode();
 
   if (isValid(attr, nAttr)) {
     for(int i = 0 ; i < nAttr ; i++)

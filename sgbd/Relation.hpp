@@ -1,28 +1,50 @@
 #ifndef RELATION_HPP
 #define RELATION_HPP
+
+#include <unordered_map>
+#include <set>
+
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
 #include <tulip/Edge.h>
-#include <tulip/Node.h>
+
+#include "DBTools.hpp"
+
+#define PROP_RELATION_NAME "dbRelationName"
 
 using namespace tlp;
 
-class Relation
-{
+class Relation {
+  
 private:
-  char * nameProperty[]; 
-  char * typeProperty[];
-  PropertyInterface* property[];
+  std::string name;
+  StringProperty * nameProp;
+  Entity * entitySrc;
+  Entity * entityDst;
   Graph * g;
-  int len;
+  std::unordered_map<std::string, Attribute *> attr;
+  int nAttr;
   
 public: 
-  Relation(Graph* G, std::string ,const char * [], const char * [], int );
+  Relation(const std::string &name, Entity * src, Entity * dst, const Attribute * const attr[], int nAttr, Graph * g);
   ~Relation();
-  int newRelationInstance(const char *[] , const char *[] , const node, const node, int);
-  int deleteRelationInstance(const char *[] , const char *[] , int);
-  int editRelationInstance(const char *[] , const char *[] , int);
-  int getRelationInstance(const char * [], const char * [], int , struct edge*);
+
+  // Doit disparaitre ou passer private : debug
+  Graph * getGraph() const;
+  
+  const edge * newInstance(const node * src, const node * dst, Attribute * attr[], int nAttr);
+  void delInstance(const std::vector<edge> * eSet);
+  void delInstance(const edge * e);
+  bool editInstance(std::vector<edge> * eSet, Attribute * attr[], int nAttr);
+  bool editInstance(edge * e, Attribute * attr[], int nAttr);
+  std::vector<edge> * getInstance(Attribute * attr[], int Attr) const;
+  std::vector<edge> * getInstance(const node * n, Attribute * attr[], int Attr, direction dir) const;
+  std::vector<edge> * getInstance(const node * nA, const node * nB, Attribute * attr[], int Attr, direction dir) const;
+  
+  bool isInstance(const edge * e) const;
+  
+private:
+  bool isValid(Attribute * attr[], int nAttr) const;
 };
 
 #endif

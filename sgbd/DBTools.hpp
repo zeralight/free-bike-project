@@ -36,7 +36,20 @@ enum db_types {
 #define UNIQUE 1 << 0
 #define NOT_NULL 1 << 1
 
+/*
+ * Direction options
+ */
+enum directionValues {
+  IN,
+  OUT,
+  INOUT
+};
+
+typedef directionValues direction;
+
 class Entity;
+class Relation;
+
 
 template <int T>
 struct Type;
@@ -79,6 +92,7 @@ struct Type<STRING> {
 class Attribute {
 
   friend Entity;
+  friend Relation;
   
 public:
   virtual std::string getLabel() const =0;
@@ -91,7 +105,8 @@ public:
   virtual void setValue(const void *) =0;
  
   virtual Attribute * clone() const =0;
-  virtual bool isEqual(tlp::node) const =0;
+  virtual bool isEqual(tlp::node &) const =0;
+  virtual bool isEqual(tlp::edge &) const =0;
   virtual void print() const =0;
 
   virtual Attribute * operator=(const Attribute *) =0;
@@ -101,7 +116,8 @@ protected:
   virtual void setTypeName(const std::string &) =0;
   virtual void setProperty(const void *) =0;
   virtual void setProperty(const Attribute *) =0;
-  virtual void setValue(tlp::node) const =0;
+  virtual void setValue(tlp::node &) const =0;
+  virtual void setValue(tlp::edge &) const =0;
   virtual void set(const void *) =0;
 };
 
@@ -136,7 +152,8 @@ public:
   void setValue(const void * value);
 
   Attribute * clone() const;
-  bool isEqual(tlp::node n) const;
+  bool isEqual(tlp::node &n) const;
+  bool isEqual(tlp::edge &e) const;
   void print() const;
 
   Attribute * operator=(const Attribute * attr);
@@ -146,7 +163,8 @@ private:
   void setTypeName(const std::string &newTypeName);
   void setProperty(const void * prop);
   void setProperty(const Attribute * attr);
-  void setValue(tlp::node n) const ;
+  void setValue(tlp::node &n) const ;
+  void setValue(tlp::edge &e) const ;
   void set(const void * value);
   
   void init();
@@ -238,8 +256,13 @@ void Attr<T>::setValue(const void * newValue) {
 }
 
 template <int T>
-void Attr<T>::setValue(tlp::node n) const {
+void Attr<T>::setValue(tlp::node &n) const {
   this->prop->setNodeValue(n, this->value);
+}
+
+template <int T>
+void Attr<T>::setValue(tlp::edge &e) const {
+  this->prop->setEdgeValue(e, this->value);
 }
 
 template <int T>
@@ -268,8 +291,13 @@ Attribute * Attr<T>::clone() const {
 }
 
 template <int T>
-bool Attr<T>::isEqual(tlp::node n) const {
+bool Attr<T>::isEqual(tlp::node &n) const {
   return (this->value == this->prop->getNodeValue(n));
+}
+
+template <int T>
+bool Attr<T>::isEqual(tlp::edge &e) const {
+  return (this->value == this->prop->getEdgeValue(e));
 }
 
 template <int T>

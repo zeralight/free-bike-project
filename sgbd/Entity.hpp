@@ -10,6 +10,8 @@
 
 #include "DBTools.hpp"
 
+#define PROP_ENTITY_NAME "dbEntityName"
+
 using namespace tlp;
 
 class Entity {
@@ -21,7 +23,7 @@ private:
   int nAttr;
   
 public: 
-  Entity(const std::string &name, const Attribute * const attributes[], int nAttr);
+  Entity(const std::string &name, const Attribute * const attributes[], int nAttr, Graph * g);
   ~Entity();
 
   // Doit disparaitre ou passer private : debug
