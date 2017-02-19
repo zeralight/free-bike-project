@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include <set>
+#include <vector>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -34,42 +34,44 @@ int main() {
   //initialize the Tulip lib
   initTulipLib();
 
+  //create the main graphes
   Graph * graph = newGraph();
   Graph * graphE = graph->addSubGraph("Entity");
+  Graph * graphR = graphE->addSubGraph("Relation");
 
-  //graph->getLocalProperty<StringProperty>("dbEntityName");  
-  //graph->getLocalProperty<StringProperty>("dbRelationName");  
+  graph->setName("graphGet");
   
   //create an entity
   Attribute * attr[3] = {new Attr<STRING>("Prenom"), new Attr<STRING>("Nom"), new Attr<STRING>("Nationalite")};
   Entity * e = new Entity("Personne", attr, 3, graphE);
-
-  Graph * graphR = graphE->addSubGraph("Relation");
   
   //create a relation
   Attribute * attrR[1] = {new Attr<INT>("Date")};
   Relation * r = new Relation("FriendOf", e, e, attrR, 1, graphR);
-  
+
+  //create new instancies of the entity
   T_STRING prenom;
   T_STRING nom;
   T_STRING nationalite;
-  
-  //create new instancies of the entity
   const node * nList[N_NODE];
+    
   for (int i = 0 ; i < N_NODE ; i++) {
     prenom = "Roger";
     nom = "Hanin" + to_string(i);
     nationalite = "Israelienne";
     attr[0]->setValue(&prenom);
     attr[1]->setValue(&nom);
-    attr[2]->setValue(&nationalite);
-    
+    attr[2]->setValue(&nationalite);    
     nList[i] = e->newInstance(attr, 3);
   }
 
-  set<node> * nSet = e->getInstance(NULL, 0); 
-  graphR->addNodes(vector<node>(nSet->begin(), nSet->end()));
+  //add node of the main graph in all subgraphes
+  //especially in graphR : in order to create edges, nodes must be in the graph
+  vector<node> * nSet = e->getInstance(NULL, 0);
+  graphR->addNodes(*nSet);
 
+  Graph * tstGetNode = graphR->addSubGraph("testGetNodes");
+  
   Graph * all = graphR->addCloneSubGraph("getInstanceAll");
   Graph * AiB = graphR->addCloneSubGraph("getInstanceAinB");
   Graph * AoB = graphR->addCloneSubGraph("getInstanceAoutB");
@@ -78,26 +80,24 @@ int main() {
   Graph * Ao = graphR->addCloneSubGraph("getInstanceAout");
   Graph * Aio = graphR->addCloneSubGraph("getInstanceAinout");
 
-  T_INT date;
-  
   //create new instancies of the relation
-  const edge * rList[N_NODE * (N_NODE - 1)];
+  T_INT date;
+  const edge * rList[N_EDGE];
+  
   for (int i = 0 ; i < N_NODE ; i++) {
     for (int j = 0 ; j < N_NODE - 1 ; j++) {
       date = (i * 7) % 12 + 1;
       attrR[0]->setValue(&date);
       
-      rList[i * N_NODE + j] = r->newInstance(nList[i % N_NODE], nList[(i + j + 1) % N_NODE], attrR, 1);
+      rList[i * (N_NODE - 1) + j] = r->newInstance(nList[i % N_NODE], nList[(i + j + 1) % N_NODE], attrR, 1);
     }
   }
 
-  bool tmp = saveGraph(graph, "test.tlp");
-  if (!tmp)
-    cout << "Erreur lors de la sauvegarde" << endl;
-
   // Get instancies of the entity corresponding to the specified conditions
   Attribute * cond[1] = {new Attr<STRING>("Nom", "Hanin0")}; 
-  set<node> * res = e->getInstance(cond, 1);
+  vector<node> * res = e->getInstance(cond, 1);
+
+  tstGetNode->addNodes(*res);
 
   // Get instancies of the relation corresponding to the specified conditions
   date = 1;
@@ -119,13 +119,12 @@ int main() {
   Ai->addEdges(*resAi);
   Ao->addEdges(*resAo);
   Aio->addEdges(*resAio);
-  
-  tmp = saveGraph(graph, "test1.tlp");
+
+  int tmp = saveGraph(graph, "testGet.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
 
-  e->delInstance(nList[1]);
-  e->delInstance(res);
+  graph->setName("graphSet");
 
   // Modifies one instance
   // Get all instancies of "Personne" for which 'Prenom' = 'Roger'
@@ -140,13 +139,38 @@ int main() {
   cond[0]->setValue(&nationalite);
   e->editInstance(res, cond, 1);
 
-  tmp = saveGraph(graph, "test2.tlp");
+  // Change "Date" value for all edges in resAout
+  date = 42;
+  attrR[0]->setValue(&date);
+  r->editInstance(resAo, attrR, 1);
+  
+  tmp = saveGraph(graph, "testSet.tlp");
+  if (!tmp)
+    cout << "Erreur lors de la sauvegarde" << endl;
+
+  graph->setName("graphDel");
+  
+  //delete one node
+  e->delInstance(nList[1]);
+
+  //delete a set of nodes
+  res->clear();
+  res->push_back(*nList[2]);
+  e->delInstance(res);
+
+  //delete one edge
+  r->delInstance(rList[2]);
+
+  //delete a set of edges
+  resAll->clear();
+  resAll->push_back(*rList[9]);
+  r->delInstance(resAll);
+
+  tmp = saveGraph(graph, "testDel.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
 
   delete graph;
-  //delete graphE;
-  //delete graphR;
-
+  
   return 0;
 }

@@ -2,7 +2,7 @@
 #define ENTITY_HPP
 
 #include <unordered_map>
-#include <set>
+#include <vector>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -30,14 +30,14 @@ public:
   Graph * getGraph() const;
 
   const node * newInstance(Attribute * attr[], int nAttr);
-  void delInstance(const std::set<node> * nSet);
+  void delInstance(const std::vector<node> * nSet);
   void delInstance(const node * n); // redondant ?
-  bool editInstance(std::set<node> * nSet, Attribute * attr[], int nAttr);
+  bool editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr);
   bool editInstance(node * n, Attribute * attr[], int nAttr);
-  std::set<node> * getInstance(Attribute * attr[], int nAttr) const;
+  std::vector<node> * getInstance(Attribute * attr[], int nAttr) const;
   bool isInstance(const node * n) const;
   std::string getName() const;
-  int writeEntity(int fd);
+  int writeEntity(int fd) const;
   int load(char * l);
 
 private:

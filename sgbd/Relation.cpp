@@ -1,5 +1,9 @@
 #include <iostream>
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
+#include <unordered_map>
+#include <vector>
+#include <iterator>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -47,12 +51,12 @@ Graph * Relation::getGraph() const {
 
 
 const edge * Relation::newInstance(const node * src, const node * dst, Attribute * attr[], int nAttr) {
-  edge * e = (edge *) malloc(sizeof(edge));
+  edge * e = (edge *) std::malloc(sizeof(edge));
   *e = this->g->addEdge(*src, *dst);
-
+  
   if (isValid(attr, nAttr)) {
     for(int i = 0 ; i < nAttr ; i++)
-      attr[i]->setValue(*e);
+      attr[i]->setEdgeValue(*e);
 
     return e;
   }
@@ -77,7 +81,7 @@ bool Relation::editInstance(edge * e, Attribute * attr[], int nAttr) {
     return false;
 
   for (int i = 0 ; i < nAttr ; i++)
-    attr[i]->setValue(*e);
+    attr[i]->setEdgeValue(*e);
 
   return true;
 }
@@ -94,9 +98,8 @@ bool Relation::editInstance(std::vector<edge> * eSet, Attribute * attr[], int nA
   return res;
 }
 
-std::vector<edge> * Relation::getInstance(Attribute * attr[], int Attr) const {
+std::vector<edge> * Relation::getInstance(Attribute * attr[], int nAttr) const {
   std::vector<edge> * res = new std::vector<edge>;
-  Iterator<edge> * itEdges;
   
   if (this->isValid(attr, nAttr))
     res = getEdges(this->g, attr, nAttr);
@@ -105,9 +108,8 @@ std::vector<edge> * Relation::getInstance(Attribute * attr[], int Attr) const {
 }
 
 
-std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attribute * attr[], int Attr, direction dir) const {
+std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attribute * attr[], int nAttr, direction dir) const {
   std::vector<edge> * res = new std::vector<edge>;
-  Iterator<edge> * itEdges;
 
   if (this->isValid(attr, nAttr))
     res = getEdges(this->g, nA, nB, attr, nAttr, dir);
@@ -116,9 +118,8 @@ std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attr
 }
 
 
-std::vector<edge> * Relation::getInstance(const node * n, Attribute * attr[], int Attr, direction dir) const {
+std::vector<edge> * Relation::getInstance(const node * n, Attribute * attr[], int nAttr, direction dir) const {
   std::vector<edge> * res = new std::vector<edge>;
-  Iterator<edge> * itEdges;
   
   if (this->isValid(attr, nAttr))
     res = getEdges(this->g, n, attr, nAttr, dir);
@@ -128,14 +129,14 @@ std::vector<edge> * Relation::getInstance(const node * n, Attribute * attr[], in
 
 
 bool Relation::isValid(Attribute * attr[], int nAttr) const {
-   for (int i = 0 ; i < nAttr ; i++) {
+  for (int i = 0 ; i < nAttr ; i++) {
     auto it = this->attr.find(attr[i]->getLabel());
     if (it == this->attr.end())
       return false;
-
+    
     attr[i]->setProperty((*it).second);
   }
-
+  
   return true;
 }
 

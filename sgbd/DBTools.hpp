@@ -116,8 +116,8 @@ protected:
   virtual void setTypeName(const std::string &) =0;
   virtual void setProperty(const void *) =0;
   virtual void setProperty(const Attribute *) =0;
-  virtual void setValue(tlp::node &) const =0;
-  virtual void setValue(tlp::edge &) const =0;
+  virtual void setNodeValue(tlp::node &) const =0;
+  virtual void setEdgeValue(tlp::edge &) const =0;
   virtual void set(const void *) =0;
 };
 
@@ -163,8 +163,8 @@ private:
   void setTypeName(const std::string &newTypeName);
   void setProperty(const void * prop);
   void setProperty(const Attribute * attr);
-  void setValue(tlp::node &n) const ;
-  void setValue(tlp::edge &e) const ;
+  void setNodeValue(tlp::node &n) const ;
+  void setEdgeValue(tlp::edge &e) const ;
   void set(const void * value);
   
   void init();
@@ -256,12 +256,12 @@ void Attr<T>::setValue(const void * newValue) {
 }
 
 template <int T>
-void Attr<T>::setValue(tlp::node &n) const {
+void Attr<T>::setNodeValue(tlp::node &n) const {
   this->prop->setNodeValue(n, this->value);
 }
 
 template <int T>
-void Attr<T>::setValue(tlp::edge &e) const {
+void Attr<T>::setEdgeValue(tlp::edge &e) const {
   this->prop->setEdgeValue(e, this->value);
 }
 

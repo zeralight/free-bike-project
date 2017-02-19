@@ -2,7 +2,7 @@
 #define RELATION_HPP
 
 #include <unordered_map>
-#include <set>
+#include <vector>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>

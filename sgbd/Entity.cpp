@@ -2,7 +2,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <unordered_map>
-#include <set>
+#include <vector>
 #include <iterator>
 
 #include <tulip/TlpTools.h>
@@ -15,9 +15,8 @@
 
 using namespace tlp;
 
-<<<<<<< HEAD
 Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr, Graph * g) {
-  this->g = newGraph();
+  this->g = g;
   
   // Initialize nodes with entity's name
   this->name = name;
@@ -47,20 +46,20 @@ Graph * Entity::getGraph() const {
 
 
 const node * Entity::newInstance(Attribute * attr[], int nAttr) {
-  node * n = (node *) malloc(sizeof(node));
+  node * n = (node *) std::malloc(sizeof(node));
   *n = this->g->addNode();
 
   if (isValid(attr, nAttr)) {
     for(int i = 0 ; i < nAttr ; i++)
-      attr[i]->setValue(*n);
-
+      attr[i]->setNodeValue(*n);
+    
     return n;
   }
   else
     return NULL;
 }
 
-void Entity::delInstance(const std::set<node> * nSet) {
+void Entity::delInstance(const std::vector<node> * nSet) {
   for (auto it = nSet->begin() ; it != nSet->end() ; it++)
     this->g->delNode(*it, true);
 }
@@ -74,12 +73,12 @@ bool Entity::editInstance(node * n, Attribute * attr[], int nAttr) {
     return false;
 
   for (int i = 0 ; i < nAttr ; i++)
-    attr[i]->setValue(*n);
+    attr[i]->setNodeValue(*n);
 
   return true;
 }
 
-bool Entity::editInstance(std::set<node> * nSet, Attribute * attr[], int nAttr) {
+bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr) {
   bool res = true;
   node * n;
   for (auto it = nSet->begin() ; it != nSet->end() ; it++) {
@@ -90,8 +89,8 @@ bool Entity::editInstance(std::set<node> * nSet, Attribute * attr[], int nAttr) 
   return res;
 }
 
-std::set<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
-  std::set<node> * res = new std::set<node>;
+std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
+  std::vector<node> * res = new std::vector<node>;
   bool hasMatchingAttr;
   Iterator<node> * itNodes;
   node n;
@@ -109,7 +108,7 @@ std::set<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
       }
 
       if (hasMatchingAttr)
-	res->emplace(n);
+	res->push_back(n);
     }
   }
 
