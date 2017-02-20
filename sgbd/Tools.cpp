@@ -42,6 +42,32 @@ Iterator<edge> * getItEdges(const Graph * g, const node * nA, const node * nB, d
 */
 
 
+std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr) {
+  std::vector<node> * res = new std::vector<node>;
+  bool hasMatchingAttr;
+  node n;
+
+  Iterator<node> * it = g->getNodes();
+
+  while(it->hasNext()) {
+    n = it->next();
+    hasMatchingAttr = true;
+    
+    for(int i = 0 ; i < nAttr ; i++) {
+      if (!attr[i]->isEqual(n))
+	hasMatchingAttr = false;
+    }
+    
+    if (hasMatchingAttr)
+      res->push_back(n);
+  }
+
+  delete it;
+
+  return res;
+}
+
+
 std::vector<edge> * getEdges(const Graph * g, const node * nA, const node * nB, Attribute * attr[], int nAttr, direction dir) {
   std::vector<edge> * res = new std::vector<edge>;
   bool hasMatchingAttr;

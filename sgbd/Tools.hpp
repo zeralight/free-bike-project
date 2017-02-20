@@ -15,6 +15,7 @@ using namespace tlp;
 
 //Iterator<edge> * getItEdges(const Graph * g, const node * nA, const node * nB, direction dir);
 
+std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr);
 std::vector<edge> * getEdges(const Graph * g, const node * nA, const node * nB, Attribute * attr[], int nAttr, direction dir);
 std::vector<edge> * getEdges(const Graph * g, const node * n, Attribute * attr[], int nAttr, direction dir);
 std::vector<edge> * getEdges(const Graph * g, Attribute * attr[], int nAttr);

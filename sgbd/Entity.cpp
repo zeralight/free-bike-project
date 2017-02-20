@@ -12,8 +12,10 @@
 
 #include "Entity.hpp"
 #include "DBTools.hpp"
+#include "Tools.hpp"
 
 using namespace tlp;
+
 
 Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr, Graph * g) {
   this->g = g;
@@ -32,6 +34,7 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
     //initialisation ? ou Tulip le fait par défaut ?
   }
 }
+
 
 Entity::~Entity() {
   for (auto it = attr.begin() ; it != attr.end() ; it = attr.erase(it)) 
@@ -68,14 +71,17 @@ const node * Entity::newInstance(Attribute * attr[], int nAttr) {
   }
 }
 
+
 void Entity::delInstance(const std::vector<node> * nSet) {
   for (auto it = nSet->begin() ; it != nSet->end() ; it++)
     this->g->delNode(*it, true);
 }
 
+
 void Entity::delInstance(const node * n) {
   this->g->delNode(*n, true);
 }
+
 
 bool Entity::editInstance(node * n, Attribute * attr[], int nAttr) {
   if (!isInstance(n) || !isValid(attr, nAttr))
@@ -86,6 +92,7 @@ bool Entity::editInstance(node * n, Attribute * attr[], int nAttr) {
 
   return true;
 }
+
 
 bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr) {
   bool res = true;
@@ -99,33 +106,15 @@ bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAtt
   return res;
 }
 
+
 std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
-  std::vector<node> * res = new std::vector<node>;
-  bool hasMatchingAttr;
-  Iterator<node> * itNodes;
-  node n;
-
   if (this->isValid(attr, nAttr)) {
-    itNodes = this->g->getNodes();
-
-    while(itNodes->hasNext()) {
-      n = itNodes->next();
-      hasMatchingAttr = true;
-
-      for(int i = 0 ; i < nAttr ; i++) {
-	if (!attr[i]->isEqual(n))
-	  hasMatchingAttr = false;
-      }
-
-      if (hasMatchingAttr)
-	res->push_back(n);
-    }
+    return getNodes(this->g, attr, nAttr);
   }
-
-  delete itNodes;
-
-  return res;
+  else
+    return new std::vector<node>;
 }
+
 
 // modifie egalement les propriétés de attr si elle existe
 bool Entity::isValid(Attribute * attr[], int nAttr) const {
