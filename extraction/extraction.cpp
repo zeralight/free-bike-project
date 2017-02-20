@@ -3,14 +3,12 @@
 #include <vector> // Multidimensional arrays library
 #include <fstream> // Files library
 
-using namespace std;
-
-vector<vector<string> > parseCSVFile(char* csv_file) // csv_file : file name
+std::vector<std::vector<std::string> > parseCSVFile(char* csv_file) // csv_file : file name
 {
-  ifstream file(csv_file, ios::in); // Read-only .csv file opening
+  std::ifstream file(csv_file, std::ios::in); // Read-only .csv file opening
   if (file) // If the opening succeeded
     {
-      vector<string> namesVarList; // Dynamic array declaration
+      std::vector<std::string> namesVarList; // Dynamic array declaration
       char character; // Last character read
       int i=0;
       while ( character != '\n' && file.get(character) ) // While it is the 1st line
@@ -23,10 +21,10 @@ vector<vector<string> > parseCSVFile(char* csv_file) // csv_file : file name
 	    }
 	  i++;
 	}
-      vector<vector<string> > data; // Dynamic idimensional array for data
-      for (int j=0; j<i; j++)
+      std::vector<std::vector<std::string> > data; // Dynamic bidimensional array for data
+      for (int j=0; j<i; ++j)
 	{
-	  data.push_back(vector<string>(1, namesVarList[j])); // Creates as columns as fields in the table
+	  data.push_back(std::vector<std::string>(1, namesVarList[j])); // Creates as columns as fields in the table
 	}
       i=0; int j=1; character='\0'; // '\0' to avoid a falsifying '\n'
       while ( !file.eof() && file.get(character) ) // While it's not the end of the file
@@ -51,8 +49,8 @@ vector<vector<string> > parseCSVFile(char* csv_file) // csv_file : file name
     }
   else
     {
-      cerr << "Error: can't open file" << endl;
-      vector<vector<string> > empty; // Creates an empty dynamic bidimensional array...
+      std::cerr << "Error: can't open file" << std::endl;
+      std::vector<std::vector<std::string> > empty; // Creates an empty dynamic bidimensional array...
       return empty; // ... to respect the type
     }
 }
