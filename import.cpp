@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include "Database.hpp"
+#include "DBTools.hpp"
 #include "parseCSVfile.hpp"
 
 using namespace std;
@@ -15,18 +17,17 @@ int importChicago() {
   // Creation of the database
   Database * chicagoDatabase = newDB("Chicago Database");
 
-
   // Creation of the entities
   Attribute * attrStation[4] = {new Attr<INT>("id"), // UNIQUE 
 				new Attr<STRING>("name"), 
 				new Attr<DOUBLE>("latitude"), 
 				new Attr<DOUBLE>("longitude")};
   chicagoDatabase->newEntity("Station", attrStation, 4);
-
+  
   chicagoDatabase->newEntity("Event", NULL, 0);
-
+  
   chicagoDatabase->newEntity("Trip", NULL, 0);
-
+  
   Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
   chicagoDatabase->newEntity("Bike", attrBike, 1);
 
@@ -106,18 +107,20 @@ int importChicago() {
 
   // Creation of the nodes and the edges
   Result * nodesStation[stationsData[0].size-1];
-  T_INT id;
-  T_STRING name;
-  T_DOUBLE latitude;
-  T_DOUBLE longitude;
-  for (int i=1; i<stationsData[0].size; i++) {
-    id = stoi(stationsData[0][i]);
+  
+  INT id;
+  STRING name;
+  DOUBLE latitude;
+  DOUBLE longitude;
+  
+  for (int i = 1; i < stationsData[0].size ; i++) {
+    id = unserialize<INT>(stationsData[0][i]);
     attrStation[0]->setValue(&id);
-    name = stationsData[1][i];
+    name = unserialize<STRING>stationsData[1][i];
     attrStation[1]->setValue(&name);
-    latitude = stod(stationsData[2][i]);
+    latitude = unserialize<DOUBLE>(stationsData[2][i]);
     attrStation[2]->setValue(&latitude);
-    longitude = stod(stationsData[3][i]);
+    longitude = unserialize<DOUBLE>(stationsData[3][i]);
     attrStation[3]->setValue(&longitude);
     nodesStation[id] = chicagoDatabase->newNode("Station", attrStation, 4);
   }
@@ -126,22 +129,31 @@ int importChicago() {
 
   Result * nodesBike[numberLinesData];
   Result * nodesUser[numberLinesData];
-  Result * nodesDate[2*numberLinesData]; // provisoire
+  Result * nodesDate[2 * numberLinesData]; // provisoire
   Result * nodesTrip[numberLinesData];
-  Result * nodesEvent[2*numberLinesData];
+  Result * nodesEvent[2 * numberLinesData];
 
-  ////////// FINIR LES CASTS
-
-  for (int i=1; i<tripsData[0].size; i++) {
-    attrBike[0]->setValue(&tripsData[3][i]);
-    attrUser[0]->setValue(&tripsData[10][i]);
-    attrUser[1]->setValue(&tripsData[9][i]);
+  INT gender;
+  STRING type;
+  STRING date;
+  
+  for (int i = 1 ; i < tripsData[0].size ; i++) {
+    id = unserialize<INT>(tripsData[3][i]);
+    attrBike[0]->setValue(&id);
     nodesBike[i-1] = chicagoDatabase->newNode("Bike", attrBike, 1);
+
+    gender = unserialize<INT>(tripsData[10][i]);
+    type = unserialize<STRING>(tripsData[9][i]);
+    attrUser[0]->setValue(&gender);
+    attrUser[1]->setValue(&type);
     nodesUser[i-1] = chicagoDatabase->newNode("User", attrUser, 2);
 
-    attrDate[0]->setValue(&tripsData[1][i]); // provisoire
+    date = tripsData[1][i];
+    attrDate[0]->setValue(&date); // provisoire
     nodesDate[2*(i-1)] = chicagoDatabase->newNode("Date", attrDate, 2); // provisoire
-    attrDate[0]->setValue(&tripsData[2][i]); // provisoire
+
+    date = tripsData[2][i];
+    attrDate[0]->setValue(&date); // provisoire
     nodesDate[2*(i-1)+1] = chicagoDatabase->newNode("Date", attrDate, 2); // provisoire
 
     nodesTrip[i-1] = chicagoDatabase->newNode("Trip", NULL, 0);

@@ -2,7 +2,7 @@
 #define DBTOOLS_HPP
 
 #include <iostream>
-#include <cstring>
+#include <string>
 
 #include <tulip/Node.h>
 #include <tulip/StringProperty.h>

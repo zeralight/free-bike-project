@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <ctime>
 #include <cstdlib>
 #include <array>
@@ -94,7 +94,7 @@ BOOL unserialize<BOOL>(const std::string &serializedValue, const std::string &fo
 
 template <>
 STRING unserialize<STRING>(const std::string &serializedValue, const std::string &format) {
-  return std::string(serializedValue);
+  return serializedValue;
 }
 
 /*
