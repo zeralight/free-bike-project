@@ -50,9 +50,9 @@ int main() {
   Relation * r = new Relation("FriendOf", e, e, attrR, 1, graphR);
 
   //create new instancies of the entity
-  T_STRING prenom;
-  T_STRING nom;
-  T_STRING nationalite;
+  STRING prenom;
+  STRING nom;
+  STRING nationalite;
   const node * nList[N_NODE];
     
   for (int i = 0 ; i < N_NODE ; i++) {
@@ -81,7 +81,7 @@ int main() {
   Graph * Aio = graphR->addCloneSubGraph("getInstanceAinout");
 
   //create new instancies of the relation
-  T_INT date;
+  INT date;
   const edge * rList[N_EDGE];
   
   for (int i = 0 ; i < N_NODE ; i++) {
