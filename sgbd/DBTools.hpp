@@ -16,7 +16,7 @@
 #define DOUBLE double
 #define BOOL bool
 #define STRING std::string
-// DATE à rajouter pourquoi pas ?
+//#define DATE struct tm
 
 /* 
  * List of acceptable constraints for the attributes 
@@ -91,7 +91,6 @@ protected:
   virtual void set(const void *) =0;
 };
 
-
 /*
  * Example of instanciation
  * @code
@@ -131,6 +130,9 @@ private:
   void init();
 };
 
+
+template <class T>
+T unserialize(const std::string &serializedValue, const std::string &format = "");
 
 /* Template Implementation */
 /**********************************************************************/

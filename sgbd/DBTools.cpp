@@ -1,5 +1,8 @@
 #include <iostream>
 #include <cstring>
+#include <ctime>
+#include <cstdlib>
+#include <array>
 
 #include "DBTools.hpp"
 
@@ -63,3 +66,45 @@ void Attribute::setTypeName(const std::string &newTypeName) {
 void Attribute::addConstraints(int newConstraints) {
   this->constraints |= newConstraints;
 }
+
+
+template <>
+INT unserialize<INT>(const std::string &serializedValue, const std::string &format) {
+  return std::stoi(serializedValue);
+}
+
+
+template <>
+DOUBLE unserialize<DOUBLE>(const std::string &serializedValue, const std::string &format) {
+  return std::stod(serializedValue);
+}
+
+
+template <>
+BOOL unserialize<BOOL>(const std::string &serializedValue, const std::string &format) {
+  if (serializedValue == "true" ||
+      serializedValue == "True" ||
+      serializedValue == "TRUE" ||
+      stoi(serializedValue) != 0)
+    return true;
+  else
+    return false;
+}
+
+
+template <>
+STRING unserialize<STRING>(const std::string &serializedValue, const std::string &format) {
+  return std::string(serializedValue);
+}
+
+/*
+template <>
+DATE unserialize<DATE>(const std::string &serializedValue, const std::string &format) {
+  struct tm t;
+  DATE ret;
+  memset(&t, 0, sizeof(struct tm));
+
+  strptime(serializedValue.c_str, format.c_str, &t);
+  
+}
+*/
