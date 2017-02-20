@@ -92,7 +92,7 @@ int main() {
       rList[i * (N_NODE - 1) + j] = r->newInstance(nList[i % N_NODE], nList[(i + j + 1) % N_NODE], attrR, 1);
     }
   }
-
+  
   // Get instancies of the entity corresponding to the specified conditions
   Attribute * cond[1] = {new Attr<STRING>("Nom", "Hanin0")}; 
   vector<node> * res = e->getInstance(cond, 1);
@@ -131,6 +131,7 @@ int main() {
   prenom = "Roger";
   cond[0]->setLabel("Prenom");
   cond[0]->setValue(&prenom);
+  delete res;
   res = e->getInstance(cond, 1);
 
   // Change "Nationalite" value for all nodes in res
@@ -169,6 +170,33 @@ int main() {
   tmp = saveGraph(graph, "testDel.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
+
+
+  // Memory liberation
+  for (int i = 0 ; i < 3 ; i++)
+    delete attr[i];
+
+  for (int i = 0 ; i < N_NODE ; i++)
+    delete nList[i];
+
+  for (int i = 0 ; i < N_EDGE ; i++)
+    delete rList[i];
+
+  delete attrR[0];
+  delete cond[0];
+
+  delete nSet;
+  delete res;
+  delete resAll;
+  delete resAiB;
+  delete resAoB;
+  delete resAioB;
+  delete resAi;
+  delete resAo;
+  delete resAio;
+
+  delete r;
+  delete e;
 
   delete graph;
   

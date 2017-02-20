@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include <cstdlib>
+//#include <cstdlib>
 #include <unordered_map>
 #include <vector>
 #include <iterator>
@@ -34,9 +34,16 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
 }
 
 Entity::~Entity() {
-  this->attr.clear();
-  delete nameProp;
-  delete g;
+  for (auto it = attr.begin() ; it != attr.end() ; it = attr.erase(it)) 
+    delete (*it).second;
+  
+  nameProp->setAllNodeValue("");
+
+  Graph * supG = g->getSuperGraph();
+  if (supG != g)
+    supG->delAllSubGraphs(g);
+  else
+    delete g;
 }
 
 
@@ -46,7 +53,7 @@ Graph * Entity::getGraph() const {
 
 
 const node * Entity::newInstance(Attribute * attr[], int nAttr) {
-  node * n = (node *) std::malloc(sizeof(node));
+  node * n = new node;
   *n = this->g->addNode();
 
   if (isValid(attr, nAttr)) {
@@ -55,8 +62,10 @@ const node * Entity::newInstance(Attribute * attr[], int nAttr) {
     
     return n;
   }
-  else
+  else {
+    delete n;
     return NULL;
+  }
 }
 
 void Entity::delInstance(const std::vector<node> * nSet) {
@@ -80,10 +89,11 @@ bool Entity::editInstance(node * n, Attribute * attr[], int nAttr) {
 
 bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr) {
   bool res = true;
-  node * n;
+  node n;
+  
   for (auto it = nSet->begin() ; it != nSet->end() ; it++) {
-    *n = *it;
-    res = res && editInstance(n, attr, nAttr);
+    n = *it;
+    res = res && editInstance(&n, attr, nAttr);
   }
 
   return res;
@@ -111,6 +121,8 @@ std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
 	res->push_back(n);
     }
   }
+
+  delete itNodes;
 
   return res;
 }

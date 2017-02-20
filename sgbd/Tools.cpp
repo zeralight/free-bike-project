@@ -117,12 +117,19 @@ std::vector<edge> * getEdges(const Graph * g, const node * n, Attribute * attr[]
     it = g->getInOutEdges(*n);
     break;
   };
+
+  std::vector<edge> * ret = getEdges(it, attr, nAttr);
+  delete it;
   
-  return getEdges(it, attr, nAttr);
+  return ret;
 }
 
 
 std::vector<edge> * getEdges(const Graph * g, Attribute * attr[], int nAttr) {
   Iterator<edge> * it = g->getEdges();
-  return getEdges(it, attr, nAttr);
+  
+  std::vector<edge> * ret = getEdges(it, attr, nAttr);
+  delete it;
+  
+  return ret;
 }

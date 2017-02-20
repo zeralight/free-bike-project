@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include <cstdlib>
+//#include <cstdlib>
 #include <unordered_map>
 #include <vector>
 #include <iterator>
@@ -39,9 +39,16 @@ Relation::Relation(const std::string &name, Entity * src, Entity * dst, const At
 
 
 Relation::~Relation() {
-  this->attr.clear();
-  delete nameProp;
-  delete g;
+  for (auto it = attr.begin() ; it != attr.end() ; it = attr.erase(it)) 
+    delete (*it).second;
+  
+  nameProp->setAllNodeValue("");
+
+  Graph * supG = g->getSuperGraph();
+  if (supG != g)
+    supG->delAllSubGraphs(g);
+  else
+    delete g;
 }
 
 
@@ -51,7 +58,7 @@ Graph * Relation::getGraph() const {
 
 
 const edge * Relation::newInstance(const node * src, const node * dst, Attribute * attr[], int nAttr) {
-  edge * e = (edge *) std::malloc(sizeof(edge));
+  edge * e = new edge;
   *e = this->g->addEdge(*src, *dst);
   
   if (isValid(attr, nAttr)) {
@@ -60,8 +67,10 @@ const edge * Relation::newInstance(const node * src, const node * dst, Attribute
 
     return e;
   }
-  else
+  else {
+    delete e;
     return NULL;
+  }
 }
 
 
@@ -89,42 +98,37 @@ bool Relation::editInstance(edge * e, Attribute * attr[], int nAttr) {
 
 bool Relation::editInstance(std::vector<edge> * eSet, Attribute * attr[], int nAttr) {
   bool res = true;
-  edge * e;
+  edge e;
+  
   for (auto it = eSet->begin() ; it != eSet->end() ; it++) {
-    *e = *it;
-    res = res && editInstance(e, attr, nAttr);
+    e = *it;
+    res = res && editInstance(&e, attr, nAttr);
   }
 
   return res;
 }
 
 std::vector<edge> * Relation::getInstance(Attribute * attr[], int nAttr) const {
-  std::vector<edge> * res = new std::vector<edge>;
-  
   if (this->isValid(attr, nAttr))
-    res = getEdges(this->g, attr, nAttr);
-  
-  return res;
+    return getEdges(this->g, attr, nAttr);
+  else
+    return new std::vector<edge>;
 }
 
 
 std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attribute * attr[], int nAttr, direction dir) const {
-  std::vector<edge> * res = new std::vector<edge>;
-
   if (this->isValid(attr, nAttr))
-    res = getEdges(this->g, nA, nB, attr, nAttr, dir);
-  
-  return res;
+    return getEdges(this->g, nA, nB, attr, nAttr, dir);
+  else
+    return new std::vector<edge>;
 }
 
 
 std::vector<edge> * Relation::getInstance(const node * n, Attribute * attr[], int nAttr, direction dir) const {
-  std::vector<edge> * res = new std::vector<edge>;
-  
   if (this->isValid(attr, nAttr))
-    res = getEdges(this->g, n, attr, nAttr, dir);
-  
-  return res;
+    return getEdges(this->g, n, attr, nAttr, dir);
+  else
+    return new std::vector<edge>;
 }
 
 
