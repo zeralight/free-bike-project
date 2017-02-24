@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <iterator>
+#include <unistd.h>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -137,4 +138,21 @@ std::string Entity::getName() const{
   return name;
 }
 
-int Entity::writeEntity(int fd) const{}
+int Entity::write(int fd) const {
+  std::string buff;
+  Attribute * tmp;
+  int res;
+
+  buff += "(entity " + this->name + "\n"; 
+
+  for (auto it = attr.begin() ; it != attr.end() ; it++) {
+    tmp = ((*it).second);
+    buff += "\t(attr " + tmp->getLabel() + " " + tmp->getTypeName() + ")\n";
+  }
+
+  buff += ")";
+
+  res = ::write(fd, buff.c_str(), buff.length());
+  
+  return res;
+}

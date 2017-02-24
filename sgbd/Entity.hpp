@@ -37,8 +37,8 @@ public:
   std::vector<node> * getInstance(Attribute * attr[], int nAttr) const;
   bool isInstance(const node * n) const;
   std::string getName() const;
-  int writeEntity(int fd) const;
-  int load(char * l);
+  int write(int fd) const;
+  int load(std::string path);
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;

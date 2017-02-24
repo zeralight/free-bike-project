@@ -1,6 +1,11 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <unistd.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -171,6 +176,15 @@ int main() {
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
 
+  int fd = open("test.sav", O_RDWR | O_CREAT);
+  if (fd == -1)
+    std::cout << "error save" << std::endl;
+  else {
+    e->write(fd);
+    //write(fd, "\0", 1);
+  }
+
+  close(fd);
 
   // Memory liberation
   for (int i = 0 ; i < 3 ; i++)
@@ -183,7 +197,7 @@ int main() {
     delete rList[i];
 
   delete attrR[0];
-  delete cond[0];
+  delete cond[0];  
 
   delete nSet;
   delete res;
