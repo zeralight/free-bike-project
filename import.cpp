@@ -5,6 +5,7 @@
 #include "Database.hpp"
 #include "DBTools.hpp"
 #include "parseCSVfile.hpp"
+#include "datesInNodes.hpp"
 
 using namespace std;
 
@@ -35,7 +36,6 @@ int importChicago() {
 			     new Attr<STRING>("type")};
   chicagoDatabase->newEntity("User", attrUser, 2);
 
-  /* A remettre quand il y aura le systeme des dates
   Attribute * attrDay[1] = {new Attr<INT>("value")};
   chicagoDatabase->newEntity("Day", attrDay, 1);
 
@@ -56,10 +56,10 @@ int importChicago() {
 
   Attribute * attrRootDate[1] = {new Attr<INT>("value")};
   chicagoDatabase->newEntity("RootDate", attrRootDate, 1);
-  */
-  // Provisoirement pour les dates :
-  Attribute * attrDate[1] = {new Attr<STRING>("value")};
-  chicagoDatabase->newEntity("Date", attrDate, 1);
+
+  // Supprimé :
+  // Attribute * attrDate[1] = {new Attr<STRING>("value")};
+  // chicagoDatabase->newEntity("Date", attrDate, 1);
 
   // Creation of the relationships
   chicagoDatabase->newRelation("takesPlace", "Event", "Station", NULL, 0);
@@ -76,27 +76,27 @@ int importChicago() {
   chicagoDatabase->newRelation("timesFrom", "Event", "Minute", NULL, 0);
 
   chicagoDatabase->newRelation("isFirstDay", "Month", "Day", NULL, 0);
-  chicagoDatabase->newRelation("isChildDay", "Month", "Day", NULL, 0); // a traiter lors de l'insertion en n'ajoutant que les dates apparaissant
+  chicagoDatabase->newRelation("isChildDay", "Month", "Day", NULL, 0);
   chicagoDatabase->newRelation("isLastDay", "Month", "Day", NULL, 0);
   chicagoDatabase->newRelation("isNextDay", "Day", "Day", NULL, 0);
 
   chicagoDatabase->newRelation("isFirstMonth", "Year", "Month", NULL, 0);
-  chicagoDatabase->newRelation("isChildMonth", "Year", "Month", NULL, 0); // a traiter lors de l'insertion en n'ajoutant que les dates apparaissant
+  chicagoDatabase->newRelation("isChildMonth", "Year", "Month", NULL, 0);
   chicagoDatabase->newRelation("isLastMonth", "Year", "Month", NULL, 0);
   chicagoDatabase->newRelation("isNextMonth", "Month", "Month", NULL, 0);
 
   chicagoDatabase->newRelation("isFirstYear", "RootDate", "Year", NULL, 0);
-  chicagoDatabase->newRelation("isChildYear", "RootDate", "Year", NULL, 0); // a traiter lors de l'insertion en n'ajoutant que les dates apparaissant
+  chicagoDatabase->newRelation("isChildYear", "RootDate", "Year", NULL, 0);
   chicagoDatabase->newRelation("isLastYear", "RootDate", "Year", NULL, 0);
   chicagoDatabase->newRelation("isNextYear", "Year", "Year", NULL, 0);
 
   chicagoDatabase->newRelation("isFirstMinute", "Hour", "Minute", NULL, 0);
-  chicagoDatabase->newRelation("isChildMinute", "Hour", "Minute", NULL, 0); // a traiter lors de l'insertion en n'ajoutant que les dates apparaissant
+  chicagoDatabase->newRelation("isChildMinute", "Hour", "Minute", NULL, 0);
   chicagoDatabase->newRelation("isLastMinute", "Hour", "Minute", NULL, 0);
   chicagoDatabase->newRelation("isNextMinute", "Minute", "Minute", NULL, 0);
 
   chicagoDatabase->newRelation("isFirstHour", "RootHour", "Hour", NULL, 0);
-  chicagoDatabase->newRelation("isChildHour", "RootHour", "Hour", NULL, 0); // a traiter lors de l'insertion en n'ajoutant que les dates apparaissant
+  chicagoDatabase->newRelation("isChildHour", "RootHour", "Hour", NULL, 0);
   chicagoDatabase->newRelation("isLastHour", "RootHour", "Hour", NULL, 0);
   chicagoDatabase->newRelation("isNextHour", "Hour", "Hour", NULL, 0);
 
@@ -106,6 +106,7 @@ int importChicago() {
   
 
   // Creation of the nodes and the edges
+  // About stations
   Result * nodesStation[stationsData[0].size-1];
   
   INT id;
@@ -126,47 +127,98 @@ int importChicago() {
   }
 
   int numberLinesData = tripsData[0].size-1;
-
-  Result * nodesBike[numberLinesData];
-  Result * nodesUser[numberLinesData];
-  Result * nodesDate[2 * numberLinesData]; // provisoire
-  Result * nodesTrip[numberLinesData];
-  Result * nodesEvent[2 * numberLinesData];
-
   INT gender;
   STRING type;
-  STRING date;
-  
+  // Avant : STRING date;
+
+  // About bikes
+  Result * nodesBike[numberLinesData];
   for (int i = 1 ; i < tripsData[0].size ; i++) {
     id = unserialize<INT>(tripsData[3][i]);
     attrBike[0]->setValue(&id);
     nodesBike[i-1] = chicagoDatabase->newNode("Bike", attrBike, 1);
+  }
 
+  // About users
+  Result * nodesUser[numberLinesData];
+  for (int i = 1 ; i < tripsData[0].size ; i++) {
     gender = unserialize<INT>(tripsData[10][i]);
     type = unserialize<STRING>(tripsData[9][i]);
     attrUser[0]->setValue(&gender);
     attrUser[1]->setValue(&type);
     nodesUser[i-1] = chicagoDatabase->newNode("User", attrUser, 2);
+  }
 
-    date = tripsData[1][i];
-    attrDate[0]->setValue(&date); // provisoire
-    nodesDate[2*(i-1)] = chicagoDatabase->newNode("Date", attrDate, 2); // provisoire
-
-    date = tripsData[2][i];
-    attrDate[0]->setValue(&date); // provisoire
-    nodesDate[2*(i-1)+1] = chicagoDatabase->newNode("Date", attrDate, 2); // provisoire
-
+  // About trips
+  Result * nodesTrip[numberLinesData];
+  for (int i = 1 ; i < tripsData[0].size ; i++) {
     nodesTrip[i-1] = chicagoDatabase->newNode("Trip", NULL, 0);
+  }
+
+  // About events
+  Result * nodesEvent[2 * numberLinesData];
+  for (int i = 1 ; i < tripsData[0].size ; i++) {
     nodesEvent[2*(i-1)] = chicagoDatabase->newNode("Event", NULL, 0);
     nodesEvent[2*(i-1)+1] = chicagoDatabase->newNode("Event", NULL, 0);
+  }
 
+  // Edges between the already declared nodes
+  for (int i = 1 ; i < tripsData[0].size ; i++) {
     chicagoDatabase->newEdge("uses", nodesTrip[i-1], nodesBike[i-1], NULL, 0);
     chicagoDatabase->newEdge("does", nodesUser[i-1], nodesTrip[i-1], NULL, 0);
     chicagoDatabase->newEdge("departs", nodesTrip[i-1], nodesEvent[2*(i-1)], NULL, 0);
     chicagoDatabase->newEdge("arrives", nodesTrip[i-1], nodesEvent[2*(i-1)+1], NULL, 0);
-    chicagoDatabase->newEdge("datesFrom", nodesEvent[2*(i-1)], nodesDate[2*(i-1)], NULL, 0);
-    chicagoDatabase->newEdge("datesFrom", nodesEvent[2*(i-1)+1], nodesDate[2*(i-1)+1], NULL, 0);
     chicagoDatabase->newEdge("takesPlace", nodesEvent[2*(i-1)], nodesStation[&tripsData[5][i]], NULL, 0);
     chicagoDatabase->newEdge("takesPlace", nodesEvent[2*(i-1)+1], nodesStation[&tripsData[7][i]], NULL, 0);
+    // FAUT-IL VRAIMENT CREER 2 FOIS PLUS D'EVENTS ?
+  }
+
+  // Creation of the date and hour trees
+  INT nb;
+  Result * nodesDay[1][3][31];
+  Result * nodesMonth[1][3];
+  Result * nodesYear[1];
+  for (int i=0; i<1; i++) {
+    nb = i+2016;
+    attrYear[0]->setValue(&nb);
+    nodesYear[i] = chicagoDatabase->newNode("Year", attrYear, 1);
+    for (int j=0; j<3; j++) {
+      nb = j+1;
+      attrMonth[0]->setValue(&nb);
+      nodesMonth[i][j] = chicagoDatabase->newNode("Month", attrMonth, 1);
+      for (int k=0; k<31; k++) {
+	nb = k+1;
+	attrDay[0]->setValue(&nb);
+	nodesDay[i][j][k] = chicagoDatabase->newNode("Day", attrDay, 1);
+	chicagoDatabase->newEdge("isChildDay", nodesMonth[i][j], nodesDay[i][j][k], NULL, 0);
+      }
+      chicagoDatabase->newEdge("isChildMonth", nodesYear[i], nodesMonth[i][j], NULL, 0);
+    }
+  }
+
+  Result * nodesMinute[24][60];
+  Result * nodesHour[24];
+  for (int i=0; i<24; i++) {
+    nb = i;
+    attrHour[0]->setValue(&nb);
+    nodesHour[i] = chicagoDatabase->newNode("Hour", attrHour, 1);
+    for (int j=0; i<60; i++) {
+      nb = j;
+      attrMinute[0]->setValue(&nb);
+      nodesMinute[i][j] = chicagoDatabase->newNode("Minute", attrMinute, 1);
+      chicagoDatabase->newEdge("isChildMinute", nodesHour[i], nodesMinute[i][j], NULL, 0);
+    }
+  }
+
+  vector<int> dateInNodes;
+  
+  // About dates and hours
+  for (int i = 1 ; i < tripsData[0].size ; i++) {
+    dateInNodes = dateInNodes(tripsData[1][i]);
+    chicagoDatabase->newEdge("datesFrom", nodesEvent[2*(i-1)], nodesDay[dateInNodes[2]-2016][dateInNodes[0]-1][dateInNodes[1]-1], NULL, 0);
+    chicagoDatabase->newEdge("timesFrom", nodesEvent[2*(i-1)], nodesMinute[dateInNodes[3]][dateInNodes[4]], NULL, 0);
+    dateInNodes = dateInNodes(tripsData[2][i]);
+    chicagoDatabase->newEdge("datesFrom", nodesEvent[2*(i-1)+1], nodesDay[dateInNodes[2]-2016][dateInNodes[0]-1][dateInNodes[1]-1], NULL, 0);
+    chicagoDatabase->newEdge("timesFrom", nodesEvent[2*(i-1)+1], nodesMinute[dateInNodes[3]][dateInNodes[4]], NULL, 0);
   }
 }
