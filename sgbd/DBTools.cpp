@@ -97,6 +97,19 @@ STRING unserialize<STRING>(const std::string &serializedValue, const std::string
   return serializedValue;
 }
 
+
+Attribute * newAttr(const std::string &label, const std::string &typeName) {
+  if (typeName == "int")
+    return new Attr<INT>(label);
+  else if (typeName == "double")
+    return new Attr<DOUBLE>(label);
+  else if (typeName == "bool")
+    return new Attr<BOOL>(label);
+  else if (typeName == "string")
+    return new Attr<STRING>(label);
+}
+
+
 /*
 template <>
 DATE unserialize<DATE>(const std::string &serializedValue, const std::string &format) {

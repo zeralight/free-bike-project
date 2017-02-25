@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <fstream>
 #include <vector>
 #include <unistd.h>
 
@@ -185,6 +186,17 @@ int main() {
   }
 
   close(fd);
+
+  e->print();
+  
+  std::fstream file;
+  file.open("test.sav");
+  
+  Entity * e2 = new Entity();
+  e2->load(file);
+  e2->print();
+
+  file.close();
 
   // Memory liberation
   for (int i = 0 ; i < 3 ; i++)

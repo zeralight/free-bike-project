@@ -134,6 +134,8 @@ private:
 template <class T>
 T unserialize(const std::string &serializedValue, const std::string &format = "");
 
+Attribute * newAttr(const std::string &label, const std::string &typeName);
+
 /* Template Implementation */
 /**********************************************************************/
 

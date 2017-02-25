@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
 //#include <cstdlib>
 #include <unordered_map>
@@ -16,6 +17,13 @@
 #include "Tools.hpp"
 
 using namespace tlp;
+
+
+Entity::Entity() {
+  this->nameProp = NULL;
+  this->g = NULL;
+  this->nAttr = 0;
+}
 
 
 Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr, Graph * g) {
@@ -156,3 +164,72 @@ int Entity::write(int fd) const {
   
   return res;
 }
+
+
+std::string getWord(std::fstream &file) {
+  std::string buff;
+  char c;
+
+  while(buff.size() == 0) {
+    file.get(c);
+    if (c == '(' ||
+	c == ')')
+      buff = c;
+    else {
+      while (c != ' ' &&
+	     c != '\n' &&
+	     c != '\t' &&
+	     c != '(' &&
+	     c != ')') {
+	buff += c;
+	file.get(c);
+      }
+      
+      if (c == '(' ||
+	  c == ')')
+	file.unget();  
+    }
+  }
+    
+  return buff;
+}
+
+
+void Entity::load(std::fstream &file) {
+  std::string buff;
+  int openPar = 0;
+  bool read = false;
+
+  while(openPar > 0 || !read) {
+    buff = getWord(file);
+    read = true;
+    
+    if (buff == "(")
+      openPar++;
+    else if (buff == ")")
+      openPar--;
+    else if (buff == "entity" && read)
+      this->name = getWord(file);
+    else if (buff == "attr" && read) {
+      std::string name = getWord(file);
+      std::string typeName = getWord(file);
+      Attribute * tmp = newAttr(name, typeName);
+      this->attr[name] = tmp;
+    }
+    else {
+      std::cout << "Error loading Entity: bad format '" + buff + "'" << std::endl;
+      for (int i = 0 ; i < buff.size() ; i++)
+	file.unget();
+      break;
+    }
+  }    
+}
+
+
+void Entity::print() {
+  std::cout << "==== " + name + " ====" << std::endl;
+
+  for (auto it = attr.begin() ; it != attr.end() ; it++)
+    ((*it).second)->print(); 
+}
+

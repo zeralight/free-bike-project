@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <fstream>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -22,7 +23,8 @@ private:
   std::unordered_map<std::string, Attribute *> attr;
   int nAttr;
 
-public: 
+public:
+  Entity();
   Entity(const std::string &name, const Attribute * const attributes[], int nAttr, Graph * g);
   ~Entity();
 
@@ -38,7 +40,8 @@ public:
   bool isInstance(const node * n) const;
   std::string getName() const;
   int write(int fd) const;
-  int load(std::string path);
+  void load(std::fstream &file);
+  void print();
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;
