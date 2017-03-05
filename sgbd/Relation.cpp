@@ -206,10 +206,13 @@ void Relation::load(std::fstream &file, Graph * gSrc, std::unordered_map<std::st
       openPar--;
     else if (buff == "relation" && read) {
       this->name = getWord(file);
+      this->nameProp = gSrc->getLocalProperty<StringProperty>(PROP_RELATION_NAME);
       std::string nameSrc = getWord(file);
       std::string nameDst = getWord(file);
       this->entitySrc = entityList[nameSrc];
       this->entityDst = entityList[nameDst];
+
+      this->g = gSrc->getSubGraph(this->name);
     }
     else if (buff == "attr" && read) {
       std::string name = getWord(file);
@@ -218,7 +221,7 @@ void Relation::load(std::fstream &file, Graph * gSrc, std::unordered_map<std::st
       this->attr[name] = tmp;
 
       // Initialize property from graph
-      this->attr[name]->setProperty(name, gSrc);
+      this->attr[name]->setProperty(this->g);
     }
     else {
       std::cout << "Error loading Relation: bad format '" + buff + "'" << std::endl;

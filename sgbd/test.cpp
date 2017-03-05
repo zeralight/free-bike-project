@@ -207,18 +207,16 @@ int main() {
   file.close();
 
   // Memory liberation
-  for (int i = 0 ; i < 3 ; i++)
-    delete attr[i];
-
+  delAttr(attr, 3);
+  delAttr(attrR, 1);
+  delAttr(cond, 1);
+  
   for (int i = 0 ; i < N_NODE ; i++)
     delete nList[i];
 
   for (int i = 0 ; i < N_EDGE ; i++)
     delete rList[i];
-
-  delete attrR[0];
-  delete cond[0];  
-
+  
   delete nSet;
   delete res;
   delete resAll;

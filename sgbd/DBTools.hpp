@@ -87,7 +87,7 @@ protected:
   void setTypeName(const std::string &);
   virtual void setProperty(const void *) =0;
   virtual void setProperty(const Attribute *) =0;
-  virtual void setProperty(const std::string &propName, tlp::Graph *) =0;
+  virtual void setProperty(tlp::Graph *) =0;
   virtual void setNodeValue(tlp::node &) const =0;
   virtual void setEdgeValue(tlp::edge &) const =0;
   virtual void set(const void *) =0;
@@ -125,7 +125,7 @@ public:
 private:
   void setProperty(const void * prop);
   void setProperty(const Attribute * attr);
-  void setProperty(const std::string &propName, tlp::Graph * g);
+  void setProperty(tlp::Graph * g);
   void setNodeValue(tlp::node &n) const ;
   void setEdgeValue(tlp::edge &e) const ;
   void set(const void * value);
@@ -231,8 +231,8 @@ void Attr<T>::setProperty(const Attribute * attr) {
 }
 
 template <class T>
-void Attr<T>::setProperty(const std::string &propName, tlp::Graph * g) {
-  this->prop = g->getLocalProperty<typename TlpProp<T>::type>(propName);
+void Attr<T>::setProperty(tlp::Graph * g) {
+  this->prop = g->getLocalProperty<typename TlpProp<T>::type>(this->label);
 }
 
 template <class T>

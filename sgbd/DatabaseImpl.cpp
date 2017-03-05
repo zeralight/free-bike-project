@@ -28,6 +28,8 @@ DatabaseImpl::DatabaseImpl(const string &name): GraphWriteAbstract(newGraph(), t
   this->gEntities = this->g->addSubGraph("Entities");
   this->gResults = this->g->addSubGraph("Results");
   this->name = name;
+  this->gEntities->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
+  this->gRelations->getLocalProperty<StringProperty>(PROP_RELATION_NAME);
 }
 
 
@@ -136,6 +138,10 @@ void DatabaseImpl::load(const string &path){
       throw string("ERROR: impossible to load the graph " + pathG);
         
     this->name = this->g->getName();
+    this->gEntities = this->g->getSubGraph("Entities");
+    this->gRelations = this->g->getSubGraph("Relations");
+    this->gResults = this->g->getSubGraph("Results");
+    
     this->loadEntities(pathE);
     this->loadRelations(pathR);
   }
@@ -197,8 +203,8 @@ void DatabaseImpl::saveEntities(const string &path) const {
 
   file.flush();
 
-  buff = entities.size();
-  file << buff.c_str();
+  buff = to_string(entities.size());
+  file << buff.c_str() << endl;
   
   for(auto it = entities.begin() ; it != entities.end() ; it++) {
     e = (*it).second;
@@ -220,8 +226,8 @@ void DatabaseImpl::saveRelations(const string &path) const {
 
   file.flush();
 
-  buff = relations.size();
-  file << buff.c_str();
+  buff = to_string(relations.size());
+  file << buff.c_str() << endl;
   
   for(auto it = relations.begin() ; it != relations.end() ; it++) {
     r = (*it).second;
@@ -246,7 +252,7 @@ void DatabaseImpl::loadEntities(const string &path){
 
   for (int i = 0 ; i < n ; i++) {
     Entity * e = new Entity();
-    e->load(file, this->g);
+    e->load(file, this->gEntities);
     entities[e->getName()] = e;
   }
 
@@ -267,7 +273,7 @@ void DatabaseImpl::loadRelations(const string &path) {
 
   for (int i = 0 ; i < n ; i++) {
     Relation * r = new Relation();
-    r->load(file, this->g, this->entities);
+    r->load(file, this->gRelations, this->entities);
     relations[r->getName()] = r;
   }
 

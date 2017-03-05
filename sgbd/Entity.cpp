@@ -217,8 +217,12 @@ void Entity::load(std::fstream &file, Graph * gSrc) {
       openPar++;
     else if (buff == ")")
       openPar--;
-    else if (buff == "entity" && read)
+    else if (buff == "entity" && read) {
       this->name = getWord(file);
+      this->nameProp = gSrc->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
+
+      this->g = gSrc->getSubGraph(this->name);
+    }
     else if (buff == "attr" && read) {
       std::string name = getWord(file);
       std::string typeName = getWord(file);
@@ -226,7 +230,7 @@ void Entity::load(std::fstream &file, Graph * gSrc) {
       this->attr[name] = tmp;
 
       // Initialize property from graph
-      this->attr[name]->setProperty(name, gSrc);
+      this->attr[name]->setProperty(this->g);
     }
     else {
       std::cout << "Error loading Entity: bad format '" + buff + "'" << std::endl;

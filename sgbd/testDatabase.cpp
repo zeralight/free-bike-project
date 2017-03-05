@@ -43,8 +43,14 @@ int main() {
 
   db->save(".");
 
+  Database * dbCopy = newDB("");
+  dbCopy->load("./Friends.db");
+
+  dbCopy->save("./cpy");
+
   delAttr(attrPerson, 3);
   delAttr(attrFriendOf, 1);
 
   delDB(db);
+  delDB(dbCopy);
 }

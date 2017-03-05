@@ -93,6 +93,8 @@
 
 - déplacer la fonction getWord()
 
+- suppression Entity/Relation : mettre nameProp à ""
+
 
 ============ Tools
 
