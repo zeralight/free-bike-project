@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <fstream>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -19,13 +20,14 @@ class Relation {
 private:
   std::string name;
   StringProperty * nameProp;
-  Entity * entitySrc;
-  Entity * entityDst;
+  const Entity * entitySrc;
+  const Entity * entityDst;
   Graph * g;
   std::unordered_map<std::string, Attribute *> attr;
   int nAttr;
   
-public: 
+public:
+  Relation();
   Relation(const std::string &name, Entity * src, Entity * dst, const Attribute * const attr[], int nAttr, Graph * g);
   ~Relation();
 
@@ -42,8 +44,9 @@ public:
   std::vector<edge> * getInstance(const node * nA, const node * nB, Attribute * attr[], int Attr, direction dir) const;
   std::string getName() const;
   
-  int writeRelation(int fd) const;
-  int load(char * l);
+  void write(std::fstream &file) const;
+  void load(std::fstream &file, Graph * gSrc, std::unordered_map<std::string, Entity *> &entityList);
+  void print();
 
   bool isInstance(const edge * e) const;
   

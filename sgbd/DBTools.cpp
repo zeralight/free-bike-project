@@ -110,6 +110,12 @@ Attribute * newAttr(const std::string &label, const std::string &typeName) {
 }
 
 
+void delAttr(Attribute * attr[], int nAttr) {
+  for (int i = 0 ; i < nAttr ; i++)
+    delete attr[i];
+}
+
+
 /*
 template <>
 DATE unserialize<DATE>(const std::string &serializedValue, const std::string &format) {

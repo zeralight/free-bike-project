@@ -5,13 +5,20 @@
 #include "DBTools.hpp"
 #include "Database.hpp"
 //#include "Result.hpp"
-#include "DatabaseImpl"
+#include "DatabaseImpl.hpp"
 
-Database * newDB(std::string &name){
-  Database * D = new DatabaseImpl(name);
-  return D;
+Database * newDB(const std::string &name) {
+  Database * db = new DatabaseImpl(name);
+  return db;
 }
 
-void delDB(Database * db){
-  //pas de destructeur pour DatabaseImpl, necessaire ?
+
+void delDB(Database * db) {
+  delete ((DatabaseImpl *) db);
+}
+
+
+void initDB() {
+  //initialize the Tulip lib
+  tlp::initTulipLib();
 }

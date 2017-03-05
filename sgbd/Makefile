@@ -1,13 +1,17 @@
-TLPFLAGS = `tulip-config-debug --cxxflags` 
-TLPLIBS = `tulip-config-debug --libs` 
+TLPFLAGS = `tulip-config --cxxflags` 
+TLPLIBS = `tulip-config --libs` 
 GPPFLAGS = -std=c++14 -fdiagnostics-color -g
-TLPSUP = -L/home/raptapia/Documents/logiciels/Tulip-4.9.0/install-debug/lib/ -lyajl-tulip-4.9 -ltess2-tulip-4.9
+
+all: test
 
 %.o: %.cpp 
-	g++ -I. $(GPPFLAGS) $(TLPFLAGS) $(TLPSUP) -c $<
+	g++ $(GPPFLAGS) $(TLPFLAGS) -c $<
 
-test: test.o DBTools.o Tools.o Relation.o Entity.o
+test: test.o DBTools.o Tools.o Relation.o Entity.o GraphWrite.o DatabaseImpl.o ResultImpl.o
 	g++ $(GPPFLAGS) $(TLPLIBS) $(TLPSUP) $^ -o test
+
+testDatabase: testDatabase.o DBTools.o Tools.o Relation.o Entity.o GraphWrite.o Database.o DatabaseImpl.o ResultImpl.o
+	g++ $(GPPFLAGS) $(TLPLIBS) $^ -o testDatabase
 
 clean:
 	rm -f *~ *.o

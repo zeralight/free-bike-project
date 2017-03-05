@@ -12,6 +12,7 @@
 #include <tulip/Node.h>
 #include <tulip/StringProperty.h>
 
+#include "Database.hpp"
 #include "Entity.hpp"
 #include "DBTools.hpp"
 #include "Tools.hpp"
@@ -146,10 +147,12 @@ std::string Entity::getName() const{
   return name;
 }
 
-int Entity::write(int fd) const {
+void Entity::write(std::fstream &file) const {
   std::string buff;
   Attribute * tmp;
-  int res;
+
+  if (!file)
+    return;
 
   buff += "(entity " + this->name + "\n"; 
 
@@ -160,9 +163,7 @@ int Entity::write(int fd) const {
 
   buff += ")";
 
-  res = ::write(fd, buff.c_str(), buff.length());
-  
-  return res;
+  file << buff.c_str();
 }
 
 
@@ -170,7 +171,10 @@ std::string getWord(std::fstream &file) {
   std::string buff;
   char c;
 
-  while(buff.size() == 0) {
+  if (!file)
+    return buff;
+  
+  while(buff.size() == 0 && !file.eof()) {
     file.get(c);
     if (c == '(' ||
 	c == ')')
@@ -180,7 +184,8 @@ std::string getWord(std::fstream &file) {
 	     c != '\n' &&
 	     c != '\t' &&
 	     c != '(' &&
-	     c != ')') {
+	     c != ')' &&
+	     !file.eof()) {
 	buff += c;
 	file.get(c);
       }
@@ -195,11 +200,15 @@ std::string getWord(std::fstream &file) {
 }
 
 
-void Entity::load(std::fstream &file) {
+void Entity::load(std::fstream &file, Graph * gSrc) {
   std::string buff;
   int openPar = 0;
   bool read = false;
 
+  if (!file)
+    return;
+
+  // Load data from file
   while(openPar > 0 || !read) {
     buff = getWord(file);
     read = true;
@@ -215,6 +224,9 @@ void Entity::load(std::fstream &file) {
       std::string typeName = getWord(file);
       Attribute * tmp = newAttr(name, typeName);
       this->attr[name] = tmp;
+
+      // Initialize property from graph
+      this->attr[name]->setProperty(name, gSrc);
     }
     else {
       std::cout << "Error loading Entity: bad format '" + buff + "'" << std::endl;
@@ -222,12 +234,12 @@ void Entity::load(std::fstream &file) {
 	file.unget();
       break;
     }
-  }    
+  }
 }
 
 
 void Entity::print() {
-  std::cout << "==== " + name + " ====" << std::endl;
+  std::cout << "==== ent:" + name + " ====" << std::endl;
 
   for (auto it = attr.begin() ; it != attr.end() ; it++)
     ((*it).second)->print(); 

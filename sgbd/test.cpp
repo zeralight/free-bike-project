@@ -177,25 +177,33 @@ int main() {
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
 
-  int fd = open("test.sav", O_RDWR | O_CREAT);
-  if (fd == -1)
-    std::cout << "error save" << std::endl;
-  else {
-    e->write(fd);
-    //write(fd, "\0", 1);
-  }
-
-  close(fd);
+  // Entity write test  
+  std::fstream file;
+  file.open("testEnt.sav", ios_base::out);
+  e->write(file);
+  file.close();
 
   e->print();
-  
-  std::fstream file;
-  file.open("test.sav");
-  
-  Entity * e2 = new Entity();
-  e2->load(file);
-  e2->print();
 
+  // Entity load test
+  file.open("testEnt.sav");
+  e->load(file, graph);
+  e->print();
+
+  file.close();
+
+  // Relation write test
+  r->print();
+  file.open("testRel.sav", ios_base::out);
+  r->write(file);
+  file.close();
+
+  // Relation load test
+  std::unordered_map<std::string, Entity *> eTab;
+  eTab[e->getName()] = e;
+  file.open("testRel.sav");
+  r->load(file, graph, eTab);
+  r->print();
   file.close();
 
   // Memory liberation

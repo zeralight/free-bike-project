@@ -2,53 +2,57 @@
 #define DATABASEIMPL_HPP
 
 #include <string>
+#include <unordered_map>
+
 #include <tulip/Node.h>
 #include <tulip/Edge.h>
 
 #include "DBTools.hpp"
+#include "GraphWrite.hpp"
 #include "Database.hpp"
-//#include "Result.hpp"
+#include "Result.hpp"
 #include "Entity.hpp"
 #include "Relation.hpp"
 
 using namespace tlp;
 
-class Result;
-
 /**
- * @brief This class is the implementation of the Database Management System describ in <Database.cpp>.
+ * @brief This class is the implementation of the Database Management System described in <Database.hpp>.
  *
- * Remark : The file <DBTools.hpp> must be inserted in order to use certain data types like : Attr, AttrType and AttrValue.
+ * Remark : The file <DBTools.hpp> must be inserted in order to use certain data types like : Attr.
  *          See this file for more details on its use.
  *
  **/
-class DatabaseImpl: public Database {
- private:
-  Graph * G;
+class DatabaseImpl: public Database, GraphWriteAbstract {
+private:
+  Graph * gRelations;
+  Graph * gEntities;
+  Graph * gResults;
   std::string name;
-  Entity * E;
-  int nbE;
-  Relation * R;
-  int nbR;
-
- public:
+  std::unordered_map<std::string, Entity *> entities;
+  std::unordered_map<std::string, Relation *> relations;
+  
+public:
   DatabaseImpl(const std::string &name);
   ~DatabaseImpl();
   void newEntity(const std::string &name, const Attribute * const attributes[], int nAttr);
-  Result * newNode(const std::string &entityName, Attribute * attributes[], int nVal);
+  void newRelation(const std::string &name, const std::string &entitySrc, const std::string &entityDst, const Attribute * const attr[], int nAttr);
+  Result * newNode(const std::string &entityName, Attribute * attr[], int nVal);
   /*const Result * newNode(const Attribute * const attributes[], int nAttr) ;*/
-  void newRelation(const std::string &relationName, const std::string &entitySrc, const std::string &entityDst, const Attribute * const attributes[], int nAttr);
-  void newEdge(const std::string &relationName, const Result * src, const Result * dst, const Attribute * const attributes[], int nVal);
+  void newEdge(const std::string &relationName, const Result * src, const Result * dst, Attribute * attr[], int nAttr);
   /*void newEdge(const std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr);*/
-  int saveDB(const std::string &path) const;
-  Database * loadDB(const char * path, const std::string &name);
-};
+  void load(const std::string &path);
+  void save(const std::string &path) const;
 
-Relation getRelation(Relation * R, int nbR, const std::string &relationName);
-Entity getEntity(Entity * E, int nbE, const std::string &entityName);
-int loadE(Entity * E, const char * path );
-int loadR(Relation * R, const char * path );
-void saveE(Entity * E, int nbE, const char * path );
-void saveR(Relation * R, int nbR, const char *path );
+  Relation * getRelation(const std::string &name);
+  Entity * getEntity(const std::string &name);
+
+private:
+  void loadEntities(const std::string &path);
+  void loadRelations(const std::string &path);
+
+  void saveEntities(const std::string &path) const;
+  void saveRelations(const std::string &path) const;
+};
 
 #endif

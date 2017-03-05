@@ -39,12 +39,14 @@ public:
   std::vector<node> * getInstance(Attribute * attr[], int nAttr) const;
   bool isInstance(const node * n) const;
   std::string getName() const;
-  int write(int fd) const;
-  void load(std::fstream &file);
+  void write(std::fstream &file) const;
+  void load(std::fstream &file, Graph * gSrc);
   void print();
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;
 };
+
+std::string getWord(std::fstream &file);
 
 #endif
