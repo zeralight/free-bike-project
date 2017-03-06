@@ -72,6 +72,8 @@ Result * DatabaseImpl::newNode(const string &entityName, Attribute * attr[], int
       rG = it->next();
       rG->addNode(n);
     }
+
+    delete it;
     
     // ajout de n dans r
     ResultImpl * r = new ResultImpl(this->gResults->addSubGraph(), this);
@@ -118,7 +120,11 @@ void DatabaseImpl::newEdge(const std::string &relationName, const Result * src, 
       nDst = itDst->next();
       r->newInstance(nSrc, nDst, attr, nAttr);
     }
+
+    delete itDst;
   }
+  
+  delete itSrc;
 }
 
 
@@ -133,7 +139,8 @@ void DatabaseImpl::load(const string &path){
     string pathE = path + "/entities.sav";
     string pathR = path + "/relations.sav";
 
-    delete this->g;
+    if (this->g)
+      delete this->g;
     
     this->g = loadGraph(pathG);
     if (this->g == NULL)

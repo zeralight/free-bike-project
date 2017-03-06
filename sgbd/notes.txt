@@ -137,6 +137,9 @@ sauvegarder uniquement l'arbre Data.
    - pb majeur : relier les éléments de Data à root lors du chargement d'une DB
   => avantage : on évite de supprimer les sous-graphes de Results et donc de laisser des objets Result incohérents à l'utilisateur
 
+- free tous les bons attributs quand on fait un load from file (supposons que la personne n'ait pas initialisé un élément vide, les anciens attr ne seront pas désalloués.)
+  -> idem dans Entity / Relation : fonction read(load ?	  )
+
 =========== Result
 
 - utilisation de smart pointer pour supprimer le sous-graphe d'un Result
