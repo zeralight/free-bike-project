@@ -68,20 +68,17 @@ Graph * Relation::getGraph() const {
 }
 
 
-const edge * Relation::newInstance(const node * src, const node * dst, Attribute * attr[], int nAttr) {
-  edge * e = new edge;
-  *e = this->g->addEdge(*src, *dst);
+edge Relation::newInstance(const node &src, const node &dst, Attribute * attr[], int nAttr) {
+  edge e;
   
   if (isValid(attr, nAttr)) {
+    e = this->g->addEdge(src, dst);
+      
     for(int i = 0 ; i < nAttr ; i++)
-      attr[i]->setEdgeValue(*e);
+      attr[i]->setEdgeValue(e);
+  }
 
-    return e;
-  }
-  else {
-    delete e;
-    return NULL;
-  }
+  return e;
 }
 
 
@@ -91,17 +88,17 @@ void Relation::delInstance(const std::vector<edge> * eSet) {
 }
 
 
-void Relation::delInstance(const edge * e) {
-  this->g->delEdge(*e, true);
+void Relation::delInstance(const edge &e) {
+  this->g->delEdge(e, true);
 }
 
 
-bool Relation::editInstance(edge * e, Attribute * attr[], int nAttr) {
+bool Relation::editInstance(edge &e, Attribute * attr[], int nAttr) {
   if (!isInstance(e) || !isValid(attr, nAttr))
     return false;
 
   for (int i = 0 ; i < nAttr ; i++)
-    attr[i]->setEdgeValue(*e);
+    attr[i]->setEdgeValue(e);
 
   return true;
 }
@@ -113,7 +110,7 @@ bool Relation::editInstance(std::vector<edge> * eSet, Attribute * attr[], int nA
   
   for (auto it = eSet->begin() ; it != eSet->end() ; it++) {
     e = *it;
-    res = res && editInstance(&e, attr, nAttr);
+    res = res && editInstance(e, attr, nAttr);
   }
 
   return res;
@@ -127,7 +124,7 @@ std::vector<edge> * Relation::getInstance(Attribute * attr[], int nAttr) const {
 }
 
 
-std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attribute * attr[], int nAttr, direction dir) const {
+std::vector<edge> * Relation::getInstance(const node &nA, const node &nB, Attribute * attr[], int nAttr, direction dir) const {
   if (this->isValid(attr, nAttr))
     return getEdges(this->g, nA, nB, attr, nAttr, dir);
   else
@@ -135,7 +132,7 @@ std::vector<edge> * Relation::getInstance(const node * nA, const node * nB, Attr
 }
 
 
-std::vector<edge> * Relation::getInstance(const node * n, Attribute * attr[], int nAttr, direction dir) const {
+std::vector<edge> * Relation::getInstance(const node &n, Attribute * attr[], int nAttr, direction dir) const {
   if (this->isValid(attr, nAttr))
     return getEdges(this->g, n, attr, nAttr, dir);
   else
@@ -156,8 +153,8 @@ bool Relation::isValid(Attribute * attr[], int nAttr) const {
 }
 
 
-bool Relation::isInstance(const edge * e) const {
-  return this->g->isElement(*e);
+bool Relation::isInstance(const edge &e) const {
+  return this->g->isElement(e);
 }
 
 std::string Relation::getName() const{
@@ -213,6 +210,8 @@ void Relation::load(std::fstream &file, Graph * gSrc, std::unordered_map<std::st
       this->entityDst = entityList[nameDst];
 
       this->g = gSrc->getSubGraph(this->name);
+      if (this->g == NULL)
+	throw std::string("ERROR: impossible to load the relation " + this->name);
     }
     else if (buff == "attr" && read) {
       std::string name = getWord(file);

@@ -65,20 +65,17 @@ Graph * Entity::getGraph() const {
 }
 
 
-const node * Entity::newInstance(Attribute * attr[], int nAttr) {
-  node * n = new node;
-  *n = this->g->addNode();
+node Entity::newInstance(Attribute * attr[], int nAttr) {
+  node n;
 
   if (isValid(attr, nAttr)) {
-    for(int i = 0 ; i < nAttr ; i++)
-      attr[i]->setNodeValue(*n);
+    n = this->g->addNode();
     
-    return n;
+    for(int i = 0 ; i < nAttr ; i++)
+      attr[i]->setNodeValue(n);
   }
-  else {
-    delete n;
-    return NULL;
-  }
+
+  return n;
 }
 
 
@@ -88,17 +85,17 @@ void Entity::delInstance(const std::vector<node> * nSet) {
 }
 
 
-void Entity::delInstance(const node * n) {
-  this->g->delNode(*n, true);
+void Entity::delInstance(const node &n) {
+  this->g->delNode(n, true);
 }
 
 
-bool Entity::editInstance(node * n, Attribute * attr[], int nAttr) {
+bool Entity::editInstance(node &n, Attribute * attr[], int nAttr) {
   if (!isInstance(n) || !isValid(attr, nAttr))
     return false;
 
   for (int i = 0 ; i < nAttr ; i++)
-    attr[i]->setNodeValue(*n);
+    attr[i]->setNodeValue(n);
 
   return true;
 }
@@ -110,7 +107,7 @@ bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAtt
   
   for (auto it = nSet->begin() ; it != nSet->end() ; it++) {
     n = *it;
-    res = res && editInstance(&n, attr, nAttr);
+    res = res && editInstance(n, attr, nAttr);
   }
 
   return res;
@@ -139,8 +136,8 @@ bool Entity::isValid(Attribute * attr[], int nAttr) const {
   return true;
 }
 
-bool Entity::isInstance(const node * n) const {
-  return this->g->isElement(*n);
+bool Entity::isInstance(const node &n) const {
+  return this->g->isElement(n);
 }
 
 std::string Entity::getName() const{
@@ -222,6 +219,8 @@ void Entity::load(std::fstream &file, Graph * gSrc) {
       this->nameProp = gSrc->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
 
       this->g = gSrc->getSubGraph(this->name);
+      if (this->g == NULL)
+	throw std::string("ERROR: impossible to load the entity " + this->name);
     }
     else if (buff == "attr" && read) {
       std::string name = getWord(file);

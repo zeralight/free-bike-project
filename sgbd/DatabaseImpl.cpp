@@ -60,21 +60,23 @@ void DatabaseImpl::newEntity(const string &name, const Attribute * const attribu
 Result * DatabaseImpl::newNode(const string &entityName, Attribute * attr[], int nAttr){
   try {
     Entity * e = getEntity(entityName);
-    const node * n = e->newInstance(attr, nAttr);
     Graph * rG;
+    
+    const node n = e->newInstance(attr, nAttr);
+    if (!n.isValid())
+      throw string("ERROR: impossible to create an instance of " + entityName);
 
     // Add new node in all Relation graphs
     Iterator<Graph *> * it = this->gRelations->getSubGraphs();
     while (it->hasNext()) {
       rG = it->next();
-      rG->addNode(*n);
+      rG->addNode(n);
     }
     
     // ajout de n dans r
     ResultImpl * r = new ResultImpl(this->gResults->addSubGraph(), this);
-    r->addNode(*n);
+    r->addNode(n);
 
-    delete n;
     return r;
   }
   catch(const string &errMessage) {
@@ -114,7 +116,7 @@ void DatabaseImpl::newEdge(const std::string &relationName, const Result * src, 
     
     while(itDst->hasNext()) {
       nDst = itDst->next();
-      r->newInstance(&nSrc, &nDst, attr, nAttr);
+      r->newInstance(nSrc, nDst, attr, nAttr);
     }
   }
 }

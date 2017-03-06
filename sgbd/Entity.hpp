@@ -31,13 +31,13 @@ public:
   // Doit disparaitre ou passer private : debug
   Graph * getGraph() const;
 
-  const node * newInstance(Attribute * attr[], int nAttr);
+  node newInstance(Attribute * attr[], int nAttr);
   void delInstance(const std::vector<node> * nSet);
-  void delInstance(const node * n); // redondant ?
+  void delInstance(const node &n); // redondant ?
   bool editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr);
-  bool editInstance(node * n, Attribute * attr[], int nAttr);
+  bool editInstance(node &n, Attribute * attr[], int nAttr);
   std::vector<node> * getInstance(Attribute * attr[], int nAttr) const;
-  bool isInstance(const node * n) const;
+  bool isInstance(const node &n) const;
   std::string getName() const;
   void write(std::fstream &file) const;
   void load(std::fstream &file, Graph * gSrc);

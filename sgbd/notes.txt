@@ -88,6 +88,7 @@
 
 - test sur le nom dans isValid
 
+%%% DONE
 - passage par pointeur des edge / node = mauvaise idée : à cause des free
   -> edge() et node() créent des element invalides : tester la validité plutot que renvoyer NULL
 
@@ -102,13 +103,14 @@
 
 ----------- to do
 
+%%% DONE
 - faire avec les Node
 
 - réfléchir à l'utilité du fichier :
   -> migrer dans une des classes de Recherche ?
   -> faire une classe pour ces fonctions ?
 
-- DBSearch ?
+- renommer DBSearch ?
 
 
 ============ Database
@@ -138,11 +140,13 @@ sauvegarder uniquement l'arbre Data.
 =========== Result
 
 - utilisation de smart pointer pour supprimer le sous-graphe d'un Result
+  -> ou alors dans le destructeur (pb si user utilise une seult structure en local -> fonctions operator= et autres a modif en conséquence)
 
 
 
 %%%%%% TO DO GENERAL
 
+%%% MAJ : trop tard
 - beaucoup de gestion inutile sur les attributs ? -> revoir Entity / Relation en utilisant fonctions tulip
   -> typiquement garder attribut Attribute dans ces classes
   -> mesurer perfs pour décider
@@ -154,6 +158,7 @@ sauvegarder uniquement l'arbre Data.
 
 - /!\ vérifier nom des propriétés, éviter de doubler les prop ou alors changer le nom pour <propName>-<entityName>
 
+%%% MAJ : pas trop utile vu qu'on extrait rapidement un itérateur d'un vecteur, et puis on a les tests au bornes
 - utilisation d'itérateurs plutot que des vecteurs en retour de fonction
 
 - /!\ utilisation d'une unique instance d'Entity ou Relation, sinon probleme lors de la suppression.
@@ -164,9 +169,11 @@ sauvegarder uniquement l'arbre Data.
 
 simplifier utilisation user :
 -----------------------------
+%%% DONE
 - dans db, Entite par chaine et non par objet
   -> faisable qu'avec table de hachage dans Database
 
+%%% MAJ : pas compris,...
 - Migrer éléments de DBTools dans Database ?
 
 

@@ -42,8 +42,8 @@ int main() {
 
   //create the main graphes
   Graph * graph = newGraph();
-  Graph * graphE = graph->addSubGraph("Entity");
-  Graph * graphR = graphE->addSubGraph("Relation");
+  Graph * graphE = graph->addSubGraph("Personne");
+  Graph * graphR = graphE->addSubGraph("FriendOf");
 
   graph->setName("graphGet");
   
@@ -59,7 +59,7 @@ int main() {
   STRING prenom;
   STRING nom;
   STRING nationalite;
-  const node * nList[N_NODE];
+  node nList[N_NODE];
     
   for (int i = 0 ; i < N_NODE ; i++) {
     prenom = "Roger";
@@ -88,7 +88,7 @@ int main() {
 
   //create new instancies of the relation
   INT date;
-  const edge * rList[N_EDGE];
+  edge rList[N_EDGE];
   
   for (int i = 0 ; i < N_NODE ; i++) {
     for (int j = 0 ; j < N_NODE - 1 ; j++) {
@@ -162,7 +162,7 @@ int main() {
 
   //delete a set of nodes
   res->clear();
-  res->push_back(*nList[2]);
+  res->push_back(nList[2]);
   e->delInstance(res);
 
   //delete one edge
@@ -170,7 +170,7 @@ int main() {
 
   //delete a set of edges
   resAll->clear();
-  resAll->push_back(*rList[9]);
+  resAll->push_back(rList[9]);
   r->delInstance(resAll);
 
   tmp = saveGraph(graph, "testDel.tlp");
@@ -202,7 +202,7 @@ int main() {
   std::unordered_map<std::string, Entity *> eTab;
   eTab[e->getName()] = e;
   file.open("testRel.sav");
-  r->load(file, graph, eTab);
+  r->load(file, graphE, eTab);
   r->print();
   file.close();
 
@@ -210,13 +210,7 @@ int main() {
   delAttr(attr, 3);
   delAttr(attrR, 1);
   delAttr(cond, 1);
-  
-  for (int i = 0 ; i < N_NODE ; i++)
-    delete nList[i];
-
-  for (int i = 0 ; i < N_EDGE ; i++)
-    delete rList[i];
-  
+    
   delete nSet;
   delete res;
   delete resAll;
