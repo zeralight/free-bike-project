@@ -51,6 +51,9 @@ int main() {
   delAttr(attrPerson, 3);
   delAttr(attrFriendOf, 1);
 
+  for (int i = 0 ; i < N_PERSON ; i++)
+    delResult(res[i]);
+
   delDB(db);
   delDB(dbCopy);
 }
