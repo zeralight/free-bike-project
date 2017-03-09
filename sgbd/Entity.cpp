@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -120,6 +121,14 @@ std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
   }
   else
     return new std::vector<node>;
+}
+
+
+std::vector<node> * Entity::getInstance(Graph * g) const {
+  Attribute * name[1] = {new Attr<STRING>(PROP_ENTITY_NAME, this->name)};
+  name[0]->setProperty(nameProp);
+  std::vector<node> * nodes = getNodes(g, name, 1);
+  return nodes;
 }
 
 

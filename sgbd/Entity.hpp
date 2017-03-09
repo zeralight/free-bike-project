@@ -37,6 +37,7 @@ public:
   bool editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr);
   bool editInstance(node &n, Attribute * attr[], int nAttr);
   std::vector<node> * getInstance(Attribute * attr[], int nAttr) const;
+  std::vector<node> * getInstance(Graph * g) const;
   bool isInstance(const node &n) const;
   std::string getName() const;
   void write(std::fstream &file) const;

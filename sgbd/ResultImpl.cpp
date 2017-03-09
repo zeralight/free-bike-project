@@ -13,20 +13,6 @@ ResultImpl::ResultImpl(Graph * g, DatabaseImpl * db): GraphWriteAbstract(g, db) 
 ResultImpl::~ResultImpl() {}
 
 
-bool ResultImpl::editResultNodes(Entity& e, Attribute * attr[], int nAttr){
-  std::vector<node> * nodes = e.getInstance(attr, nAttr);
-  bool res = e.editInstance(nodes, attr, nAttr);
-  return res;
-}
-
-
-bool ResultImpl::editResultEdges(Relation& r, Attribute * attr[], int nAttr){
-  std::vector<edge> * edges = r.getInstance(attr, nAttr);
-  bool res = r.editInstance(edges, attr, nAttr);
-  return res;
-}
-
-
 Iterator<node> * ResultImpl::getNodes() const {
   return this->g->getNodes();
 }
@@ -44,5 +30,15 @@ void ResultImpl::addNode(const node &n) {
 
 void ResultImpl::addEdge(const edge &e) {
   this->g->addEdge(e);
+}
+
+
+bool ResultImpl::editNodes(const std::string &entityName, Attribute * attr[], int nAttr) {
+  GraphWriteAbstract::editNodes(entityName, attr, nAttr);
+}
+
+
+bool ResultImpl::editEdges(const std::string &relationName, Attribute * attr[], int nAttr) {
+  GraphWriteAbstract::editEdges(relationName, attr, nAttr);
 }
 

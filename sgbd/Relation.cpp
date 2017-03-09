@@ -140,6 +140,14 @@ std::vector<edge> * Relation::getInstance(const node &n, Attribute * attr[], int
 }
 
 
+std::vector<edge> * Relation::getInstance(Graph * g) const {
+  Attribute * name[1] = {new Attr<STRING>(PROP_RELATION_NAME, this->name)};
+  name[0]->setProperty(nameProp);
+  std::vector<edge> * edges = getEdges(g, name, 1);
+  return edges;
+}
+
+
 bool Relation::isValid(Attribute * attr[], int nAttr) const {
   for (int i = 0 ; i < nAttr ; i++) {
     auto it = this->attr.find(attr[i]->getLabel());

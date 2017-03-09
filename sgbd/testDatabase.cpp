@@ -41,6 +41,9 @@ int main() {
     }
   }
 
+  Attribute * modif[1] = {new Attr<STRING>("lastname", "Moore")};
+  res[0]->editNodes("Person", modif, 1);
+  
   db->save(".");
 
   Database * dbCopy = newDB("");

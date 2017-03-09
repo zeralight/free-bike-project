@@ -96,6 +96,11 @@
 
 - suppression Entity/Relation : mettre nameProp à ""
 
+- fonctions getInstance a fusionner avec argument graph = NULL par défaut
+  - évite de dupliquer les fonctions pour pas grand chose
+
+- invalidation de Result en cas de suppression de noeud, relations, ...
+
 
 ============ Tools
 

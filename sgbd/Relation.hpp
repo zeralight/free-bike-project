@@ -42,6 +42,7 @@ public:
   std::vector<edge> * getInstance(Attribute * attr[], int Attr) const;
   std::vector<edge> * getInstance(const node &n, Attribute * attr[], int Attr, direction dir) const;
   std::vector<edge> * getInstance(const node &nA, const node &nB, Attribute * attr[], int Attr, direction dir) const;
+  std::vector<edge> * getInstance(Graph * g) const;
   std::string getName() const;
   
   void write(std::fstream &file) const;
