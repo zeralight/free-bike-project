@@ -35,7 +35,6 @@ int main(int argc, char **argv)
     }
     QCoreApplication app(argc, argv);
     tlp::initTulipLib();
-    std::setlocale(LC_NUMERIC, "en_US.UTF-8"); // Avoid system floatting number representation (like 25,25)
     run(argv[1]);
     return 0;
 }
@@ -136,7 +135,7 @@ void run(char* const filePath) {
             longitudeProperty->setNodeValue(tulipNodes[i], nodes[i].longitude);
             isBicycleProperty->setNodeValue(tulipNodes[i], nodes[i].isBicycleParking);
         }
-
+/*
         // viewLayout property
         auto viewLayoutProperty = tulipGraph->getLocalProperty<tlp::LayoutProperty>("viewLayout");
         viewLayoutProperty->setAllNodeValue(tlp::Coord());
@@ -145,6 +144,7 @@ void run(char* const filePath) {
             auto xy = osm::gpsToCartesian(nodes[i].latitude, nodes[i].longitude);
             viewLayoutProperty->setNodeValue(tulipNodes[i], tlp::Coord(xy.first, xy.second, 0.));
         }
+*/
 /*
         // nextHop property
         // stored as a string because IntProperty can't hold all possible ids: the real type of nodes

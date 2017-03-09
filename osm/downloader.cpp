@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     }
     std::string cityName = argv[1];
     Downloader downloader;
-    downloader.download("talence);
+    downloader.download("talence");
     //downloader.download(cityName);
 
     return 0;
