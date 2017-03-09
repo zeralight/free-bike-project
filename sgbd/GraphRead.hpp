@@ -7,6 +7,7 @@
 #include <tulip/Graph.h>
 
 #include "DBTools.hpp"
+//#include "Result.hpp"
 
 using namespace tlp;
 
@@ -14,6 +15,10 @@ class DatabaseImpl;
 
 
 class GraphRead {
+  /*
+  Result * getNodes(const std::string &entityName, Attribute * attr[] = NULL, int nAttr = 0) const;
+  Result * getEdges(const std::string &relationName, Attribute * attr[] = NULL, int nAttr = 0) const;
+  */
 };
 
 

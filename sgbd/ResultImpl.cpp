@@ -7,7 +7,9 @@
 using namespace tlp;
 
 
-ResultImpl::ResultImpl(Graph * g, DatabaseImpl * db): GraphWriteAbstract(g, db) {}
+ResultImpl::ResultImpl(const std::string &name, Graph * g, DatabaseImpl * db): GraphWriteAbstract(g, db) {
+  g->setName(name);
+}
 
 
 ResultImpl::~ResultImpl() {}

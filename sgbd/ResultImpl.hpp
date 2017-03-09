@@ -23,7 +23,7 @@ class ResultImpl : public GraphWriteAbstract, public Result {
   using GraphWriteAbstract::editEdges;
   
 public:
-  ResultImpl(Graph *, DatabaseImpl *);
+  ResultImpl(const std::string &name, Graph *, DatabaseImpl *);
   ~ResultImpl();
   
   // opérations sur le edge vraiment utile ?

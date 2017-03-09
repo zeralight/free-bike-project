@@ -130,6 +130,9 @@
 
 - Ajouter noeud dans le sous-graphe relation associé qu'au moment de l'ajout de l'arc (newEdge) et non dans newNode
 
+- Save database : quand load depuis un fichier sauvegarder dans ce meme fichier :
+  - fonction save() sans arguments
+
 - Suppression des Results avant save() :
 une idée est de changer la hiérarchie de l'arbre de la DB :
   	      root
@@ -200,3 +203,36 @@ perfs
 -> test.cpp Attr
 
 !!!!!!! EXCEPTIONS
+
+
+============= Reflexion requetes
+
+GraphRead :
+-----------
+
+match(pattern) : retourne un resultat contenant tous les noeuds du graph qui correspondent au pattern en entrée
+
+get(): retourne un itérateur sur les éléments qui match le label
+
+
+GraphWrite :
+------------
+
+where(cond) : filtre en fonction de certaines conditions passées en entrée
+
+	
+Pattern : objet supplémentaire ?
+--------
+
+- création d'un pattern avec des labels associés aux éléments.
+
+
+Cond : objet supplémentaire ?
+-----
+
+
+============= import.cpp
+
+- id_max users ne match pas le nombre d'entrées du csv
+- bordélique au niveau des dates, mauvais indices pour les tableaux.
+- ajouter les Root pour Date / Time

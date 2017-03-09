@@ -76,7 +76,7 @@ Result * DatabaseImpl::newNode(const string &entityName, Attribute * attr[], int
     delete it;
     
     // ajout de n dans r
-    ResultImpl * r = new ResultImpl(this->gResults->addSubGraph(), this);
+    ResultImpl * r = new ResultImpl(entityName, this->gResults->addSubGraph(), this);
     r->addNode(n);
 
     return r;

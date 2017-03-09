@@ -186,7 +186,7 @@ void Relation::write(std::fstream &file) const {
     buff += "\t(attr " + tmp->getLabel() + " " + tmp->getTypeName() + ")\n";
   }
 
-  buff += ")";
+  buff += ")\n";
 
   file << buff.c_str();
 }
