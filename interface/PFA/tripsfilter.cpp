@@ -8,7 +8,7 @@ TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
     minDensityTrip(new QSpinBox),
     maxDensityTrip(new QSpinBox)
 {
-    setWindowTitle("Filtre utilisateurs");
+    setWindowTitle("Filtre trajets");
     resize(300,300);
     QGridLayout * lay = new QGridLayout;
     minLengthTrip->setRange(1, 3000);
@@ -18,9 +18,9 @@ TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
     minDensityTrip->setSingleStep(100);
     maxDensityTrip->setSingleStep(100);
     lay->addWidget(new QLabel("Stations de départ :(àfaire)"),0,0,1,5);
-    lay->addWidget(beginStation,1,0);
+    lay->addWidget(beginStation,1,0,1,3);
     lay->addWidget(new QLabel("Sations d'arrrivée :(àfaire)"),2,0,1,5);
-    lay->addWidget(endStation,3,0);
+    lay->addWidget(endStation,3,0,1,3);
     lay->addWidget(new QLabel("Temps de trajet (en minutes) :"),4,0,1,5);
     lay->addWidget(new QLabel("Min : "),5,0);
     lay->addWidget(minLengthTrip,5,1);
@@ -41,6 +41,7 @@ TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
 
 
 void TripsFilter::validation(){
+
     this->close();
 }
 

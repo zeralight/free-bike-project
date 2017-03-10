@@ -1,6 +1,12 @@
 #include "usersfilter.h"
 
-UsersFilter::UsersFilter(QWidget *parent) : QWidget(parent),men(new QCheckBox("Homme")), women(new QCheckBox("Femme")), minimumAge(new QSpinBox),maximumAge(new QSpinBox),subscriber(new QCheckBox("Abonnés")),nonSubscriber(new QCheckBox("Non abonnés"))
+UsersFilter::UsersFilter(QWidget *parent) : QWidget(parent),
+    men(new QCheckBox("Homme")),
+    women(new QCheckBox("Femme")),
+    minimumAge(new QSpinBox),
+    maximumAge(new QSpinBox),
+    subscriber(new QCheckBox("Abonnés")),
+    nonSubscriber(new QCheckBox("Non abonnés"))
 {
     setWindowTitle("Filtre utilisateurs");
     resize(300,300);

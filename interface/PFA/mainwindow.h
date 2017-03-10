@@ -2,9 +2,15 @@
 #define MAINWINDOW_H
 #include <QMenuBar>
 #include <QMainWindow>
-#include "questionnairechaleur.h"
 #include <QHBoxLayout>
 #include <QPushButton>
+
+
+#include "heatmapsurvey.h"
+
+/*
+ * @brief This class is a widget creating the main window of the software.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
