@@ -1,221 +1,290 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include <tulip/TlpTools.h>
 #include <tulip/Node.h>
 #include <tulip/Edge.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <iostream>
-#include <stdio.h>
-#include <string.h>
 
 #include "DBTools.hpp"
 #include "Database.hpp"
 #include "DatabaseImpl.hpp"
 #include "Entity.hpp"
 #include "Relation.hpp"
-//#include "Result.hpp"
+#include "Result.hpp"
+#include "ResultImpl.hpp"
 
-#define LEN 1000
+
 using namespace std;
 
-DatabaseImpl::DatabaseImpl(const string &name){
-  Graph *G = newGraph();
-  this->name.assign(name);
-  nbE=0;
-  nbR=0;
+
+DatabaseImpl::DatabaseImpl(const string &name): GraphWriteAbstract(newGraph(), this) {
+  this->g->setName(name);
+  this->gRelations = this->g->addSubGraph("Relations");
+  this->gEntities = this->g->addSubGraph("Entities");
+  this->gResults = this->g->addSubGraph("Results");
+  this->name = name;
+  this->gEntities->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
+  this->gRelations->getLocalProperty<StringProperty>(PROP_RELATION_NAME);
 }
+
 
 DatabaseImpl::~DatabaseImpl(){
-  name.string::~string();
-  int i;
-  for(i=0; i<nbE; i++)
-  {
-    E[i].~Entity();
-  }
-  for(i=0; i<nbR; i++)
-  {
-    R[i].~Relation();
-  }
-  G->tlp::Graph::~Graph();
-}
+  for (auto it = entities.begin() ; it != entities.end() ; it = entities.erase(it))
+    delete (*it).second;
 
-void DatabaseImpl::newEntity(const string &name, const Attribute * const attributes[], int nAttr){
-    int i;
-    try{
-      for(i=0; i<nbE; i++)
-      {
-        if ((E[i].getName()).compare(name)==0)
-          throw string("ERREUR : Entity is already exist");
-      }
-      Graph * entityGraph = this->G->addSubGraph(name);
-      Entity * e = new Entity(name, attributes, nAttr, entityGraph);
-      nbE ++;
-      E=(Entity *)realloc(E, sizeof(Entity)*nbE);
-      E[nbE-1]=*e;
-    }
-    catch(string const& chaine)
-    {
-      cerr << chaine << endl;
-    }
+  for (auto it = relations.begin() ; it != relations.end() ; it = relations.erase(it))
+    delete (*it).second;
 }
 
 
-Result * DatabaseImpl::newNode(const string &entityName, Attribute * attributes[], int nVal){
+void DatabaseImpl::newEntity(const string &name, const Attribute * const attributes[], int nAttr) {
   try{
-    Entity e = getEntity(E, nbE, entityName);
-    const node * n = e.newInstance(attributes, nVal);
+    if (entities.find(name) != entities.end())
+      throw string("ERROR: Entity " + name + " already exists");
+    
+    Graph * entityGraph = this->gEntities->addSubGraph(name);
+    Entity * e = new Entity(name, attributes, nAttr, entityGraph);
+    entities[name] = e;
+  }
+  catch(const string &errMessage) {
+    cerr << errMessage << endl;
+  }
+}
+
+
+Result * DatabaseImpl::newNode(const string &entityName, Attribute * attr[], int nAttr){
+  try {
+    Entity * e = getEntity(entityName);
+    Graph * rG;
+    
+    const node n = e->newInstance(attr, nAttr);
+    if (!n.isValid())
+      throw string("ERROR: impossible to create an instance of " + entityName);
+
+    // Add new node in all Relation graphs
+    Iterator<Graph *> * it = this->gRelations->getSubGraphs();
+    while (it->hasNext()) {
+      rG = it->next();
+      rG->addNode(n);
+    }
+
+    delete it;
+    
     // ajout de n dans r
-    Result * r;
+    ResultImpl * r = new ResultImpl(entityName, this->gResults->addSubGraph(), this);
+    r->addNode(n);
+
     return r;
   }
-  catch(string const& chaine)
-  {
-     cerr << chaine << endl;
+  catch(const string &errMessage) {
+     cerr << errMessage << endl;
   }
 }
 
 
+void DatabaseImpl::newRelation(const std::string &name, const std::string &entitySrc, const std::string &entityDst, const Attribute * const attr[], int nAttr) {
+  try {
+    if (relations.find(name) != relations.end())
+      throw string("ERROR: Relation " + name + " already exists");
 
-Database * DatabaseImpl::loadDB(const char * path, const string &name){
-      try{
-        PluginProgress * p;
-        string pathG = "/Graph";
-        string pathE = "/Entities";
-        string pathR = "/Relations";
-        string result;
-        result = path;
-        result = result + pathG;
-	
-        G = loadGraph(result, p);
-        if (G==NULL)
-            throw  string("ERREUR : Graph no load");
+    Entity * src = getEntity(entitySrc);
+    Entity * dst = getEntity(entityDst);
 
-        string result1;
-        result1 = path;
-        result1 = result1 + pathE;
-	
-        string result2;
-        result2 = path;
-        result2 = result2 + pathR;
-
-        this->name.assign(name);
-        nbE = loadE(E, result1.c_str());
-        nbR = loadR(R, result2.c_str());
-      }
-      catch(string const &chaine)
-      {
-         cerr << chaine << endl;
-      }
+    Graph * relationGraph = this->gRelations->addSubGraph(name);
+    
+    Relation * r = new Relation(name, src, dst, attr, nAttr, relationGraph);
+    relations[name] = r;
+  }
+  catch(const string &errMessage) {
+    cerr << errMessage << endl;
+  }
 }
 
 
-
-
-
-Relation getRelation(Relation * R, int nbR,  const string &relationName){
-    int i;
-    for(i=0; i<nbR; i++)
-    {
-      if ((R[i].getName()).compare(relationName)==0)
-        return R[i];
+void DatabaseImpl::newEdge(const std::string &relationName, const Result * src, const Result * dst, Attribute * attr[], int nAttr) {
+  node nSrc;
+  node nDst;
+  Relation * r = getRelation(relationName);
+  Iterator<node> * itSrc = ((const ResultImpl *) src)->getNodes();
+  
+  while(itSrc->hasNext()) {
+    nSrc = itSrc->next();
+    Iterator<node> * itDst = ((const ResultImpl *) dst)->getNodes();
+    
+    while(itDst->hasNext()) {
+      nDst = itDst->next();
+      r->newInstance(nSrc, nDst, attr, nAttr);
     }
-    throw string("ERREUR : Relation doesn't exist");
-}
 
-Entity getEntity(Entity * E, int nbE,  const string &entityName){
-    int i;
-    for(i=0; i<nbE; i++)
-    {
-      if ((E[i].getName()).compare(entityName)==0)
-        return E[i];
-    }
-    throw string("ERREUR : Entity doesn't exist");
-}
-
-void saveE(Entity * E, int nbE, const char * path ){
-  int fd=creat(path, 0600);
-  int err, err2, i;
-  if (fd==-1)
-    throw string("ERREUR : create save E");
-
-  char * c;
-  sprintf(c,"%d\n",nbE);
-  err = write(fd, c,strlen(c)+2);
-  if (err==-1)
-    throw string("ERREUR : nb entities no save");
-
-  for(i=0;i<nbE; i++)
-  {
-    err = E[i].writeEntity(fd); //a coder dans entity
-    err2 = write(fd, "\n", 2);
-    if (err==-1 || err2==-1)
-      throw string("ERREUR : one entity isn't save");
+    delete itDst;
   }
-  err=close(fd);
-  if (fd==-1)
-    throw string("ERREUR : close save E");
+  
+  delete itSrc;
 }
 
 
-void saveR(Relation * R, int nbR, const char * path ){
-    int fd=creat(path, 0600);
-    int err, err2, i;
-    if (fd==-1)
-      throw string("ERREUR : create save R");
+void DatabaseImpl::load(const string &path){
+  try {
+    ifstream file(path.c_str());
+    if (!file)
+      throw string("ERROR: the database " + path + " doesn't exist");
+    file.close();
+    
+    string pathG = path + "/graph.tlp";
+    string pathE = path + "/entities.sav";
+    string pathR = path + "/relations.sav";
 
-    char * c;
-    sprintf(c,"%d\n",nbR);
-    err = write(fd, c,strlen(c)+2);
-    if (err==-1)
-      throw string("ERREUR : nb relation no save");
-
-    for(i=0;i<nbR; i++)
-    {
-      err = R[i].writeRelation(fd); //a coder dans relation
-      err2 = write(fd, "\n", 2);
-      if (err==-1 || err2==-1)
-        throw string("ERREUR : one relation isn't save");
-    }
-    err=close(fd);
-    if (fd==-1)
-      throw string("ERREUR : close save R");
+    if (this->g)
+      delete this->g;
+    
+    this->g = loadGraph(pathG);
+    if (this->g == NULL)
+      throw string("ERROR: impossible to load the graph " + pathG);
+        
+    this->name = this->g->getName();
+    this->gEntities = this->g->getSubGraph("Entities");
+    this->gRelations = this->g->getSubGraph("Relations");
+    this->gResults = this->g->getSubGraph("Results");
+    
+    this->loadEntities(pathE);
+    this->loadRelations(pathR);
+  }
+  catch(const string &errMessage) {
+    cerr << errMessage << endl;
+  }
 }
 
-int loadE(Entity * E, const char * path ){
-  FILE * fd=fopen(path, "r");
-  if (fd==NULL)
-    throw string("ERREUR : file E not found");
 
-  char b[LEN];
-  fgets(b, LEN, fd);
-  b[strlen(b)-3]='\0';
-  int nbE=atoi(b);
-  int i=0;
-  while (fgets(b, LEN, fd)!=NULL){
-    E[i].load(b);
-    i++;
+void DatabaseImpl::save(const string &path) const {
+  try {
+    string dbPath = path + "/" + this->name + ".db";
+    int ret = mkdirat(AT_FDCWD, dbPath.c_str(), S_IFDIR | S_IRWXU);
+    if (ret == -1 && errno != EEXIST)
+      throw string("ERROR: impossible to create the database at " + path);    
+    string pathG = dbPath + "/graph.tlp";
+    string pathE = dbPath + "/entities.sav";
+    string pathR = dbPath + "/relations.sav";
+
+    ret = saveGraph(this->g, pathG);
+    if (!ret)
+      throw string("ERROR: impossible to save the graph at " + pathG);
+    
+    this->saveEntities(pathE);
+    this->saveRelations(pathR);
+  }
+  catch (const string &errMessage) {
+    cerr << errMessage << endl;
+  }
+}
+
+
+Relation * DatabaseImpl::getRelation(const string &name) {
+  auto rPtr = relations.find(name);
+  if (rPtr == relations.end())
+    throw string("ERROR: Relation " + name + " doesn't exist");
+
+  return (*rPtr).second;
+}
+
+
+Entity * DatabaseImpl::getEntity(const string &name) {
+  auto ePtr = entities.find(name);
+  if (ePtr == entities.end())
+    throw string("ERROR: Entity " + name + " doesn't exist");
+
+  return (*ePtr).second;
+}
+
+
+void DatabaseImpl::saveEntities(const string &path) const {
+  fstream file;
+  string buff;
+  Entity * e;
+  file.open(path, ios_base::out);
+  
+  if (!file)
+    throw string("ERROR: impossible to create file " + path);
+
+  file.flush();
+
+  buff = to_string(entities.size());
+  file << buff.c_str() << endl;
+  
+  for(auto it = entities.begin() ; it != entities.end() ; it++) {
+    e = (*it).second;
+    e->write(file);
   }
 
-  fclose(fd);
-  return nbE;
+  file.close();
 }
 
-int loadR(Relation * R, const char * path ){
-  FILE * fd=fopen(path, "r");
-  if (fd==NULL)
-    throw string("ERREUR : file R not found");
 
-  char b[LEN];
-  fgets(b, LEN, fd);
-  b[strlen(b)-3]='\0';
-  int nbR=atoi(b);
-  int i=0;
-  while (fgets(b, LEN, fd)!=NULL){
-    R[i].load(b);
-    i++;
+void DatabaseImpl::saveRelations(const string &path) const {
+  fstream file;
+  string buff;
+  Relation * r;
+  file.open(path, ios_base::out);
+  
+  if (!file)
+    throw string("ERROR: impossible to create file " + path);
+
+  file.flush();
+
+  buff = to_string(relations.size());
+  file << buff.c_str() << endl;
+  
+  for(auto it = relations.begin() ; it != relations.end() ; it++) {
+    r = (*it).second;
+    r->write(file);
   }
 
-  fclose(fd);
-  return nbR;
+  file.close();
+}
+
+
+void DatabaseImpl::loadEntities(const string &path){
+  fstream file;
+  string buff;
+  int n;
+  file.open(path);
+
+  if (!file)
+    throw string("ERROR: impossible to open file " + path);
+  
+  buff = getWord(file);
+  n = stoi(buff);
+
+  for (int i = 0 ; i < n ; i++) {
+    Entity * e = new Entity();
+    e->load(file, this->gEntities);
+    entities[e->getName()] = e;
+  }
+
+  file.close();
+}
+
+void DatabaseImpl::loadRelations(const string &path) {
+  fstream file;
+  string buff;
+  int n;
+  file.open(path);
+
+  if (!file)
+    throw string("ERROR: impossible to open file " + path);
+  
+  buff = getWord(file);
+  n = stoi(buff);
+
+  for (int i = 0 ; i < n ; i++) {
+    Relation * r = new Relation();
+    r->load(file, this->gRelations, this->entities);
+    relations[r->getName()] = r;
+  }
+
+  file.close();
 }

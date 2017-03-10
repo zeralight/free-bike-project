@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include <tulip/Graph.h>
 #include <tulip/Node.h>
 #include <tulip/StringProperty.h>
 #include <tulip/DoubleProperty.h>
@@ -86,6 +87,7 @@ protected:
   void setTypeName(const std::string &);
   virtual void setProperty(const void *) =0;
   virtual void setProperty(const Attribute *) =0;
+  virtual void setProperty(tlp::Graph *) =0;
   virtual void setNodeValue(tlp::node &) const =0;
   virtual void setEdgeValue(tlp::edge &) const =0;
   virtual void set(const void *) =0;
@@ -123,6 +125,7 @@ public:
 private:
   void setProperty(const void * prop);
   void setProperty(const Attribute * attr);
+  void setProperty(tlp::Graph * g);
   void setNodeValue(tlp::node &n) const ;
   void setEdgeValue(tlp::edge &e) const ;
   void set(const void * value);
@@ -133,6 +136,9 @@ private:
 
 template <class T>
 T unserialize(const std::string &serializedValue, const std::string &format = "");
+
+Attribute * newAttr(const std::string &label, const std::string &typeName);
+void delAttr(Attribute * attr[], int nAttr);
 
 /* Template Implementation */
 /**********************************************************************/
@@ -225,6 +231,11 @@ void Attr<T>::setProperty(const Attribute * attr) {
 }
 
 template <class T>
+void Attr<T>::setProperty(tlp::Graph * g) {
+  this->prop = g->getLocalProperty<typename TlpProp<T>::type>(this->label);
+}
+
+template <class T>
 void Attr<T>::set(const void * value) {
   T _value = *((T *) value);
   this->prop->setAllNodeValue(_value);
@@ -251,10 +262,12 @@ bool Attr<T>::isEqual(tlp::edge &e) const {
 
 template <class T>
 void Attr<T>::print() const {
-  std::cout << "== " + this->label + " ==" << std::endl;
-  std::cout << "type\t\t" + this->typeName << std::endl;
-  std::cout << "constraints\t\t" + this->constraints << std::endl;
-  std::cout << "value\t\t";
+  std::cout << this->label;
+  for (int i = 0 ; i < (32 - this->label.size()) ; i++)
+    std::cout << " ";
+  std::cout << this->typeName << "\t";
+  std::cout << "cstr:" << this->constraints << "\t";
+  std::cout << "val:";
   std::cout << this->value;
   std::cout << std::endl;
 }

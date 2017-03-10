@@ -2,7 +2,9 @@
 #include <string>
 #include <vector>
 
-vector<int> dateInNodes(string csvDate) {
+#include "dateInNodes.hpp"
+
+vector<int> dateInNodes(const string &csvDate) {
   vector<string> tmpDateInNodes;
   string tmpNode="";
   for (int i=0; i<=csvDate.size(); ++i) {

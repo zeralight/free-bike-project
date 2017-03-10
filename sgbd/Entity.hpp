@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <fstream>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -22,26 +23,31 @@ private:
   std::unordered_map<std::string, Attribute *> attr;
   int nAttr;
 
-public: 
+public:
+  Entity();
   Entity(const std::string &name, const Attribute * const attributes[], int nAttr, Graph * g);
   ~Entity();
 
   // Doit disparaitre ou passer private : debug
   Graph * getGraph() const;
 
-  const node * newInstance(Attribute * attr[], int nAttr);
+  node newInstance(Attribute * attr[], int nAttr);
   void delInstance(const std::vector<node> * nSet);
-  void delInstance(const node * n); // redondant ?
+  void delInstance(const node &n); // redondant ?
   bool editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr);
-  bool editInstance(node * n, Attribute * attr[], int nAttr);
+  bool editInstance(node &n, Attribute * attr[], int nAttr);
   std::vector<node> * getInstance(Attribute * attr[], int nAttr) const;
-  bool isInstance(const node * n) const;
+  std::vector<node> * getInstance(Graph * g) const;
+  bool isInstance(const node &n) const;
   std::string getName() const;
-  int write(int fd) const;
-  int load(std::string path);
+  void write(std::fstream &file) const;
+  void load(std::fstream &file, Graph * gSrc);
+  void print();
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;
 };
+
+std::string getWord(std::fstream &file);
 
 #endif

@@ -1,4 +1,6 @@
+
 #include <iostream>
+#include <fstream>
 #include <cstring>
 //#include <cstdlib>
 #include <unordered_map>
@@ -11,11 +13,19 @@
 #include <tulip/Node.h>
 #include <tulip/StringProperty.h>
 
+#include "Database.hpp"
 #include "Entity.hpp"
 #include "DBTools.hpp"
 #include "Tools.hpp"
 
 using namespace tlp;
+
+
+Entity::Entity() {
+  this->nameProp = NULL;
+  this->g = NULL;
+  this->nAttr = 0;
+}
 
 
 Entity::Entity(const std::string &name, const Attribute * const attr[], int nAttr, Graph * g) {
@@ -56,20 +66,17 @@ Graph * Entity::getGraph() const {
 }
 
 
-const node * Entity::newInstance(Attribute * attr[], int nAttr) {
-  node * n = new node;
-  *n = this->g->addNode();
+node Entity::newInstance(Attribute * attr[], int nAttr) {
+  node n;
 
   if (isValid(attr, nAttr)) {
-    for(int i = 0 ; i < nAttr ; i++)
-      attr[i]->setNodeValue(*n);
+    n = this->g->addNode();
     
-    return n;
+    for(int i = 0 ; i < nAttr ; i++)
+      attr[i]->setNodeValue(n);
   }
-  else {
-    delete n;
-    return NULL;
-  }
+
+  return n;
 }
 
 
@@ -79,17 +86,17 @@ void Entity::delInstance(const std::vector<node> * nSet) {
 }
 
 
-void Entity::delInstance(const node * n) {
-  this->g->delNode(*n, true);
+void Entity::delInstance(const node &n) {
+  this->g->delNode(n, true);
 }
 
 
-bool Entity::editInstance(node * n, Attribute * attr[], int nAttr) {
+bool Entity::editInstance(node &n, Attribute * attr[], int nAttr) {
   if (!isInstance(n) || !isValid(attr, nAttr))
     return false;
 
   for (int i = 0 ; i < nAttr ; i++)
-    attr[i]->setNodeValue(*n);
+    attr[i]->setNodeValue(n);
 
   return true;
 }
@@ -101,7 +108,7 @@ bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAtt
   
   for (auto it = nSet->begin() ; it != nSet->end() ; it++) {
     n = *it;
-    res = res && editInstance(&n, attr, nAttr);
+    res = res && editInstance(n, attr, nAttr);
   }
 
   return res;
@@ -114,6 +121,14 @@ std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
   }
   else
     return new std::vector<node>;
+}
+
+
+std::vector<node> * Entity::getInstance(Graph * g) const {
+  Attribute * name[1] = {new Attr<STRING>(PROP_ENTITY_NAME, this->name)};
+  name[0]->setProperty(nameProp);
+  std::vector<node> * nodes = getNodes(g, name, 1);
+  return nodes;
 }
 
 
@@ -130,18 +145,20 @@ bool Entity::isValid(Attribute * attr[], int nAttr) const {
   return true;
 }
 
-bool Entity::isInstance(const node * n) const {
-  return this->g->isElement(*n);
+bool Entity::isInstance(const node &n) const {
+  return this->g->isElement(n);
 }
 
 std::string Entity::getName() const{
   return name;
 }
 
-int Entity::write(int fd) const {
+void Entity::write(std::fstream &file) const {
   std::string buff;
   Attribute * tmp;
-  int res;
+
+  if (!file)
+    return;
 
   buff += "(entity " + this->name + "\n"; 
 
@@ -150,9 +167,93 @@ int Entity::write(int fd) const {
     buff += "\t(attr " + tmp->getLabel() + " " + tmp->getTypeName() + ")\n";
   }
 
-  buff += ")";
+  buff += ")\n";
 
-  res = ::write(fd, buff.c_str(), buff.length());
-  
-  return res;
+  file << buff.c_str();
 }
+
+
+std::string getWord(std::fstream &file) {
+  std::string buff;
+  char c;
+
+  if (!file)
+    return buff;
+  
+  while(buff.size() == 0 && !file.eof()) {
+    file.get(c);
+    if (c == '(' ||
+	c == ')')
+      buff = c;
+    else {
+      while (c != ' ' &&
+	     c != '\n' &&
+	     c != '\t' &&
+	     c != '(' &&
+	     c != ')' &&
+	     !file.eof()) {
+	buff += c;
+	file.get(c);
+      }
+      
+      if (c == '(' ||
+	  c == ')')
+	file.unget();  
+    }
+  }
+    
+  return buff;
+}
+
+
+void Entity::load(std::fstream &file, Graph * gSrc) {
+  std::string buff;
+  int openPar = 0;
+  bool read = false;
+
+  if (!file)
+    return;
+
+  // Load data from file
+  while(openPar > 0 || !read) {
+    buff = getWord(file);
+    read = true;
+    
+    if (buff == "(")
+      openPar++;
+    else if (buff == ")")
+      openPar--;
+    else if (buff == "entity" && read) {
+      this->name = getWord(file);
+      this->nameProp = gSrc->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
+
+      this->g = gSrc->getSubGraph(this->name);
+      if (this->g == NULL)
+	throw std::string("ERROR: impossible to load the entity " + this->name);
+    }
+    else if (buff == "attr" && read) {
+      std::string name = getWord(file);
+      std::string typeName = getWord(file);
+      Attribute * tmp = newAttr(name, typeName);
+      this->attr[name] = tmp;
+
+      // Initialize property from graph
+      this->attr[name]->setProperty(this->g);
+    }
+    else {
+      std::cout << "Error loading Entity: bad format '" + buff + "'" << std::endl;
+      for (int i = 0 ; i < buff.size() ; i++)
+	file.unget();
+      break;
+    }
+  }
+}
+
+
+void Entity::print() {
+  std::cout << "==== ent:" + name + " ====" << std::endl;
+
+  for (auto it = attr.begin() ; it != attr.end() ; it++)
+    ((*it).second)->print(); 
+}
+

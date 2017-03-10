@@ -1,13 +1,18 @@
 TLPFLAGS = `tulip-config-debug --cxxflags` 
 TLPLIBS = `tulip-config-debug --libs` 
-GPPFLAGS = -std=c++14 -fdiagnostics-color -g
-TLPSUP = -L/home/raptapia/Documents/logiciels/Tulip-4.9.0/install-debug/lib/ -lyajl-tulip-4.9 -ltess2-tulip-4.9
+GPPFLAGS = -std=c++14 -fdiagnostics-color -g -fPIC
+INCLUDES = -I./sgbd -I./extraction -I.
+LIBS = -L./sgbd/ -lgraphdb
+
+
+extraction.o: extraction/extraction.cpp 
+	g++ $(INCLUDES) $(GPPFLAGS) -c $< 
 
 %.o: %.cpp 
-	g++ -I./sgbd -I./extraction $(GPPFLAGS) $(TLPFLAGS) $(TLPSUP) -c $<
+	g++ $(INCLUDES) $(GPPFLAGS) $(TLPFLAGS) -c $<
 
-import: import.o DBTools.o
-	g++ $(GPPFLAGS) $(TLPLIBS) $(TLPSUP) $^ -o import
+import: testImport.o import.o extraction.o dateInNodes.o
+	g++ $(GPPFLAGS) $(LIBS) $(TLPLIBS) $^ -o import
 
 clean:
 	rm -f *~ *.o

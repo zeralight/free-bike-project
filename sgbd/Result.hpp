@@ -1,36 +1,24 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
-#include "Database.hpp"
-#include "Entity.hpp"
-#include "Relation.hpp"
+#include <string>
 
-class Result{
-private:
-  Graph * G;//this graph is a particular graph, subgraph of a global graph
-  Database * db;
+#include "DBTools.hpp"
 
+class Result {
 public:
-  Result(Graph *, Database *);
-
   /*
-Fonction to remove the result's graph from the global graph and the database
-  */
-  void removeResult();
-
-  /*
-Fonction to edit the result's graph nodes matching entity
-  */
-  bool editResultNodes(Entity&, Attribute **, int);
+   * Fonction to edit the result's graph nodes matching entity
+   */
+  virtual bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr) =0;
   
-    /*
-Fonction to edit the result's graph nodes matching relation
-  */
-  bool editResultEdges(Relation&, Attribute **, int);
-
+  /*
+   * Fonction to edit the result's graph nodes matching relation
+   */
+  virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;
 };
 
+void delResult(Result * res);
 
+#endif //RESULT_HPP
 
-
-#endif

@@ -1,0 +1,238 @@
+============== Attribute 
+
+---------- idées amélioration
+
+%%% DONE : les perfs ne devraient pas être affectées
+- sauvegarde du type : entier plutot que chaine pour perfs et memoire (pool de chaines) ?
+
+
+- utiliser macro pour instanciation attribut :
+  ex: #define ATTR_STRING("prenom")
+  -> simplicité coté user
+
+%%% MAJ : inutile
+- typedef dans Attr ? pour manipuler le type facilement
+
+%%% MAJ : trop tard, Gabriel utilise les tableaux
+- Gestion de liste d'attributs : itérateur, ...
+
+%%% MAJ : pas vraiment utile
+- Réorganisation :
+  Attribute:
+	label, typeName, constraints
+	accesseurs
+
+  Attr<T>:
+	value, type
+
+%%% DONE : solution non retenue pour éviter complexification coté utilisateur
+- utilisation de types codés par entier, et faire spécialisation sur entiers : Attr<TYPE_VALUE> ?
+
+
+----------- to do
+
+- vérifier que les éléments sont bien copiés aux bons endroits (pas de variables partagée)
+
+- gestion des exceptions : mauvais type pour argument
+
+%%% DONE : méthode séparée, plus dans le constructeur
+- réfléchir autre moyen de passer les contraintes sur les attributs
+
+%%% DONE
+- changer tous les passage 'std::string' par 'const(ou pas) std::string &'
+
+%%% MAJ : inutile
+- initialisation avec valeurs par défaut pour 'value'
+
+- commentaires
+
+%%% DONE : a priori non, le destructeur par défaut suffit, on ne veut pas détruire l'objet pointé par prop -> peut etre nécessaire pour type T qui est pointeur ?
+- réfléchir à la nécessité d'un destructeur
+
+%%% DONE
+- modifier initialisation par Attr() : duplication d'objet ?
+  -> utiliser une méthode privée, supprimer le constructeur sans arguments
+
+%%% MAJ : pas vraiment utile ? -> utilisation delete tab [N_ELTS]
+- fonction free tableau Attribute
+
+%%% DONE
+- revoir utilité T_<TYPE> dans les macros : uniformiser, simplifier pour user
+
+
+============ Entity, Relation
+
+----------- amélioration
+
+----------- to do
+
+%%% MAJ : peut etre pas nécessaire, Tulip semble le faire par défaut
+- initialisation des valeurs des propriétés
+
+- gestion des Exceptions : permet le retour par référence et non par pointeur dans les méthodes.
+
+%%% DONE
+- getInstance doit renvoyer un Result ou tableau de node
+
+- getInstance surcharger avec des conditions
+
+- /!\ vérifier les labels des attributs a la création : pas de conflits avec les prop internes (ex: dbEntityName)
+
+%%% DONE : les node ne sont que des entiers, c'est les graphes qu'il faut protéger
+- vérifier les accès aux valeurs de retour : set<node> ou set<const node> par exemple
+
+%%% DONE
+- changer retour set<node> -> vector<node>
+
+- séparer initialisation prop dans isValid
+
+- test sur le nom dans isValid
+
+%%% DONE
+- passage par pointeur des edge / node = mauvaise idée : à cause des free
+  -> edge() et node() créent des element invalides : tester la validité plutot que renvoyer NULL
+
+- déplacer la fonction getWord()
+
+- suppression Entity/Relation : mettre nameProp à ""
+
+- fonctions getInstance a fusionner avec argument graph = NULL par défaut
+  - évite de dupliquer les fonctions pour pas grand chose
+
+- invalidation de Result en cas de suppression de noeud, relations, ...
+
+
+============ Tools
+
+----------- amélioration
+
+----------- to do
+
+%%% DONE
+- faire avec les Node
+
+- réfléchir à l'utilité du fichier :
+  -> migrer dans une des classes de Recherche ?
+  -> faire une classe pour ces fonctions ?
+
+- renommer DBSearch ?
+
+
+============ Database
+
+- /!\ Attention les propriétés sur les entités et relations sont déclarées localement : réfléchir à la portée de ces prop.
+  //graph->getLocalProperty<StringProperty>("dbEntityName");  
+  //graph->getLocalProperty<StringProperty>("dbRelationName");  
+
+- Suppression Entity / Relation :
+  -> donner le choix de supprimer tous les noeuds du type ou de les laisser en supprimant le type.
+  -> Attention comportement des Relations concernant une entité venant d'être supprimée
+
+- Ajouter noeud dans le sous-graphe relation associé qu'au moment de l'ajout de l'arc (newEdge) et non dans newNode
+
+- Save database : quand load depuis un fichier sauvegarder dans ce meme fichier :
+  - fonction save() sans arguments
+
+- Suppression des Results avant save() :
+une idée est de changer la hiérarchie de l'arbre de la DB :
+  	      root
+	     /    \
+       Requests   Data
+          |       |   \
+       Results   Ent.  Rel.
+sauvegarder uniquement l'arbre Data.
+   - pb: sauvegarder le nom de la base (changer nom Data, ou l'écrire dans un fichier de save)
+   - pb majeur : relier les éléments de Data à root lors du chargement d'une DB
+  => avantage : on évite de supprimer les sous-graphes de Results et donc de laisser des objets Result incohérents à l'utilisateur
+
+- free tous les bons attributs quand on fait un load from file (supposons que la personne n'ait pas initialisé un élément vide, les anciens attr ne seront pas désalloués.)
+  -> idem dans Entity / Relation : fonction read(load ?	  )
+
+=========== Result
+
+- utilisation de smart pointer pour supprimer le sous-graphe d'un Result
+  -> ou alors dans le destructeur (pb si user utilise une seult structure en local -> fonctions operator= et autres a modif en conséquence)
+
+
+
+%%%%%% TO DO GENERAL
+
+%%% MAJ : trop tard
+- beaucoup de gestion inutile sur les attributs ? -> revoir Entity / Relation en utilisant fonctions tulip
+  -> typiquement garder attribut Attribute dans ces classes
+  -> mesurer perfs pour décider
+
+- utilisation de forEach
+
+%%% DONE : géré grace a unordered_map
+- vérifier nom Entity/Relation
+
+- /!\ vérifier nom des propriétés, éviter de doubler les prop ou alors changer le nom pour <propName>-<entityName>
+
+%%% MAJ : pas trop utile vu qu'on extrait rapidement un itérateur d'un vecteur, et puis on a les tests au bornes
+- utilisation d'itérateurs plutot que des vecteurs en retour de fonction
+
+- /!\ utilisation d'une unique instance d'Entity ou Relation, sinon probleme lors de la suppression.
+
+- résolution des dépendances circulaires (ex macro dans Result)
+
+- vérifier les includes (cohérence niveau import public / privé)
+
+simplifier utilisation user :
+-----------------------------
+%%% DONE
+- dans db, Entite par chaine et non par objet
+  -> faisable qu'avec table de hachage dans Database
+
+%%% MAJ : pas compris,...
+- Migrer éléments de DBTools dans Database ?
+
+
+interface offerte utilisateur : utile ?
+-------------------------------
+- fournir librairie pour utilisateur
+- séparer les fichiers interface / implémentation avec namespace 
+
+perfs
+-----
+%%% DONE
+- dans Tools.h::getEdges : récupérer un itérateur plutot que vector quand nB défini
+
+!!!!!!! FUITES MEMOIRES
+-> itérateurs
+-> test.cpp Attr
+
+!!!!!!! EXCEPTIONS
+
+
+============= Reflexion requetes
+
+GraphRead :
+-----------
+
+match(pattern) : retourne un resultat contenant tous les noeuds du graph qui correspondent au pattern en entrée
+
+get(): retourne un itérateur sur les éléments qui match le label
+
+
+GraphWrite :
+------------
+
+where(cond) : filtre en fonction de certaines conditions passées en entrée
+
+	
+Pattern : objet supplémentaire ?
+--------
+
+- création d'un pattern avec des labels associés aux éléments.
+
+
+Cond : objet supplémentaire ?
+-----
+
+
+============= import.cpp
+
+- id_max users ne match pas le nombre d'entrées du csv
+- bordélique au niveau des dates, mauvais indices pour les tableaux.
+- ajouter les Root pour Date / Time

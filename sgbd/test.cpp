@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <fstream>
 #include <vector>
 #include <unistd.h>
 
@@ -41,8 +42,8 @@ int main() {
 
   //create the main graphes
   Graph * graph = newGraph();
-  Graph * graphE = graph->addSubGraph("Entity");
-  Graph * graphR = graphE->addSubGraph("Relation");
+  Graph * graphE = graph->addSubGraph("Personne");
+  Graph * graphR = graphE->addSubGraph("FriendOf");
 
   graph->setName("graphGet");
   
@@ -58,7 +59,7 @@ int main() {
   STRING prenom;
   STRING nom;
   STRING nationalite;
-  const node * nList[N_NODE];
+  node nList[N_NODE];
     
   for (int i = 0 ; i < N_NODE ; i++) {
     prenom = "Roger";
@@ -87,7 +88,7 @@ int main() {
 
   //create new instancies of the relation
   INT date;
-  const edge * rList[N_EDGE];
+  edge rList[N_EDGE];
   
   for (int i = 0 ; i < N_NODE ; i++) {
     for (int j = 0 ; j < N_NODE - 1 ; j++) {
@@ -161,7 +162,7 @@ int main() {
 
   //delete a set of nodes
   res->clear();
-  res->push_back(*nList[2]);
+  res->push_back(nList[2]);
   e->delInstance(res);
 
   //delete one edge
@@ -169,36 +170,47 @@ int main() {
 
   //delete a set of edges
   resAll->clear();
-  resAll->push_back(*rList[9]);
+  resAll->push_back(rList[9]);
   r->delInstance(resAll);
 
   tmp = saveGraph(graph, "testDel.tlp");
   if (!tmp)
     cout << "Erreur lors de la sauvegarde" << endl;
 
-  int fd = open("test.sav", O_RDWR | O_CREAT);
-  if (fd == -1)
-    std::cout << "error save" << std::endl;
-  else {
-    e->write(fd);
-    //write(fd, "\0", 1);
-  }
+  // Entity write test  
+  std::fstream file;
+  file.open("testEnt.sav", ios_base::out);
+  e->write(file);
+  file.close();
 
-  close(fd);
+  e->print();
+
+  // Entity load test
+  file.open("testEnt.sav");
+  e->load(file, graph);
+  e->print();
+
+  file.close();
+
+  // Relation write test
+  r->print();
+  file.open("testRel.sav", ios_base::out);
+  r->write(file);
+  file.close();
+
+  // Relation load test
+  std::unordered_map<std::string, Entity *> eTab;
+  eTab[e->getName()] = e;
+  file.open("testRel.sav");
+  r->load(file, graphE, eTab);
+  r->print();
+  file.close();
 
   // Memory liberation
-  for (int i = 0 ; i < 3 ; i++)
-    delete attr[i];
-
-  for (int i = 0 ; i < N_NODE ; i++)
-    delete nList[i];
-
-  for (int i = 0 ; i < N_EDGE ; i++)
-    delete rList[i];
-
-  delete attrR[0];
-  delete cond[0];  
-
+  delAttr(attr, 3);
+  delAttr(attrR, 1);
+  delAttr(cond, 1);
+    
   delete nSet;
   delete res;
   delete resAll;

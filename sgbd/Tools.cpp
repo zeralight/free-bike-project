@@ -68,21 +68,21 @@ std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr) {
 }
 
 
-std::vector<edge> * getEdges(const Graph * g, const node * nA, const node * nB, Attribute * attr[], int nAttr, direction dir) {
+std::vector<edge> * getEdges(const Graph * g, const node &nA, const node &nB, Attribute * attr[], int nAttr, direction dir) {
   std::vector<edge> * res = new std::vector<edge>;
   bool hasMatchingAttr;
 
   switch(dir) {
   case IN:
-    *res = g->getEdges(*nB, *nA, true);
+    *res = g->getEdges(nB, nA, true);
     break;
     
   case OUT:
-    *res = g->getEdges(*nA, *nB, true);
+    *res = g->getEdges(nA, nB, true);
     break;
    
   case INOUT:
-    *res = g->getEdges(*nA, *nB, false);
+    *res = g->getEdges(nA, nB, false);
     break;
   };
 
@@ -127,20 +127,20 @@ std::vector<edge> * getEdges(Iterator<edge> * it, Attribute * attr[], int nAttr)
 }
 
 
-std::vector<edge> * getEdges(const Graph * g, const node * n, Attribute * attr[], int nAttr, direction dir) {
+std::vector<edge> * getEdges(const Graph * g, const node &n, Attribute * attr[], int nAttr, direction dir) {
   Iterator<edge> * it = NULL;
   
   switch(dir) {
   case IN:
-    it = g->getInEdges(*n);
+    it = g->getInEdges(n);
     break;
     
   case OUT:
-    it = g->getOutEdges(*n);
+    it = g->getOutEdges(n);
     break;
     
   case INOUT:
-    it = g->getInOutEdges(*n);
+    it = g->getInOutEdges(n);
     break;
   };
 
