@@ -1,4 +1,4 @@
-SOURCES += xml.cpp OsmParser.cpp InternalNode.cpp misc.cpp
+SOURCES += xml.cpp OsmParser.cpp InternalNode.cpp InternalWay.cpp misc.cpp
 
 QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS += -DDEBUG_ONLY_PROCESSED_NODES

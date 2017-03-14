@@ -72,7 +72,6 @@ void run(char* const filePath) {
             tulipNodes[i] = tulipGraph->addNode();
             // node i will be represented in tulipGraph by tulipNodes[i]
         }
-/*
         // edges
         // linearize adjacencyList
         std::vector<std::tuple<size_t, size_t, double>> edges;
@@ -85,26 +84,21 @@ void run(char* const filePath) {
             for (auto const& e: adjacencyList[i])
                 edges.push_back(std::make_tuple(i, e.first, e.second));
         }
-*/
-/*
         // adding normal edges
         std::vector<tlp::edge> tulipNormalEdges;
         tulipNormalEdges.reserve(edges.size());
-        // add edges
-        tulipNormalEdges.reserve(edges.size());
-        for (auto const& e: edges)
+        for (auto const& e: edges) {
             tulipNormalEdges.push_back(tulipGraph->addEdge(tulipNodes[std::get<0>(e)], tulipNodes[std::get<1>(e)]));
-
-
+        }
         // adding shortest paths edges
+/*
         std::vector<tlp::edge> tulipPathsEdges(paths.size());
         for (size_t i = 0; i < paths.size(); ++i) {
-            // do not store paths where src = dest
-            if (paths[i].src != paths[i].dest)
-                tulipPathsEdges[i] = tulipGraph->addEdge(tulipNodes[paths[i].src], tulipNodes[paths[i].nextHop]);
+            // do not store paths where src = dest: DONE in shrotest paths calculations
+            tulipPathsEdges[i] = tulipGraph->addEdge(tulipNodes[paths[i].src], tulipNodes[paths[i].nextHop]);
         }
 */
-
+/*
         std::map<std::pair<size_t, size_t>, tlp::edge> tulipEdges;
         for (auto const& p: paths) {
             auto a = p.src;
@@ -116,6 +110,7 @@ void run(char* const filePath) {
                 tulipEdges[{b, a}] = tulipGraph->addEdge(tulipNodes[b], tulipNodes[a]);
             }
         }
+*/
         /*
             properties
         */
@@ -135,7 +130,6 @@ void run(char* const filePath) {
             longitudeProperty->setNodeValue(tulipNodes[i], nodes[i].longitude);
             isBicycleProperty->setNodeValue(tulipNodes[i], nodes[i].isBicycleParking);
         }
-/*
         // viewLayout property
         auto viewLayoutProperty = tulipGraph->getLocalProperty<tlp::LayoutProperty>("viewLayout");
         viewLayoutProperty->setAllNodeValue(tlp::Coord());
@@ -144,7 +138,6 @@ void run(char* const filePath) {
             auto xy = osm::gpsToCartesian(nodes[i].latitude, nodes[i].longitude);
             viewLayoutProperty->setNodeValue(tulipNodes[i], tlp::Coord(xy.first, xy.second, 0.));
         }
-*/
 /*
         // nextHop property
         // stored as a string because IntProperty can't hold all possible ids: the real type of nodes
@@ -161,8 +154,12 @@ void run(char* const filePath) {
         // viewSize property
         // this property is explicitly set because tulip is automatically generating inconvenient values
         auto viewSizeProperty = tulipGraph->getLocalProperty<tlp::SizeProperty>("viewSize");
-        viewSizeProperty->setAllNodeValue(tlp::Size(0.0001, 0.0001, 0.0001));
-        viewSizeProperty->setAllEdgeValue(tlp::Size(0.000125, 0.000125, 0.000125));
+        viewSizeProperty->setAllNodeValue(tlp::Size(0.0005, 0.0005, 0.0005));
+        viewSizeProperty->setAllEdgeValue(tlp::Size(0.0001, 0.0001, 0.0001));
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            if (!nodes[i].isBicycleParking)
+                viewSizeProperty->setNodeValue(tulipNodes[i], tlp::Size(0, 0, 0));
+        }
 
         // save the graph
         tlp::saveGraph(tulipGraph.get(), std::string(filePath)+".tlp");

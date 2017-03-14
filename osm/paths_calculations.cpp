@@ -44,7 +44,6 @@ void run(char* const filePath) {
         auto const& edges = rawGraph.second;
         outputProcess.reset(nullptr);
         inputStream.reset(nullptr);
-
         // run shortest paths
         auto paths = osm::AllShortestPaths::run(nodes, edges);
     

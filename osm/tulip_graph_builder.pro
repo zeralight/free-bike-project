@@ -1,4 +1,4 @@
-SOURCES += tulip_graph_builder.cpp ShortestPaths.cpp OsmParser.cpp InternalNode.cpp misc.cpp
+SOURCES += tulip_graph_builder.cpp ShortestPaths.cpp OsmParser.cpp InternalNode.cpp InternalWay.cpp misc.cpp
 QT -= gui
 QMAKE_CXXFLAGS += \$(shell echo `tulip-config --cxxflags`) 
 QMAKE_CXXFLAGS += -std=c++14

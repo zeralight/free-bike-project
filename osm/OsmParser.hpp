@@ -2,6 +2,7 @@
 #define OSM_PARSER_HPP
 #include <unordered_map>
 #include <vector>
+#include <unordered_set>
 
 #include <QXmlStreamReader>
 #include <QFile>
@@ -46,7 +47,29 @@ class OsmParser {
 	QXmlStreamReader reader;
 	bool _ready;
 	
-	public:
+    class ClosestPoints {
+        private:
+        struct comparator {
+            bool operator()(std::pair<NodeIndexType, double> const& lhs,
+                            std::pair<NodeIndexType, double> const& rhs) {
+                return (lhs.second < rhs.second);
+            }
+        };
+
+        using NodesType = std::unordered_map<NodeIndexType, OsmNode>;
+        using ConnectedNodesType = std::unordered_set<NodeIndexType>;
+        NodesType const& _nodes;
+        ConnectedNodesType const& _connectedNodes;
+        size_t const& _count;
+
+        static size_t xxx;
+        static QMutex _mutex;
+        public:
+        using result_type = std::pair<NodeIndexType, std::vector<NodeIndexType>>;
+        ClosestPoints(NodesType const& nodes, ConnectedNodesType const& connectedNodes, size_t count);
+        std::pair<NodeIndexType, std::vector<NodeIndexType>> operator()(NodeIndexType const& bicycleNode) const;
+    };
+    public:
 	/**
      * @brief configure the parser with the associated map
      * @param file The file which the parser shall work on

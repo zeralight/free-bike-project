@@ -24,10 +24,9 @@ int main(int argc, char *argv[])
         usage();
         return 0;
     }
-    std::string cityName = argv[1];
+    QString cityName = argv[1];
     Downloader downloader;
-    downloader.download("talence");
-    //downloader.download(cityName);
+    downloader.download(cityName);
 
     return 0;
 }

@@ -23,6 +23,13 @@ Node::Node(): _idRead(false), _latitudeRead(false), _longitudeRead(false),
     
     void Node::setBicycleParkingValue() { _bicycleParkingValue = true; }
 
+    void Node::updateStatus() {
+        if ( !(_amenityKey && _bicycleParkingValue) ) {
+            _amenityKey = false;
+            _bicycleParkingValue = false;
+        }
+    }
+
     void Node::reset() {
         _idRead = false;
         _latitudeRead = false;
@@ -45,5 +52,8 @@ Node::Node(): _idRead(false), _latitudeRead(false), _longitudeRead(false),
 
     double Node::latitude() const { return _latitude; }
 
-    double Node::isBicycleParking() const { return _amenityKey && _bicycleParkingValue; }
+    bool Node::isBicycleParking() const { 
+        return _amenityKey 
+            && _bicycleParkingValue;
+    }
 } // end of namespace osm

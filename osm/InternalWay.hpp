@@ -1,34 +1,30 @@
-#ifndef OSM_NODE_HPP
-#define OSM_NODE_HPP
+#ifndef OSM_WAY_HPP
+#define OSM_WAY_HPP
 
 namespace osm {
-using NodeIndexType = unsigned long long;
-
+using WayIndexType = unsigned long long;
 /**
  * @ingroup osm
  * @brief this class is used to process the xml output of the Downloader
  * it is strictly used by the OSM Parser
  */
-class Node {
+class Way {
     private:
     bool _idRead;
-    bool _latitudeRead;
-    bool _longitudeRead;
+    WayIndexType _id;
 
-    NodeIndexType _id;
-	double _latitude;
-	double _longitude;
+    bool _highwayKey;
     bool _amenityKey;
     bool _bicycleParkingValue;
+    bool _freeParkingKey;
+    bool _freeParkingValue;
 
     public:
-    Node();
-    
-    void setId(NodeIndexType id);
-    
-    void setLatitude(double latitude);
-
-    void setLongitude(double longitude);
+    Way();
+   
+    void setId(WayIndexType);
+     
+    void setHighwayKey();
 
     void setAmenityKey();
     
@@ -43,18 +39,10 @@ class Node {
     void reset();
 
     bool hasId() const;
-
-    bool hasLongitude() const;
-
-    bool hasLatitude() const;
     
-    bool validState() const;
+    WayIndexType id() const;
 
-    NodeIndexType id() const;
-
-    double longitude() const;
-
-    double latitude() const;
+    bool isHighway() const;
 
     bool isBicycleParking() const;
 };

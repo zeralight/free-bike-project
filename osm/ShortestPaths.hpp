@@ -21,7 +21,7 @@ struct Path {
     size_t src;
     size_t dest;
     double dist;
-    size_t nextHop;
+    std::vector<size_t> elems;
 };
 using Paths = std::vector<Path>;
 

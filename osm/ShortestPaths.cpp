@@ -57,7 +57,7 @@ Paths AllShortestPaths::run(Nodes const& nodes, AdjacencyList const& edges) {
     res = singleThreadShortestPaths();
 #endif
 #if defined(DEBUG_VELO) || defined(DEBUG_MISSING_PATHS)
-    std::cerr << "Paths missing : " << notReachableRoutes << '/' << nbBicycleNodes*nbBicycleNodes << '\n';
+    std::cerr << "Paths missing : " << notReachableRoutes << '/' << nbBicycleNodes*nbBicycleNodes-nbBicycleNodes << '\n';
 #endif
 
     return res;
@@ -110,27 +110,25 @@ std::vector<Path> AllShortestPaths::singleShortestPaths(size_t const& n) {
     }
 
     std::vector<Path> res;
-    res.reserve(nbBicycleNodes);
+    res.reserve(nodes.size());
     for (auto const& node: bicycleNodes) {
         std::vector<size_t> completePath;
         if (dist[node] != -1. && node != n) {
-            NodeIndexType nextHop = node;
-            while (nextHop != n && prev[nextHop] != n) {
-                completePath.push_back(nextHop);
-                nextHop = prev[nextHop];
+            completePath.clear();
+            auto t = node;
+            while (1) {
+                completePath.push_back(t);
+                if (t == n) break;
+                t = prev[t];
             }
             std::reverse(std::begin(completePath), std::end(completePath));
             Path newPath;
             newPath.src = n;
-            newPath.nextHop = completePath[1];
-            for (size_t i = 1; i < completePath.size(); ++i) {
-                newPath.dest = completePath[i];
-                newPath.dist = dist[newPath.dest];
-                res.push_back(newPath);
-            }
+            newPath.dest = node;
+            newPath.elems = completePath;
         }
 #if defined(DEBUG_VELO) || defined(DEBUG_MISSING_PATHS)
-        else {
+        else if (node != n) {
             ++notReachableRoutes;
         }
 #endif
@@ -154,7 +152,10 @@ Paths AllShortestPaths::multiThreadShortestPaths() {
         for (auto const& p: chunk) {
             res.push_back(p);
 #ifdef DEBUG_VELO
-            std::cerr << p.src << " -> " << p.dest << " = " << p.dist << " nexthop = " << p.dist << '\n';
+            std::cerr << p.src << " -> " << p.dest << " = " << p.dist << " path = ";
+            for (auto const& e: p.elems)
+                std::cerr << e << ' ';
+            std::cerr << '\n';
 #endif
         }
     }
@@ -176,7 +177,10 @@ void printGraphAndShortestPaths(Nodes const& nodes, AdjacencyList const& edges, 
     printGraph(nodes, edges);
     std::cout << paths.size() << '\n';
     for (auto const& p: paths) {
-        std::cout << p.src << ' ' << p.dest << ' ' << p.dist << ' ' << p.nextHop << '\n';
+        std::cout << p.src << ' ' << p.dest << ' ' << p.dist << ' ' << p.elems.size();
+        for (auto const& e: p.elems)
+            std::cout << ' ' << e;
+        std::cout << '\n';
     }
 }
 
@@ -184,16 +188,19 @@ std::tuple<Nodes, AdjacencyList, Paths> buildGraphAndPaths(QTextStream& in) {
     auto rawGraph = buildGraph(in);
     auto const& nodes = rawGraph.first;
     auto const& edges = rawGraph.second;
-    
     size_t nbPaths;
     in >> nbPaths;
     
     Paths paths(nbPaths);
     for (size_t i = 0; i < nbPaths; ++i) {
         auto& p = paths[i];
-        in >> p.src >> p.dest >> p.dist >> p.nextHop;
+        in >> p.src >> p.dest >> p.dist;
+        size_t elemsSize;
+        in >> elemsSize;
+        p.elems.resize(elemsSize);
+        for (auto& x: p.elems)
+            in >> x;
     }
-
 
     return std::make_tuple(nodes, edges, paths);
 }
