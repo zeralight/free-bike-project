@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "questionnairechaleur.h"
+#include "heatmapsurvey.h"
 #include <QApplication>
 #include <QTextCodec>
 #include "periodfilter.h"

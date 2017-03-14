@@ -1,0 +1,6 @@
+#ifndef ENTITIESCREATION_HPP
+#define ENTITIESCREATION_HPP
+
+void entitiesCreation();
+
+#endif //ENTITIESCREATION_HPP

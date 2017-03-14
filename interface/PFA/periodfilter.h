@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <stdlib.h>
 class PeriodFilter : public QWidget
 {
     Q_OBJECT
@@ -16,7 +17,9 @@ public:
     QDateTimeEdit * end;
     QRadioButton * normal;
     QRadioButton * slot;
-    QLabel * toImplement;
+    QWidget * slotsChoice;
+    QPushButton * hours [24];
+
 signals:
 
 public slots:

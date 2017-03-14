@@ -1,7 +1,11 @@
 #include "periodfilter.h"
-
-PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),beginning(new QDateTimeEdit),end(new QDateTimeEdit)
-,normal(new QRadioButton("Normale")),slot(new QRadioButton("Créneaux")),toImplement(new QLabel("Pas encore implémenté !"))
+#include <stdio.h>
+PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),
+    beginning(new QDateTimeEdit),
+    end(new QDateTimeEdit),
+    normal(new QRadioButton("Normale")),
+    slot(new QRadioButton("Créneaux")),
+    slotsChoice(new QWidget)
 {
     setWindowTitle("Filtre periode");
     resize(300,300);
@@ -13,14 +17,29 @@ PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),beginning(new QDat
     lay->addWidget(new QLabel("Selectionnez le type de pèriode que vous souhaitez :"),4,0,1,2);
     lay->addWidget(normal,5,0);
     lay->addWidget(slot,5,1);
-    toImplement->hide();
-    lay->addWidget(toImplement,6,0);
-    QObject::connect(normal, SIGNAL(clicked(bool)), toImplement, SLOT(hide()));
-    QObject::connect(slot, SIGNAL(clicked(bool)), toImplement, SLOT(show())) ;
+    slotsChoice->hide();
+    lay->addWidget(slotsChoice,6,0);
+    QObject::connect(normal, SIGNAL(clicked(bool)), slotsChoice, SLOT(hide()));
+    QObject::connect(slot, SIGNAL(clicked(bool)), slotsChoice, SLOT(show())) ;
     QPushButton * validate = new QPushButton("Valider");
     lay->addWidget(validate,7,0);
     QObject::connect(validate, SIGNAL(clicked(bool)), this, SLOT(validation())) ;
 
+    QGridLayout * laySlots = new QGridLayout;
+    laySlots->setSpacing(0);
+    //aySlots->setAlignement(Qt::AlignLeft);
+    int i = 0;
+    char * name;
+    for(i=0;i<24;i++){
+        asprintf(&name,"%d",i+1);
+
+     hours[i]= new QPushButton(name);
+        free(name);
+     hours[i]->setCheckable(true);
+     hours[i]->setFixedSize(25,25);
+     laySlots->addWidget(hours[i],i/12,i%12);
+    }
+    slotsChoice->setLayout(laySlots);
 
     this->setLayout(lay);
 }

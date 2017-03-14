@@ -1,8 +1,8 @@
-#include "questionnairechaleur.h"
+#include "heatmapsurvey.h"
 
 
 
-    HeatMapSurvey::HeatMapSurvey(QWidget *parent) : QWidget(parent),periodFilter(new PeriodFilter),usersFilter(new UsersFilter),tripsFilter(new TripsFilter)
+    HeatMapSurvey::HeatMapSurvey(QWidget *parent) : QWidget(parent),periodFilter(new PeriodFilter),usersFilter(new UsersFilter),tripsFilter(new TripsFilter),densityFilter(new DensityFilter)
     {
     QGroupBox *groupbox = new QGroupBox("Recherche :", this);
     QComboBox *citiesList = new QComboBox(this);
@@ -17,7 +17,8 @@
     QObject::connect(period, SIGNAL(clicked(bool)), periodFilter, SLOT(show())) ;
     QPushButton *users = new QPushButton("Utilisateurs");
     QObject::connect(users, SIGNAL(clicked(bool)), usersFilter, SLOT(show())) ;
-    QRadioButton *bikes = new QRadioButton("Vélos");
+    QPushButton *bikes = new QPushButton("Vélos");
+    QObject::connect(bikes, SIGNAL(clicked(bool)), densityFilter, SLOT(show()));
     QPushButton  *trips = new QPushButton ("Type trajets");
     QObject::connect(trips, SIGNAL(clicked(bool)), tripsFilter, SLOT(show()));
 
