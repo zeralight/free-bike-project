@@ -272,34 +272,35 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
                 connectedNodes.insert(src);
                 for (auto const& dest: chunk.second) {
                     ways.push_back({src, dest});
+                    std::cerr << "CONNECTING " << src << " and " << dest << '\n';
                 }
             }
         }
         /*
-        for (auto const& n: bicycleNodes) {
-            struct comparator {
-                bool operator()(std::pair<NodeIndexType, double> const& lhs,
-                                std::pair<NodeIndexType, double> const& rhs) {
-                    return (lhs.second < rhs.second);
-                }
-            };
-            if (connectedNodes.find(n) == std::end(connectedNodes)) {
-                std::set<std::pair<NodeIndexType, double>, comparator> queue;
-                for (auto const& nd: connectedNodes) {
-                    auto const& node = nodes.at(nd);
-                    double distance = haversineDist(nodes[n].latitude, nodes[n].longitude,
-                                                    node.latitude, node.longitude);
-                    queue.insert({node.id, distance});
-                    if (queue.size() > L)
-                        queue.erase(--std::end(queue));
-                }
-                for (auto const& node: queue) {
-                    ways.push_back({n, node.first});
-                    // std::cerr << "NEW WAY: " << n << ' ' << node.first << '\n';
-                }
-                connectedNodes.insert(n);
-            }
-        }
+           for (auto const& n: bicycleNodes) {
+           struct comparator {
+           bool operator()(std::pair<NodeIndexType, double> const& lhs,
+           std::pair<NodeIndexType, double> const& rhs) {
+           return (lhs.second < rhs.second);
+           }
+           };
+           if (connectedNodes.find(n) == std::end(connectedNodes)) {
+           std::set<std::pair<NodeIndexType, double>, comparator> queue;
+           for (auto const& nd: connectedNodes) {
+           auto const& node = nodes.at(nd);
+           double distance = haversineDist(nodes[n].latitude, nodes[n].longitude,
+           node.latitude, node.longitude);
+           queue.insert({node.id, distance});
+           if (queue.size() > L)
+           queue.erase(--std::end(queue));
+           }
+           for (auto const& node: queue) {
+           ways.push_back({n, node.first});
+// std::cerr << "NEW WAY: " << n << ' ' << node.first << '\n';
+}
+connectedNodes.insert(n);
+}
+}
         */
     }
 
@@ -348,7 +349,13 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
             edges[mapper[node2.id]].push_back({mapper[node1.id], dist});
         }
     }
-    
+
+{
+    // ---------------- TO REMOVE
+    for (auto const& n: bicycleNodes) {
+        assert (!edges[mapper[n]].empty());
+    }
+}
     return {std::move(finalNodes), std::move(edges)};
 }
 
@@ -408,17 +415,17 @@ OsmParser::ClosestPoints::ClosestPoints(std::unordered_map<NodeIndexType,
     {}
 
 std::pair<NodeIndexType, std::vector<NodeIndexType>>
-OsmParser::ClosestPoints::operator()(NodeIndexType const& n) const {
+OsmParser::ClosestPoints::operator()(NodeIndexType const& nodeId) const {
     std::pair<NodeIndexType, std::vector<NodeIndexType>> res;
-    res.first = n;
-    if (_connectedNodes.find(n) == std::end(_connectedNodes)) {
+    res.first = nodeId;
+    if (_connectedNodes.find(nodeId) == std::end(_connectedNodes)) {
         std::set<std::pair<NodeIndexType, double>, comparator> queue;
-        auto const& node = _nodes.at(n);
-        for (auto const& nd: _connectedNodes) {
-            auto const& ndData = _nodes.at(nd);
-            double distance = haversineDist(ndData.latitude, ndData.longitude,
+        auto const& node = _nodes.at(nodeId);
+        for (auto const& otherNodeId: _connectedNodes) {
+            auto const& otherNode = _nodes.at(otherNodeId);
+            double distance = haversineDist(otherNode.latitude, otherNode.longitude,
                                             node.latitude, node.longitude);
-            queue.insert({node.id, distance});
+            queue.insert({otherNodeId, distance});
             if (queue.size() > _count)
                 queue.erase(--std::end(queue));
         }
@@ -427,7 +434,7 @@ OsmParser::ClosestPoints::operator()(NodeIndexType const& n) const {
         }
     }
     _mutex.lock();
-    std::cerr << "Closest POints: " << ++xxx << " processed Nodes\n";
+    std::cerr << "Closest Points: " << ++xxx << " processed Nodes\n";
     _mutex.unlock();
     return res;
 }
