@@ -1,6 +1,6 @@
 #ifndef DOWNLOADER_HPP
 #define DOWNLOADER_HPP
-#include <array>
+#include <vector>
 
 #include <QString>
 #include <QHash>
@@ -16,8 +16,8 @@ class Downloader {
     /**
      * @brief holds all the known cities with their bounding boxes
      */
-    void request(QString const& fileName, QString const& boundingPolygonStr);
-    QString prepareRequest(QString const& polygonStr);
+    void request(QString const& fileName, std::vector<QString> const& boundingPolygonStr);
+    QString prepareRequest(std::vector<QString> const& polygonStr);
     void sendRequest(QString const& url, QString const& fileName);
     public:
     Downloader();
