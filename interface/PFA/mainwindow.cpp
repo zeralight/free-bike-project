@@ -3,6 +3,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), heatMapSurvey(new HeatMapSurvey), osm(new QWidget)
 {
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF_8"));
     resize(600,300);
     QMenu *menuFichier = menuBar()->addMenu("&Fichier");
     QAction *actionQuitter = new QAction("&Quitter", this);

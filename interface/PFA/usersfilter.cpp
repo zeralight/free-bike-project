@@ -33,6 +33,7 @@ UsersFilter::UsersFilter(QWidget *parent) : QWidget(parent),
 
 void UsersFilter::validation(){
     this->close();
+    returnUsersFilter(men->isChecked(),women->isChecked(),minimumAge->value(), maximumAge->value(),subscriber->isChecked,nonSubscriber->isChecked());
 }
 
 

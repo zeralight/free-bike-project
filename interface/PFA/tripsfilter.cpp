@@ -43,6 +43,7 @@ TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
 void TripsFilter::validation(){
 
     this->close();
+    returnTripsFilter(maxLengthTrip->value(),minLengthTrip->value(),maxDensityTrip->value(),minDensityTrip->value());
 }
 
 

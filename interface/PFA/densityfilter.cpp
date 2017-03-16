@@ -1,8 +1,8 @@
 #include "densityfilter.h"
 
 DensityFilter::DensityFilter(QWidget *parent) : QWidget(parent),
-    oui(new QRadioButton("Oui")),
-    non(new QRadioButton("Non")),
+    yes(new QRadioButton("Oui")),
+    no(new QRadioButton("Non")),
     densityChoice(new QWidget),
     weaker(new QRadioButton("moins utilisés")),
     stronger(new QRadioButton("plus utilisés")),
@@ -16,8 +16,8 @@ DensityFilter::DensityFilter(QWidget *parent) : QWidget(parent),
       lay->addWidget(new QLabel("C'est à dire ne selectionner que les trajets les plus utilisés ou les moins utilisés."),1,0,1,5);
 
       lay->addWidget(new QLabel("Voulez-vous filtrer par densité ?"),2,0,1,5);
-      lay->addWidget(oui,3,0);
-      lay->addWidget(non,3,1);
+      lay->addWidget(yes,3,0);
+      lay->addWidget(no,3,1);
       QObject::connect(non, SIGNAL(clicked(bool)), densityChoice, SLOT(hide()));
       QObject::connect(oui, SIGNAL(clicked(bool)), densityChoice, SLOT(show()));
       densityChoice->hide();
@@ -42,4 +42,6 @@ DensityFilter::DensityFilter(QWidget *parent) : QWidget(parent),
   void DensityFilter::validation(){
 
       this->close();
+      returnDensityFilter(yes->isChecked(), weaker->isChecked(), percentage->value());
+
   }

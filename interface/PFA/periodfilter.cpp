@@ -1,5 +1,7 @@
 #include "periodfilter.h"
 #include <stdio.h>
+
+#include "../controller/controllerInterface.h"
 PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),
     beginning(new QDateTimeEdit),
     end(new QDateTimeEdit),
@@ -46,4 +48,12 @@ PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),
 
 void PeriodFilter::validation(){
     this->close();
+    bool slots[24];
+    int i = 0;
+    for(i;i++;i<24){
+        slots[i] = this->hours[i]->isChecked();
+    }
+    int returnPeriodFilter(beginning->date().day(),beginning->date().month(),beginning->date().year,beginning->time().hour(),beginning->time().minute(),
+                           end->date().day(),end->date().month(),end->date().year,end->time().hour(),end->time().minute(),
+    normal->isChecked(), slots);
 }

@@ -9,14 +9,15 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <stdlib.h>
+#include "../controller/controllerInterface.h"
 
 class DensityFilter : public QWidget
 {
     Q_OBJECT
 public:
     explicit DensityFilter(QWidget *parent = 0);
-    QRadioButton * oui;
-    QRadioButton * non;
+    QRadioButton * yes;
+    QRadioButton * no;
     QWidget * densityChoice;
     QRadioButton * weaker;
     QRadioButton * stronger;
