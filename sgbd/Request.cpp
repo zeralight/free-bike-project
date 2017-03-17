@@ -1,139 +1,74 @@
 #include "Request.hpp"
 
+
 using namespace tlp;
 
-Request::Request(Graph * gr, string n):g(gr), name(n){}
+Request::Request(Graph * gr, string n, DatabaseImpl * d):db(d),g(gr), name(n){}
 
-Result Request::getAllNodes(){
+Result* Request::getAllNodes(){
   Graph * resultSubGraph = g->addSubGraph(name);
   Iterator<node> * nodes = g->getNodes();
   resultSubGraph->addNodes(nodes);
-  return Result(resultSubGraph, name);
+  ResultImpl r = ResultImpl(name, resultSubGraph, db);
+  Result* res = &r;
+  delete nodes;
+  return res;
 }
 
-Result Request::getAllNodes(const Entity &e){
+/*utiliser Entity::getInstance */
+/*penser au template pr éviter la duplication de code*/
+/*utiliser Entity::isInstance*/
+/*l'utilisateur ne fournit pas d'Entity mais une chaine de caractère correspondant au nom d'une entité*/
+Result* Request::getAllNodes(string entityName){
   Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameE = e.getName();
-  Iterator<node> * nodes = g->getNodes();
-  while (nodes->hasNext()){
-    if (getNodeDefaultStringValue(*nodes) == nameE)
-      resultSubGraph->addNode(*nodes);
-    nodes->next();
-  }
-  return Result(resultSubGraph, name); 
+  Entity * e = this->db->getEntity(entityName);
+  std::vector<node> * nodes = e->getInstance(this->g);
+  resultSubGraph->addNodes(*nodes);
+  ResultImpl r = ResultImpl(name, resultSubGraph, db);
+  Result* res = &r;
+  delete nodes;
+  return res;
 }
 
-Result Request::getAllEdges(){
+Result* Request::getAllEdges(){
   Graph * resultSubGraph = g->addSubGraph(name);
   Iterator<edge> * edges = g->getEdges();
   resultSubGraph->addEdges(edges);
-  return Result(resultSubGraph, name);
+  ResultImpl r = ResultImpl(name, resultSubGraph, db);
+  Result* res = &r;
+  delete edges;
+  return res;
 }
 	    
-Result Request::getAllEdges(const Relation &r){
+Result* Request::getAllEdges(string relationName){
   Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameR = r.getName();
-  Iterator<edge> * edges = g->getEdges();
-  while (edges->hasNext()){
-    if (getEdgeDefaultStringValue(*edges) == nameR)
-      resultSubGraph->addEdge(*edges);
-    edges->next();
-  }
-  return Result(resultSubGraph, name); 
+  Relation * relation = this->db->getRelation(relationName);
+  std::vector<edge> * edges = relation->getInstance(this->g);
+  resultSubGraph->addEdges(*edges);
+  ResultImpl r = ResultImpl(name, resultSubGraph, db);
+  Result* res = &r;
+  delete edges;
+  return res;
 }
 
-Result getNodes(const Entity &e, const int value){
+Result* Request::getNodes(string entityName, Attribute * attr[], int nAttr){
   Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameE = e.getName();
-  Iterator<node> * nodes = g->getNodes();
-  while (nodes->hasNext()){
-    if(getNodeDefaultStringValue(*nodes) == nameE && value == getNodeValue(*nodes))
-      resultSubGraph->addNode(*nodes);
-    nodes->next();
-  }
-  return Result(resultSubGraph, name);      
+  Entity * e = this->db->getEntity(entityName);
+  std::vector<node> * nodes = e->getInstance(attr, nAttr);
+  resultSubGraph->addNodes(*nodes);
+  ResultImpl r = ResultImpl(name, resultSubGraph, db);
+  Result* res = &r;
+  delete nodes;
+  return res;      
 }
 
-Result getNodes(const Entity &e, const double value){
+Result* Request::getEdges(string relationName, Attribute * attr[], int nAttr){
   Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameE = e.getName();
-  Iterator<node> * nodes = g->getNodes();
-  while (nodes->hasNext()){
-    if(getNodeDefaultStringValue(*nodes) == nameE && value == getNodeDoubleValue(*nodes))
-      resultSubGraph->addNode(*nodes);
-    nodes->next();
-  }
-  return Result(resultSubGraph, name);      
-}
-
-Result getNodes(const Entity &e, const bool value){
-  Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameE = e.getName();
-  Iterator<node> * nodes = g->getNodes();
-  while (nodes->hasNext()){
-    if(getNodeDefaultStringValue(*nodes) == nameE && value == getNodeValue(*nodes))
-      resultSubGraph->addNode(*nodes);
-    nodes->next();
-  }
-  return Result(resultSubGraph, name);      
-}
-
-Result getNodes(const Entity &e, const string value){
-  Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameE = e.getName();
-  Iterator<node> * nodes = g->getNodes();
-  while (nodes->hasNext()){
-    if(getNodeStringValue(*nodes) == nameE && value == getNodeStringValue(*nodes))
-      resultSubGraph->addNode(*nodes);
-    nodes->next();
-  }
-  return Result(resultSubGraph, name);      
-}
-
-Result getEdges(const Relation &r, const int value){
-  Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameR = r.getName();
-  Iterator<edge> * edges = g->getEdges();
-  while (edges->hasNext()){
-    if(getEdgeDefaultStringValue(*edges) == nameR && value == getEdgeValue(*edges))
-      resultSubGraph->addEdge(*edges);
-    edges->next();
-  }
-  return Result(resultSubGraph, name);      
-}
-
-Result getEdges(const Relation &r, const double value){
-  Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameR = r.getName();
-  Iterator<edge> * edges = g->getEdges();
-  while (edges->hasNext()){
-    if(getEdgeDefaultStringValue(*edges) == nameR && value == getEdgeDoubleValue(*edges))
-      resultSubGraph->addEdge(*edges);
-    edges->next();
-  }
-  return Result(resultSubGraph, name);      
-}
-
-Result getEdges(const Relation &r, const bool value){
-  Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameR = r.getName();
-  Iterator<edge> * edges = g->getEdges();
-  while (edges->hasNext()){
-    if(getEdgeDefaultStringValue(*edges) == nameR && value == getNodeValue(*edges))
-      resultSubGraph->addEdge(*edges);
-    edges->next();
-  }
-  return Result(resultSubGraph, name);      
-}
-
-Result getEdges(const Relation &r, const string value){
-  Graph * resultSubGraph = g->addSubGraph(name);
-  std::string nameR = r.getName();
-  Iterator<edge> * edges = g->getEdges();
-  while (edges->hasNext()){
-    if(getEdgeDefaultStringValue(*edges) == nameR && value == getEdgeStringValue(*edges))
-      resultSubGraph->addEdge(*edges);
-    edges->next();
-  }
-  return Result(resultSubGraph, name);      
+  Relation * relation = db->getRelation(relationName);
+  std::vector<edge> * edges = relation->getInstance(attr, nAttr);
+  resultSubGraph->addEdges(*edges);
+  ResultImpl r = ResultImpl(name, resultSubGraph, db);
+  Result* res = &r;
+  delete edges;
+  return res;      
 }
