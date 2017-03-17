@@ -1,4 +1,4 @@
-#include "usersfilter.h"
+#include "usersfilter.hpp"
 
 UsersFilter::UsersFilter(QWidget *parent) : QWidget(parent),
     men(new QCheckBox("Homme")),

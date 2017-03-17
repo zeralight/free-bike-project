@@ -7,10 +7,10 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 #include <QPushButton>
-#include "periodfilter.h"
-#include "usersfilter.h"
-#include "tripsfilter.h"
-#include "densityfilter.h"
+#include "periodfilter.hpp"
+#include "usersfilter.hpp"
+#include "tripsfilter.hpp"
+#include "densityfilter.hpp"
 
 /*
  * @brief This class is a the widget for generating the interface for the heatmap's settings.

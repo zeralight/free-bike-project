@@ -24,7 +24,7 @@ public:
     QSpinBox * percentage;
 
 
-signals:
+    signals:
 
 public slots:
     void validation();};

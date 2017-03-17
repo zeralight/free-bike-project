@@ -1,4 +1,4 @@
-#include "periodfilter.h"
+#include "periodfilter.hpp"
 #include <stdio.h>
 
 #include "../controller/controllerInterface.h"

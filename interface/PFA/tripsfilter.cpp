@@ -1,4 +1,4 @@
-#include "tripsfilter.h"
+#include "tripsfilter.hpp"
 
 TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
     beginStation(new QCheckBox("Stations début à implémenter")),

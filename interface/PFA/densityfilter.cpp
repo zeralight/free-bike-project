@@ -1,4 +1,4 @@
-#include "densityfilter.h"
+#include "densityfilter.hpp"
 
 DensityFilter::DensityFilter(QWidget *parent) : QWidget(parent),
     yes(new QRadioButton("Oui")),
