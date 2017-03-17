@@ -3,11 +3,11 @@
 #include <vector>
 
 // Problemes avec les include !!!
-#include "../sgbd/Database.hpp"
+#include "Database.hpp"
 #include "DBTools.hpp"
 #include "Result.hpp"
 
-#include "extraction/extraction.hpp"
+#include "extraction.hpp"
 #include "dateInNodes.hpp"
 
 using namespace std;
@@ -19,7 +19,7 @@ void importChicago() {
 
   // .csv files parsing process
   cout << "Parsing station file... ";
-  vector<vector<string> > stationsData = parseCSVFile("Divvy_Stations_2016_Q1Q2.csv")
+  vector<vector<string> > stationsData = parseCSVFile("Divvy_Stations_2016_Q1Q2.csv");
   cout << "OK" << endl;
 
   cout << "Parsing trip file... ";
