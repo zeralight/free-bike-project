@@ -7,7 +7,7 @@
 
 #include "controller.hpp"
 #include "../sgbd/Database.hpp"
-#include "../sgbd/DBTools.hpp"
+
 class ControllerDB{
     ControllerDB();
     ~ControllerDB();

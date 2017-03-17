@@ -3,6 +3,7 @@
 //
 
 #include "controllerDB.hpp"
+#include "../sgbd/Database.hpp"
 
 ControllerDB::ControllerDB() {
     initDB();
