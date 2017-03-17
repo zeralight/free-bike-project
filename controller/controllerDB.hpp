@@ -6,9 +6,12 @@
 #define FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERDB_H
 
 #include "controller.hpp"
-#include "Database.hpp"
-class ControllerDataBase{
-    ControllerDataBase();
-    ~ControllerDataBase();
+#include "../sgbd/Database.hpp"
+#include "../sgbd/DBTools.hpp"
+class ControllerDB{
+    ControllerDB();
+    ~ControllerDB();
+    DataBase * DB;
+
 };
 #endif //FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERDB_H

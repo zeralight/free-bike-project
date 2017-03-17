@@ -3,3 +3,12 @@
 //
 
 #include "controllerDB.hpp"
+
+ControllerDB::ControllerDB() {
+    initDB();
+    DB = newDB("Dat Base");
+}
+
+ControllerDB::~ControllerDB() {
+    delDB(DB);
+}
