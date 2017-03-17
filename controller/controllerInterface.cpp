@@ -1,21 +1,23 @@
 //
 // Created by leo on 16/03/2017.
 //
-
-void launchInterface(){
+#include "controllerInterface.hpp"
+ControllerInterface::ControllerInterface(){
     QApplication a(argc, argv);
-    MainWindow window;
-    QWidget * mainWidget = new QWidget();
-    //QuestionnaireChaleur q;
-    //window.setCentralWidget(&q);
-    QVBoxLayout * lay = new QVBoxLayout;
-    //lay->addWidget(q);
-    //w.setLayout(lay);
-    PeriodFilter aa;
-    window.show();
-    return a.exec();
+    MW = new MainWindow;
+    argc = 1;
+    asprintf("Free bike project",&argv);
 }
 
+ControllerInterface::~ControllerInterface(){
+    free(argv);
+
+}
+
+void ControllerInterface::runInterface() {
+    window.show();
+    a.exec();
+}
 int returnDensityFilter(bool yes=0, bool weak = 1, int percentage){
 
     return 1;
