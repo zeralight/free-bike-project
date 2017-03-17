@@ -8,6 +8,7 @@
 #include "controllerInterface.hpp"
 #include "controllerDB.hpp"
 #include "controllerUpdate.hpp"
+#include "controllerOSM.hpp"
 class Controller
 {
 public:
@@ -16,6 +17,7 @@ public:
     ControllerInterface * cI;
     ControllerDateBase * cDB;
     ControllerUpdate * cU;
+    ControllerOSM * cOSM;
   };
 
 #endif //FREE_BIKE_PROJECT_REPOSITORY_CONTROLLER_H

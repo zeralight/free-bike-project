@@ -1,5 +1,6 @@
 #ifndef QUESTIONNAIRECHALEUR_H
 #define QUESTIONNAIRECHALEUR_H
+
 #include <QCheckBox>
 #include <QWidget>
 #include <QGroupBox>

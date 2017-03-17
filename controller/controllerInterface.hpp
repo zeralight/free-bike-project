@@ -5,7 +5,7 @@
 #define FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERINTERFACE_H
 
 #include "../interface/PFA/mainwindow.hpp"
-
+#include <QApplication>
 class ControllerInterface
 {
 public:

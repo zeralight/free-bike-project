@@ -2,6 +2,9 @@
 // Created by leo on 16/03/2017.
 //
 #include "controllerInterface.hpp"
+#include "../interface/PFA/mainwindow.hpp"
+#include <QApplication>
+
 ControllerInterface::ControllerInterface(){
     QApplication a(argc, argv);
     MW = new MainWindow;
