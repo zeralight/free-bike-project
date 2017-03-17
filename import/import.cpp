@@ -2,18 +2,19 @@
 #include <string>
 #include <vector>
 
-#include "Database.hpp"
+// Problemes avec les include !!!
+#include "../sgbd/Database.hpp"
 #include "DBTools.hpp"
 #include "Result.hpp"
+
 #include "extraction/extraction.hpp"
 #include "dateInNodes.hpp"
-#include "entitiesCreation.hpp"
-#include "relationshipsCreation.hpp"
 
 using namespace std;
 
-int importChicago() {
+void importChicago() {
 
+  // Database initialization
   initDB();
 
   // .csv files parsing process
@@ -30,11 +31,89 @@ int importChicago() {
   cout << "Database created" << endl;
   
   // Creation of the entities
-  entitiesCreation();
+  Attribute * attrStation[4] = {new Attr<INT>("id"), // UNIQUE 
+				new Attr<STRING>("name"), 
+				new Attr<DOUBLE>("latitude"), 
+				new Attr<DOUBLE>("longitude")};
+  chicagoDatabase->newEntity("Station", attrStation, 4);
+  
+  chicagoDatabase->newEntity("Event", NULL, 0);
+  
+  chicagoDatabase->newEntity("Trip", NULL, 0);
+  
+  Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
+  chicagoDatabase->newEntity("Bike", attrBike, 1);
+
+  Attribute * attrUser[2] = {new Attr<INT>("gender"),
+			     new Attr<INT>("type")};
+  chicagoDatabase->newEntity("User", attrUser, 2);
+
+  Attribute * attrDay[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Day", attrDay, 1);
+
+  Attribute * attrMonth[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Month", attrMonth, 1);
+
+  Attribute * attrYear[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Year", attrYear, 1);
+
+  Attribute * attrMinute[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Minute", attrMinute, 1);
+  
+  Attribute * attrHour[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("Hour", attrHour, 1);
+
+  Attribute * attrRootHour[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("RootHour", attrRootHour, 1);
+
+  Attribute * attrRootDate[1] = {new Attr<INT>("value")};
+  chicagoDatabase->newEntity("RootDate", attrRootDate, 1);
+
   cout << "Entities created" << endl;
 
   // Creation of the relationships
-  relationshipsCreation();
+  chicagoDatabase->newRelation("takesPlace", "Event", "Station", NULL, 0);
+
+  chicagoDatabase->newRelation("departs", "Trip", "Event", NULL, 0);
+  chicagoDatabase->newRelation("arrives", "Trip", "Event", NULL, 0);
+
+  chicagoDatabase->newRelation("uses", "Trip", "Bike", NULL, 0);
+
+  chicagoDatabase->newRelation("does", "User", "Trip", NULL, 0);
+
+  chicagoDatabase->newRelation("datesFrom", "Event", "Day", NULL, 0);
+
+  chicagoDatabase->newRelation("timesFrom", "Event", "Minute", NULL, 0);
+
+  chicagoDatabase->newRelation("isFirstDay", "Month", "Day", NULL, 0);
+  chicagoDatabase->newRelation("isChildDay", "Month", "Day", NULL, 0);
+  chicagoDatabase->newRelation("isLastDay", "Month", "Day", NULL, 0);
+  chicagoDatabase->newRelation("isNextDay", "Day", "Day", NULL, 0);
+
+  chicagoDatabase->newRelation("isFirstMonth", "Year", "Month", NULL, 0);
+  chicagoDatabase->newRelation("isChildMonth", "Year", "Month", NULL, 0);
+  chicagoDatabase->newRelation("isLastMonth", "Year", "Month", NULL, 0);
+  chicagoDatabase->newRelation("isNextMonth", "Month", "Month", NULL, 0);
+
+  chicagoDatabase->newRelation("isFirstYear", "RootDate", "Year", NULL, 0);
+  chicagoDatabase->newRelation("isChildYear", "RootDate", "Year", NULL, 0);
+  chicagoDatabase->newRelation("isLastYear", "RootDate", "Year", NULL, 0);
+  chicagoDatabase->newRelation("isNextYear", "Year", "Year", NULL, 0);
+
+  chicagoDatabase->newRelation("isFirstMinute", "Hour", "Minute", NULL, 0);
+  chicagoDatabase->newRelation("isChildMinute", "Hour", "Minute", NULL, 0);
+  chicagoDatabase->newRelation("isLastMinute", "Hour", "Minute", NULL, 0);
+  chicagoDatabase->newRelation("isNextMinute", "Minute", "Minute", NULL, 0);
+
+  chicagoDatabase->newRelation("isFirstHour", "RootHour", "Hour", NULL, 0);
+  chicagoDatabase->newRelation("isChildHour", "RootHour", "Hour", NULL, 0);
+  chicagoDatabase->newRelation("isLastHour", "RootHour", "Hour", NULL, 0);
+  chicagoDatabase->newRelation("isNextHour", "Hour", "Hour", NULL, 0);
+
+  chicagoDatabase->newRelation("isBorn", "User", "Year", NULL, 0);
+
+  chicagoDatabase->newRelation("links", "Station", "Station", NULL, 0);
+
   cout << "Relations created" << endl;
   
   // Creation of the nodes and the edges
