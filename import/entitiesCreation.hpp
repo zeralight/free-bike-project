@@ -1,6 +1,8 @@
 #ifndef ENTITIESCREATION_HPP
 #define ENTITIESCREATION_HPP
 
-void entitiesCreation();
+#include "Database.hpp"
+
+void entitiesCreation(Database *);
 
 #endif //ENTITIESCREATION_HPP
