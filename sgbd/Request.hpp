@@ -45,47 +45,39 @@ public:
   Result* getEdges(string relationName, Attribute * attr[], int nAttr);
 
   /*
-    Fonction in order to get the nodes which are instance a an Entity and which value is between v1 and v2 
+    Fonction in order to get the nodes which are instance a an Entity and which attribute value is a value of type T and is between v1 and v2
   */
-  Result* getNodes(const Entity &, const int v1, const int v2);
-  Result* getNodes(const Entity &, const double v1, const double v2);
-  Result* getNodes(const Entity &, const string v1, const string v2);
+  template<class T>
+  Result* getNodes(string entityName, Attribute * attr, T v1, T v2);
 
   /*
     Fonction in order to get the edges which are instance a an Relation and which value is between v1 and v2 
   */
-  Result* getEdges(const Entity &, const int v1, const int v2);
-  Result* getEdges(const Entity &, const double v1, const double v2);
-  Result* getEdges(const Entity &, const string v1, const string v2);
-
+  template<class T>
+  Result* getEdges(string relationName, Attribute * attr, T v1, T v2);
+  
   /*
     Fontion in order to get the nodes which are instance a an Entity and which value is superior to value
    */
-  Result* getNodesSup(const Entity &, const int value);
-  Result* getNodesSup(const Entity &, const double value);
-  Result* getNodesSup(const Entity &, const string value);
+  template<class T>
+  Result* getNodesSup(string entityName, Attribute * attr, T v1);
   
   /*
     Fontion in order to get the edges which are instance a an Relation and which value is superior to value
    */
-  Result* getEdgesSup(const Relation &, const int value);
-  Result* getEdgesSup(const Relation &, const double value);
-  Result* getEdgesSup(const Relation &, const string value);
+  template<class T>
+  Result* getEdgesSup(string relationName, Attribute * attr, T v1);
   
   /*
     Fontion in order to get the nodes which are instance a an Entity and which value is inferior to value
   */
-  Result* getNodesInf(const Entity &, const int value);
-  Result* getNodesInf(const Entity &, const double value);
-  Result* getNodesInf(const Entity &, const string value);
-  
+  template<class T>
+  Result* getNodesInf(string entityName, Attribute * attr, T v1);  
   /*
     Fontion in order to get the edges which are instance a an Relation and which value is inferior to value
   */
-  Result* getEdgesInf(const Relation &, const int value);
-  Result* getEdgesInf(const Relation &, const double value);
-  Result* getEdgesInf(const Relation &, const string value);
-
+  template<class T>
+    Result* getEdgesInf(string relationName, Attribute * attr, T v1);  
   /*
     Fonction in order to get the subGraph composed of specified Entities and Relations
    */
