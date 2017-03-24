@@ -9,6 +9,15 @@
 #include "extraction.hpp"
 #include "dateInNodes.hpp"
 
+#ifndef PATH_TO_FILES_DIRECTORY
+  #define PATH_TO_FILES_DIRECTORY "./"
+#endif
+#ifndef PATH_FOR_DB
+  #define PATH_FOR_DB "."
+#endif
+#ifndef DB_NAME
+  #define DB_NAME "chicagoDatabase"
+#endif
 using namespace std;
 
 void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
@@ -18,23 +27,23 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   
   // .csv files parsing process
   cout << "Parsing station file... ";
-  vector<vector<string> > stationsData = parseCSVFile("Divvy_Stations_2016_Q1Q2.csv");
+  vector<vector<string> > stationsData = parseCSVFile(PATH_TO_FILES_DIRECTORY+"Divvy_Stations_2016_Q1Q2.csv");
   cout << "OK" << endl;
   
   cout << "Parsing trip file... ";
-  vector<vector<string> > tripsData = parseCSVFile("Divvy_Trips_2016_Q1.csv");
+  vector<vector<string> > tripsData = parseCSVFile(PATH_TO_FILES_DIRECTORY+"Divvy_Trips_2016_Q1.csv");
   cout << "OK" << endl;
   
   // Creation of the database
-  Database * chicagoDatabase = newDB("Chicago_Database");
+  Database * database = newDB(DB_NAME);
   cout << "Database created" << endl;
   
   // Creation of the entities
-  entitiesCreation(chicagoDatabase);
+  entitiesCreation(database);
   cout << "Entities created" << endl;
   
   // Creation of the relationships
-  relationshipsCreation(chicagoDatabase);
+  relationshipsCreation(database);
   cout << "Relations created" << endl;
   
   // Creation of the nodes and the edges
@@ -64,7 +73,7 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
     attrStation[2]->setValue(&latitude);
     longitude = unserialize<DOUBLE>(stationsData[3][i]);
     attrStation[3]->setValue(&longitude);
-    nodesStation[id] = chicagoDatabase->newNode("Station", attrStation, 4);
+    nodesStation[id] = database->newNode("Station", attrStation, 4);
   }
   
   //// Delete Attribute object
@@ -84,18 +93,18 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   for (int i=0; i<1; i++) {
     nb = i+2016;
     attrYear[0]->setValue(&nb);
-    nodesYear[i] = chicagoDatabase->newNode("Year", attrYear, 1);
+    nodesYear[i] = database->newNode("Year", attrYear, 1);
     for (int j=0; j<12; j++) {
       nb = j+1;
       attrMonth[0]->setValue(&nb);
-      nodesMonth[i][j] = chicagoDatabase->newNode("Month", attrMonth, 1);
+      nodesMonth[i][j] = database->newNode("Month", attrMonth, 1);
       for (int k=0; k<31; k++) {
 	nb = k+1;
 	attrDay[0]->setValue(&nb);
-	nodesDay[i][j][k] = chicagoDatabase->newNode("Day", attrDay, 1);
-	chicagoDatabase->newEdge("isChildDay", nodesMonth[i][j], nodesDay[i][j][k], NULL, 0);
+	nodesDay[i][j][k] = database->newNode("Day", attrDay, 1);
+	database->newEdge("isChildDay", nodesMonth[i][j], nodesDay[i][j][k], NULL, 0);
       }
-      chicagoDatabase->newEdge("isChildMonth", nodesYear[i], nodesMonth[i][j], NULL, 0);
+      database->newEdge("isChildMonth", nodesYear[i], nodesMonth[i][j], NULL, 0);
     }
   }
   
@@ -107,12 +116,12 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   for (int i=0; i<24; i++) {
     nb = i;
     attrHour[0]->setValue(&nb);
-    nodesHour[i] = chicagoDatabase->newNode("Hour", attrHour, 1);
+    nodesHour[i] = database->newNode("Hour", attrHour, 1);
     for (int j=0; j<60; j++) {
       nb = j;
       attrMinute[0]->setValue(&nb);
-      nodesMinute[i][j] = chicagoDatabase->newNode("Minute", attrMinute, 1);
-      chicagoDatabase->newEdge("isChildMinute", nodesHour[i], nodesMinute[i][j], NULL, 0);
+      nodesMinute[i][j] = database->newNode("Minute", attrMinute, 1);
+      database->newEdge("isChildMinute", nodesHour[i], nodesMinute[i][j], NULL, 0);
     }
   }
   
@@ -142,7 +151,7 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
     ///// Bike node 
     id = unserialize<INT>(tripsData[3][i]);
     attrBike[0]->setValue(&id);
-    nodeBike = chicagoDatabase->newNode("Bike", attrBike, 1);
+    nodeBike = database->newNode("Bike", attrBike, 1);
     
     ///// User node
     if (tripsData[10][i] == "Male") gender = 1;
@@ -155,35 +164,35 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
     
     attrUser[0]->setValue(&gender);
     attrUser[1]->setValue(&type);
-    nodeUser = chicagoDatabase->newNode("User", attrUser, 2);
+    nodeUser = database->newNode("User", attrUser, 2);
     
     ///// Trip node
-    nodeTrip = chicagoDatabase->newNode("Trip", NULL, 0);
+    nodeTrip = database->newNode("Trip", NULL, 0);
     
     ///// Event nodes
-    nodesEvent[0] = chicagoDatabase->newNode("Event", NULL, 0);
-    nodesEvent[1] = chicagoDatabase->newNode("Event", NULL, 0);
+    nodesEvent[0] = database->newNode("Event", NULL, 0);
+    nodesEvent[1] = database->newNode("Event", NULL, 0);
     
     ///// Edges
-    chicagoDatabase->newEdge("uses", nodeTrip, nodeBike, NULL, 0);
+    database->newEdge("uses", nodeTrip, nodeBike, NULL, 0);
     
-    chicagoDatabase->newEdge("does", nodeUser, nodeTrip, NULL, 0);
+    database->newEdge("does", nodeUser, nodeTrip, NULL, 0);
     
-    chicagoDatabase->newEdge("departs", nodeTrip, nodesEvent[0], NULL, 0);
+    database->newEdge("departs", nodeTrip, nodesEvent[0], NULL, 0);
     
-    chicagoDatabase->newEdge("arrives", nodeTrip, nodesEvent[1], NULL, 0);
+    database->newEdge("arrives", nodeTrip, nodesEvent[1], NULL, 0);
     
     int idStart = stoi(tripsData[5][i]);
     int idArrival = stoi(tripsData[7][i]);
-    chicagoDatabase->newEdge("takesPlace", nodesEvent[0], nodesStation[idStart], NULL, 0);
-    chicagoDatabase->newEdge("takesPlace", nodesEvent[1], nodesStation[idArrival], NULL, 0);
+    database->newEdge("takesPlace", nodesEvent[0], nodesStation[idStart], NULL, 0);
+    database->newEdge("takesPlace", nodesEvent[1], nodesStation[idArrival], NULL, 0);
     
     date = dateInNodes(tripsData[1][i]);
-    chicagoDatabase->newEdge("datesFrom", nodesEvent[0], nodesDay[date[2]-2016][date[0]-1][date[1]-1], NULL, 0);
-    chicagoDatabase->newEdge("timesFrom", nodesEvent[0], nodesMinute[date[3]][date[4]], NULL, 0);
+    database->newEdge("datesFrom", nodesEvent[0], nodesDay[date[2]-2016][date[0]-1][date[1]-1], NULL, 0);
+    database->newEdge("timesFrom", nodesEvent[0], nodesMinute[date[3]][date[4]], NULL, 0);
     date = dateInNodes(tripsData[2][i]);
-    chicagoDatabase->newEdge("datesFrom", nodesEvent[1], nodesDay[date[2]-2016][date[0]-1][date[1]-1], NULL, 0);
-    chicagoDatabase->newEdge("timesFrom", nodesEvent[1], nodesMinute[date[3]][date[4]], NULL, 0);
+    database->newEdge("datesFrom", nodesEvent[1], nodesDay[date[2]-2016][date[0]-1][date[1]-1], NULL, 0);
+    database->newEdge("timesFrom", nodesEvent[1], nodesMinute[date[3]][date[4]], NULL, 0);
   }
   
   // Delete Attribute objects
@@ -226,10 +235,10 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
     delResult(nodesHour[i]);
 
   // ?
-  chicagoDatabase->save(".");
+  database->save(PATH_FOR_DB);
  
   // ?
-  delDB(chicagoDatabase);
+  delDB(database);
 
 }
   
