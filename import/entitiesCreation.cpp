@@ -1,16 +1,16 @@
 #include "entitiesCreation.hpp"
 
 void entitiesCreation(Database * database) {
-  Attribute * attrStation[4] = {new Attr<INT>("id"), // UNIQUE 
-				new Attr<STRING>("name"), 
-				new Attr<DOUBLE>("latitude"), 
+  Attribute * attrStation[4] = {new Attr<INT>("id"), // UNIQUE
+				new Attr<STRING>("name"),
+				new Attr<DOUBLE>("latitude"),
 				new Attr<DOUBLE>("longitude")};
   database->newEntity("Station", attrStation, 4);
-  
+
   database->newEntity("Event", NULL, 0);
-  
+
   database->newEntity("Trip", NULL, 0);
-  
+
   Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
   database->newEntity("Bike", attrBike, 1);
 
@@ -28,7 +28,7 @@ void entitiesCreation(Database * database) {
 
   Attribute * attrMinute[1] = {new Attr<INT>("value")};
   database->newEntity("Minute", attrMinute, 1);
-  
+
   Attribute * attrHour[1] = {new Attr<INT>("value")};
   database->newEntity("Hour", attrHour, 1);
 
@@ -37,7 +37,7 @@ void entitiesCreation(Database * database) {
 
   Attribute * attrRootDate[1] = {new Attr<INT>("value")};
   database->newEntity("RootDate", attrRootDate, 1);
-  
+
   // Delete Attribute objects
   delAttr(attrBike, 1);
   delAttr(attrUser, 1);
@@ -48,5 +48,5 @@ void entitiesCreation(Database * database) {
   delAttr(attrHour, 1);
   delAttr(attrRootHour, 1);
   delAttr(attrRootDate, 1);
-  
+
 }

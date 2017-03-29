@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+#include "Database.hpp"
+#include "DBTools.hpp"
+#include "Result.hpp"
+
 using namespace std;
 /*
  * This struct allows us to know in wich column of the CSV files are the info we seek to use.
@@ -37,6 +41,8 @@ public:
     vector<string> filesNames;
     CSVShape * shape;
     vector<vector<string> > parseCSVFile(const string &csv_file);
+    Database * database;
+    //the next methods are for the initialisation of the DB.
     vector<int> dateInNodes(const string &);
     void entitiesCreation(Database *);
     void relationshipsCreation(Database *);
