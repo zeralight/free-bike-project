@@ -1,5 +1,6 @@
 #include "Database.hpp"
 #include "Pattern.hpp"
+#include "PatternImpl.hpp"
 
 
 int main () {
@@ -16,7 +17,7 @@ int main () {
   p->addEdge("f1", "petOf", "pA", "pC");  // erreur
   p->addEdge("f", "friendOf", "pA", "pB");
   
-  p->debug();
+  ((PatternImpl *)p)->debug();
 
   delPattern(p);
   delDB(db);
