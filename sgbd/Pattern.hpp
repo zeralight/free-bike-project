@@ -11,7 +11,10 @@
 #include <tulip/StringProperty.h>
 #include <tulip/BooleanProperty.h>
 
+#include "Database.hpp"
 #include "DatabaseImpl.hpp"
+#include "Entity.hpp"
+#include "Relation.hpp"
 
 using namespace tlp;
 
@@ -19,6 +22,7 @@ class Pattern {
 public:  
   virtual void addNode(const std::string &label, const std::string &entityName) =0;
   virtual void addEdge(const std::string &label, const std::string &relationName, const std::string labelSrc, const std::string labelDst) =0;
+  virtual void debug() const =0;
 };
 
 
@@ -31,24 +35,30 @@ class PatternImpl : public Pattern {
   BooleanProperty * checkedProp;
 
 public:
-  Pattern(DatabaseImpl * db);
-  ~Pattern();
+  PatternImpl(DatabaseImpl * db);
+  ~PatternImpl();
 
   void addNode(const std::string &label, const std::string &entityName);
   void addEdge(const std::string &label, const std::string &relationName, const std::string labelSrc, const std::string labelDst);
 
-  std::string getEntity(node n);
-  std::string getRelation(edge e);
+  Entity * getEntity(node n) const;
+  Relation * getRelation(edge e) const;
 
-  node getNode(std::string label);
-  edge getEdge(std::string label);
+  node getNode(std::string label) const;
+  edge getEdge(std::string label) const; 
 
-  std::string isChecked(node n);
-  std::string isChecked(edge e);
+  bool isChecked(node n) const;
+  bool isChecked(edge e) const;
 
-  bool isNode(std::string label);
-  bool isEdge(std::string label);
+  bool isNode(std::string label) const;
+  bool isEdge(std::string label) const;
+
+  bool isAvailable(std::string label) const;
+  
+  void debug() const;
 };
 
+Pattern * newPattern(Database * db);
+void delPattern(Pattern * p);
   
 #endif //PATTERN_HPP

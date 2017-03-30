@@ -4,7 +4,6 @@
 
 #include "DBTools.hpp"
 #include "Database.hpp"
-//#include "Result.hpp"
 #include "DatabaseImpl.hpp"
 
 Database * newDB(const std::string &name) {
