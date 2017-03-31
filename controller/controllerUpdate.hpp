@@ -1,7 +1,3 @@
-//
-// Created by leo on 17/03/2017.
-//
-
 #ifndef FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERUPDATE_H
 #define FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERUPDATE_H
 
@@ -10,10 +6,18 @@
 #endif
 #include <wrappy/wrappy.h>
 #include "controller.hpp"
+#include "../import/cityDB.h"
 class ControllerUpdate{
     ControllerUpdate();
     ~ControllerUpdate();
-    void cityUpdate(enum Cities city);
+    void cityUpdate(CityDB * city);
+private :
+    CityDB * chicago;
+    CityDB * sanFrancisco;
+    CityDB * washington;
+    CityDB * newYork;
+    CityDB * minneapolis;
+    CityDB * chattanooga;
 };
 
 enum Cities{
