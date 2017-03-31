@@ -9,10 +9,10 @@
 #include "Result.hpp"
 
 using namespace std;
-/*
- * This struct allows us to know in wich column of the CSV files are the info we seek to use.
- */
-struct CSVShape{
+/**
+ * @struct This struct allows us to know in which column of the CSV files are the info we seek to use.
+ **/
+struct CSVShape {
     int genderPLace;
     int StationStartIDPlace;
     int StationEndIDPlace;
@@ -62,7 +62,6 @@ public:
  **/
     bool isActive;
 
-    void maj(string const & file);
 
     /**
      * @fn ?
