@@ -6,18 +6,35 @@
 #include "Database.hpp"
 #include "DBTools.hpp"
 #include "Result.hpp"
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 using namespace std;
 
 CityDB::CityDB(string const& name, string const & scriptDir, string const & dirCSV, string const & dirDB,
                vector<string const&> filesNames, CSVShape * shape) : name(name), scriptDir(scriptDir), dirCSV(dirCSV),
                 dirDB(dirDB), filesNames(filesNames), shape(shape){
     initDB();
-    database = newDB(name+"Database");
+    database = newDB(name);
+    struct stat buf;
+    stat(dirDB+name+".db",&buf);
     entitiesCreation(database);
     relationshipsCreation(database);
+    //pas finis
 }
 
+Database * CityDB::activate(){
+    initDB();
+    this->database = newDB(this->name);
+    this->database->load(dirDB+"/"+name+".db");
+    this->isActive = true;
+    return this->database;
+}
+void CityDB::desactivate() {
+    this->database->save(dirDB);
+    this->isActive = false;
+    delDB(this->database);
+}
 void CityDB::entitiesCreation(Database * database) {
     Attribute * attrStation[4] = {new Attr<INT>("id"), // UNIQUE
                                   new Attr<STRING>("name"),

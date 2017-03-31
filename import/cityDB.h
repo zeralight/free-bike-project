@@ -41,7 +41,10 @@ public:
     vector<string> filesNames;
     CSVShape * shape;
     Database * database;
+    bool isActive;
 
+    Database * activate();
+    void desactivate();
     vector<vector<string> > parseCSVFile(const string &csv_file);
 
     //the next methods are for the initialisation of the DB.
