@@ -33,9 +33,9 @@ public:
   
   bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr);  
   bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr);
-  Result* filterNodes(string entityName, Attribute * attr[], int nAttr, int cmpOp);
-  Result* filterEdges(string relationName, Attribute * attr[], int nAttr, int cmpOp);
-  Result * where(string label, Attribute * attr[], int nAttr, int cmpOp);  
+  void filterNodes(string entityName, Attribute * attr[], int nAttr, int cmpOp);
+  void filterEdges(string relationName, Attribute * attr[], int nAttr, int cmpOp);
+  void where(string label, Attribute * attr[], int nAttr, int cmpOp);  
 
   // Plus haut dans la hiérarchie ?
   void addNode(const node &n);

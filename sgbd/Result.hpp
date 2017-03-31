@@ -25,8 +25,10 @@ public:
    */
   virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;
 
-  virtual Result * where(std::string label, Attribute * attr[], int nAttr, int cmpOp) =0;
-  
+  virtual void where(std::string label, Attribute * attr[], int nAttr, int cmpOp) =0;
+
+  template <class T>
+  virtual std::vector<T> get(
 };
 
 void delResult(Result * res);
