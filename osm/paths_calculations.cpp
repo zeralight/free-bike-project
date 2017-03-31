@@ -7,6 +7,7 @@
 #include <clocale>
 #include <stdexcept>
 #include <memory>
+#include <cassert>
 
 #include "OsmParser.hpp"
 #include "ShortestPaths.hpp"
@@ -20,7 +21,7 @@ int main(int argc, char **argv)
         return 0;
     }
     QCoreApplication app(argc, argv);
-    std::setlocale(LC_NUMERIC, "en_US.UTF-8"); // Avoid system floatting number representation (like 25,25)
+    std::setlocale(LC_NUMERIC, "en_US.UTF-8"); 
     run(argv[1]);
     return 0;
 }
@@ -45,8 +46,7 @@ void run(char* const filePath) {
         outputProcess.reset(nullptr);
         inputStream.reset(nullptr);
         // run shortest paths
-        auto paths = osm::AllShortestPaths::run(nodes, edges);
-    
+        auto paths = osm::AllShortestPaths(nodes, edges).run();
         // output results
         osm::printGraphAndShortestPaths(nodes, edges, paths);   
     } catch (std::logic_error const& e) {

@@ -11,7 +11,6 @@
 
 #include <QXmlStreamReader>
 #include <QtConcurrentMap>
-#include <QMutex>
 
 #include "OsmParser.hpp"
 #include "InternalNode.hpp"
@@ -40,8 +39,33 @@ QString const valBicycleParking = "bicycle_rental";
 QString const valHighway = "highway";
 QString const valJunction = "junction";
 
+std::vector<QString> const acceptedHighways = {
+    "motorway",
+    "motorway_link",
+    "trunk",
+    "trunk_link",
+    "primary",
+    "primary_link",
+    "secondary",
+    "secondary_link",
+    "residential",
+    "residential_link",
+    "service",
+    "tertiary",
+    "tertiary_link",
+    "road",
+    "unclassified",
+    "living_street",
+    "cycleway",
+    "path",
+    // "private",
+    // "footway",
+    // "steps",
+    // "bridleway",
+    // "construction",
+    // "bus_guideway"
+};
 size_t OsmParser::ClosestPoints::xxx = 0;
-QMutex OsmParser::ClosestPoints::_mutex;
 OsmParser::OsmParser(QFile &file) : reader(&file), _ready(true) {}
 
 std::pair<Nodes, AdjacencyList> OsmParser::parse() {
@@ -118,8 +142,9 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
 				else if (eName == attrNdRef && !state.empty() && state.top() == State::nd) { // <way><nd ref="..">
 					ndId = std::stoul(eValue.toStdString());
 				}
-                else if (eName == attrTagKey && (eValue ==  valHighway || eValue == valJunction)
-                        && !state.empty() && state.top() == State::tag && parsingWay) { // <tag k="highway"> or <tag k="junction">
+                //else if (eName == attrTagKey && (eValue ==  valHighway /*|| eValue == valJunction */)
+                else if (eName == attrTagKey 
+                        && !state.empty() && state.top() == State::tag && parsingWay) { // <tag k="highway">
                     wayState.setHighwayKey();
                 }
 				else if (eName == attrTagKey && eValue == valAmenity
@@ -136,7 +161,9 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
 				    else if (parsingWay)
                         wayState.setBicycleParkingValue();
                 }
-			}
+            }
+            node.updateStatus();
+            wayState.updateStatus();
 		}
 		else if (reader.isEndElement()) {
             auto const &name = reader.name().toString();
@@ -172,10 +199,6 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
             }
             else if (name == tagTag && !state.empty() && state.top() == State::tag) {
             	state.pop();
-                if (parsingNode)
-                    node.updateStatus();
-                else if (parsingWay)
-                    wayState.updateStatus();
             }
             else if (name != tagOsm && name != tagNd && name != tagNode) {
             	continue;
@@ -191,8 +214,9 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
 {
     // ------------------------------ DRAFT
     for (auto const& w: ways) {
-        for (auto const& n: w)
+        for (auto const& n: w) {
             assert (nodes.find(n) != std::end(nodes));
+        }
     }
 }
     /*
@@ -259,20 +283,17 @@ std::pair<Nodes, AdjacencyList> OsmParser::parse() {
         need to speed up the algorithm
         currently it is O((bicycleNodes.size() * connectedNodes.size()) / (Number of Threads))
     */
-    std::cerr << "XML: Starting Closest Points Calculations\n";
     {
-        auto constexpr L = 5;
+        auto constexpr L = 1;
         ClosestPoints cp{nodes, connectedNodes, L};
         auto calculations = QtConcurrent::mapped(bicycleNodes, cp);
         calculations.waitForFinished();
-        std::cerr << "XML: Ending Closest Points Calculactions\n";
         for (auto const& chunk: calculations) {
             auto const& src = chunk.first;
             if (!chunk.second.empty()) {
                 connectedNodes.insert(src);
                 for (auto const& dest: chunk.second) {
                     ways.push_back({src, dest});
-                    std::cerr << "CONNECTING " << src << " and " << dest << '\n';
                 }
             }
         }
@@ -359,6 +380,38 @@ connectedNodes.insert(n);
     return {std::move(finalNodes), std::move(edges)};
 }
 
+// ClosestPoints Implementation
+OsmParser::ClosestPoints::ClosestPoints(std::unordered_map<NodeIndexType,
+                        OsmNode> const& nodes,
+                        std::unordered_set<NodeIndexType> const& connectedNodes,
+                        size_t count): 
+                        _nodes(nodes),
+                        _connectedNodes(connectedNodes),
+                        _count(count)
+    {}
+
+std::pair<NodeIndexType, std::vector<NodeIndexType>>
+OsmParser::ClosestPoints::operator()(NodeIndexType const& nodeId) const {
+    std::pair<NodeIndexType, std::vector<NodeIndexType>> res;
+    res.first = nodeId;
+    if (_connectedNodes.find(nodeId) == std::end(_connectedNodes)) {
+        std::set<std::pair<NodeIndexType, double>, comparator> queue;
+        auto const& node = _nodes.at(nodeId);
+        for (auto const& otherNodeId: _connectedNodes) {
+            auto const& otherNode = _nodes.at(otherNodeId);
+            double distance = haversineDist(otherNode.latitude, otherNode.longitude,
+                                            node.latitude, node.longitude);
+            queue.insert({otherNodeId, distance});
+            if (queue.size() > _count)
+                queue.erase(--std::end(queue));
+        }
+        for (auto const& node: queue) {
+            res.second.push_back(node.first);
+        }
+    }
+    return res;
+}
+
 // utility functions to pipe results
 void printGraph(Nodes const& nodes, AdjacencyList const& edges) {
     using std::cout;
@@ -402,40 +455,5 @@ std::pair<osm::Nodes, osm::AdjacencyList> buildGraph(QTextStream& cin) {
         }
     }
     return std::move(res); 
-}
-
-// ClosestPoints Implementation
-OsmParser::ClosestPoints::ClosestPoints(std::unordered_map<NodeIndexType,
-                        OsmNode> const& nodes,
-                        std::unordered_set<NodeIndexType> const& connectedNodes,
-                        size_t count): 
-                        _nodes(nodes),
-                        _connectedNodes(connectedNodes),
-                        _count(count)
-    {}
-
-std::pair<NodeIndexType, std::vector<NodeIndexType>>
-OsmParser::ClosestPoints::operator()(NodeIndexType const& nodeId) const {
-    std::pair<NodeIndexType, std::vector<NodeIndexType>> res;
-    res.first = nodeId;
-    if (_connectedNodes.find(nodeId) == std::end(_connectedNodes)) {
-        std::set<std::pair<NodeIndexType, double>, comparator> queue;
-        auto const& node = _nodes.at(nodeId);
-        for (auto const& otherNodeId: _connectedNodes) {
-            auto const& otherNode = _nodes.at(otherNodeId);
-            double distance = haversineDist(otherNode.latitude, otherNode.longitude,
-                                            node.latitude, node.longitude);
-            queue.insert({otherNodeId, distance});
-            if (queue.size() > _count)
-                queue.erase(--std::end(queue));
-        }
-        for (auto const& node: queue) {
-            res.second.push_back(node.first);
-        }
-    }
-    _mutex.lock();
-    std::cerr << "Closest Points: " << ++xxx << " processed Nodes\n";
-    _mutex.unlock();
-    return res;
 }
 } // end of namespace osm

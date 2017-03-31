@@ -63,7 +63,6 @@ class OsmParser {
         size_t const& _count;
 
         static size_t xxx;
-        static QMutex _mutex;
         public:
         using result_type = std::pair<NodeIndexType, std::vector<NodeIndexType>>;
         ClosestPoints(NodesType const& nodes, ConnectedNodesType const& connectedNodes, size_t count);
@@ -76,7 +75,6 @@ class OsmParser {
      */
     OsmParser(QFile &file);
 	
-	// OsmGraph parse();
 	/**
      * @ingroup This is the main method of the class: makes the parsing
      * @return (liste of nodes, adjacency list)

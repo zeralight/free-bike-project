@@ -37,35 +37,6 @@ void run(char* const filePath) {
         file.close();
         auto& nodes = rawGraph.first;
         auto& edges = rawGraph.second;
-        
-        /*
-        std::cerr << "SHORTEST PATH CALCULATED\n";
-        while(1);
-        std::cerr << "Nodes length = " << nodes.size() << '\n';
-        size_t nbEdges = 0;
-        for (auto const& v: edges)
-            nbEdges += v.size();
-        std::cerr << "Edges length = " << nbEdges << '\n';
-        std::vector<bool> usefulNodes(nodes.size(), false);
-
-        for (size_t i = 0; i < edges.size(); ++i) {
-            usefulNodes[i] = true;
-            for (auto const& e: edges[i])
-                usefulNodes[e.first] = true;
-        }
-
-        std::cerr << "PATHS SIZE " << paths.size() << '\n';
-        for (auto const& p: paths)
-            usefulNodes[p.second.second] = true;
-        
-        std::vector<size_t> indexNewPos(nodes.size());
-        size_t nbUsefulNodes = 0;
-        for (size_t i = 0; i < nodes.size(); ++i) {
-            if (usefulNodes[i])
-                indexNewPos[i] = nbUsefulNodes++;
-        }
-        */
-
         printGraph(nodes, edges);
     } catch (std::logic_error const& e) {
         std::cerr << e.what() << '\n';
