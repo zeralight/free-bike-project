@@ -39,10 +39,10 @@ public:
   void delInstance(const edge &e);
   bool editInstance(std::vector<edge> * eSet, Attribute * attr[], int nAttr);
   bool editInstance(edge &e, Attribute * attr[], int nAttr);
-  std::vector<edge> * getInstance(Attribute * attr[], int Attr) const;
-  std::vector<edge> * getInstance(const node &n, Attribute * attr[], int Attr, direction dir) const;
-  std::vector<edge> * getInstance(const node &nA, const node &nB, Attribute * attr[], int Attr, direction dir) const;
-  std::vector<edge> * getInstance(Graph * g) const;
+  std::vector<edge> * getInstance(Attribute * attr[], int Attr, int cmpOp) const;
+  std::vector<edge> * getInstance(const node &n, Attribute * attr[], int Attr, direction dir, int cmpOp) const;
+  std::vector<edge> * getInstance(const node &nA, const node &nB, Attribute * attr[], int Attr, direction dir, int cmpOp) const;
+  std::vector<edge> * getInstance(Graph * g, int cmpOp) const;
   std::string getName() const;
   
   void write(std::fstream &file) const;

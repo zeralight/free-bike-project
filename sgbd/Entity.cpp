@@ -114,19 +114,19 @@ bool Entity::editInstance(std::vector<node> * nSet, Attribute * attr[], int nAtt
 }
 
 
-std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr) const {
+std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr, int cmpOp) const {
   if (this->isValid(attr, nAttr)) {
-    return getNodes(this->g, attr, nAttr);
+    return getNodes(this->g, attr, nAttr, cmpOp);
   }
   else
     return new std::vector<node>;
 }
 
 
-std::vector<node> * Entity::getInstance(Graph * g) const {
+std::vector<node> * Entity::getInstance(Graph * g, int cmpOp) const {
   Attribute * name[1] = {new Attr<STRING>(PROP_ENTITY_NAME, this->name)};
   name[0]->setProperty(nameProp);
-  std::vector<node> * nodes = getNodes(g, name, 1);
+  std::vector<node> * nodes = getNodes(g, name, 1, cmpOp);
   return nodes;
 }
 

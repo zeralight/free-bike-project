@@ -73,7 +73,7 @@ int main() {
 
   //add node of the main graph in all subgraphes
   //especially in graphR : in order to create edges, nodes must be in the graph
-  vector<node> * nSet = e->getInstance(NULL, 0);
+  vector<node> * nSet = e->getInstance(NULL, 0, EQUAL);
   graphR->addNodes(*nSet);
 
   Graph * tstGetNode = graphR->addSubGraph("testGetNodes");
@@ -101,7 +101,7 @@ int main() {
   
   // Get instancies of the entity corresponding to the specified conditions
   Attribute * cond[1] = {new Attr<STRING>("Nom", "Hanin0")}; 
-  vector<node> * res = e->getInstance(cond, 1);
+  vector<node> * res = e->getInstance(cond, 1, EQUAL);
 
   tstGetNode->addNodes(*res);
 
@@ -110,13 +110,13 @@ int main() {
   attrR[0]->setValue(&date);
   int nAttrR = 0;
 
-  vector<edge> * resAll = r->getInstance(attrR, nAttrR);
-  vector<edge> * resAiB = r->getInstance(nList[0], nList[1 % N_NODE], attrR, nAttrR, IN);
-  vector<edge> * resAoB = r->getInstance(nList[0], nList[1 % N_NODE], attrR, nAttrR, OUT);
-  vector<edge> * resAioB = r->getInstance(nList[0], nList[1 % N_NODE], attrR, nAttrR, INOUT);
-  vector<edge> * resAi = r->getInstance(nList[0], attrR, nAttrR, IN);
-  vector<edge> * resAo = r->getInstance(nList[0], attrR, nAttrR, OUT);
-  vector<edge> * resAio = r->getInstance(nList[0], attrR, nAttrR, INOUT);
+  vector<edge> * resAll = r->getInstance(attrR, nAttrR, EQUAL);
+  vector<edge> * resAiB = r->getInstance(nList[0], nList[1 % N_NODE], attrR, nAttrR, IN, EQUAL);
+  vector<edge> * resAoB = r->getInstance(nList[0], nList[1 % N_NODE], attrR, nAttrR, OUT, EQUAL);
+  vector<edge> * resAioB = r->getInstance(nList[0], nList[1 % N_NODE], attrR, nAttrR, INOUT, EQUAL);
+  vector<edge> * resAi = r->getInstance(nList[0], attrR, nAttrR, IN, EQUAL);
+  vector<edge> * resAo = r->getInstance(nList[0], attrR, nAttrR, OUT, EQUAL);
+  vector<edge> * resAio = r->getInstance(nList[0], attrR, nAttrR, INOUT, EQUAL);
 
   all->addEdges(*resAll);
   AiB->addEdges(*resAiB);
@@ -138,7 +138,7 @@ int main() {
   cond[0]->setLabel("Prenom");
   cond[0]->setValue(&prenom);
   delete res;
-  res = e->getInstance(cond, 1);
+  res = e->getInstance(cond, 1, EQUAL);
 
   // Change "Nationalite" value for all nodes in res
   nationalite = "péruvienne";

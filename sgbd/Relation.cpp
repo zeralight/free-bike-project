@@ -116,34 +116,34 @@ bool Relation::editInstance(std::vector<edge> * eSet, Attribute * attr[], int nA
   return res;
 }
 
-std::vector<edge> * Relation::getInstance(Attribute * attr[], int nAttr) const {
+std::vector<edge> * Relation::getInstance(Attribute * attr[], int nAttr, int cmpOp) const {
   if (this->isValid(attr, nAttr))
-    return getEdges(this->g, attr, nAttr);
+    return getEdges(this->g, attr, nAttr, cmpOp);
   else
     return new std::vector<edge>;
 }
 
 
-std::vector<edge> * Relation::getInstance(const node &nA, const node &nB, Attribute * attr[], int nAttr, direction dir) const {
+std::vector<edge> * Relation::getInstance(const node &nA, const node &nB, Attribute * attr[], int nAttr, direction dir, int cmpOp) const {
   if (this->isValid(attr, nAttr))
-    return getEdges(this->g, nA, nB, attr, nAttr, dir);
+    return getEdges(this->g, nA, nB, attr, nAttr, dir, cmpOp);
   else
     return new std::vector<edge>;
 }
 
 
-std::vector<edge> * Relation::getInstance(const node &n, Attribute * attr[], int nAttr, direction dir) const {
+std::vector<edge> * Relation::getInstance(const node &n, Attribute * attr[], int nAttr, direction dir, int cmpOp) const {
   if (this->isValid(attr, nAttr))
-    return getEdges(this->g, n, attr, nAttr, dir);
+    return getEdges(this->g, n, attr, nAttr, dir, cmpOp);
   else
     return new std::vector<edge>;
 }
 
 
-std::vector<edge> * Relation::getInstance(Graph * g) const {
+std::vector<edge> * Relation::getInstance(Graph * g, int cmpOp) const {
   Attribute * name[1] = {new Attr<STRING>(PROP_RELATION_NAME, this->name)};
   name[0]->setProperty(nameProp);
-  std::vector<edge> * edges = getEdges(g, name, 1);
+  std::vector<edge> * edges = getEdges(g, name, 1, cmpOp);
   return edges;
 }
 

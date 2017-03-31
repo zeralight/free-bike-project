@@ -1,7 +1,15 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
+#include <iostream>
 #include <string>
+
+#include <tulip/Graph.h>
+#include <tulip/Node.h>
+#include <tulip/StringProperty.h>
+#include <tulip/DoubleProperty.h>
+#include <tulip/IntegerProperty.h>
+#include <tulip/BooleanProperty.h>
 
 #include "DBTools.hpp"
 
@@ -16,6 +24,9 @@ public:
    * Fonction to edit the result's graph nodes matching relation
    */
   virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;
+
+  virtual Result * where(std::string label, Attribute * attr[], int nAttr, int cmpOp) =0;
+  
 };
 
 void delResult(Result * res);
