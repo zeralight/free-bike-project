@@ -11,6 +11,7 @@
 
 using namespace tlp;
 
+class PatternImpl;
 class DatabaseImpl;
 
 
@@ -18,7 +19,7 @@ class GraphWrite: public GraphRead {
 public:
   virtual bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr) =0;
   virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;
-
+  
   /*
   virtual bool edit(Attribute * attr[], int nAttr) =0;
 
@@ -31,10 +32,12 @@ public:
 
 
 class GraphWriteAbstract: public GraphWrite, public GraphReadAbstract {
+private:
+  PatternImpl * pattern;
 public: 
   bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr);  
   bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr);
-  
+
 protected:
   GraphWriteAbstract(Graph * g, DatabaseImpl * db);
   ~GraphWriteAbstract();
