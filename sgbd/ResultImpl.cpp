@@ -45,26 +45,24 @@ bool ResultImpl::editEdges(const std::string &relationName, Attribute * attr[], 
 }
 
 /* */
-Result * ResultImpl::filterNodes(string entityName, Attribute * attr[], int nAttr, int cmpOp){
+void ResultImpl::filterNodes(std::string entityName, Attribute * attr[], int nAttr, int cmpOp){
   Entity * e = this->db->getEntity(entityName);
   std::vector<node> * nodes = e->getInstance(attr, nAttr, oppose(cmpOp));//on récupère les noeuds remplissant les conditions opposées à celles souhaitées pour ensuite les supprimer /!\fonction oppose à implémenter
   this->g->delNodes(*nodes);
 
-  delete nodes;
-  return this*;      
+  delete nodes;      
 }
 
-Result * ResultImpl::filterEdges(string RelationName, Attribute *attr[], int nAttr, int cmpOp){
+void ResultImpl::filterEdges(std::string RelationName, Attribute *attr[], int nAttr, int cmpOp){
   Relation * r = this->db->getRelation(relationName);
   std::vector<edge> * edges = r->getInstance(attr, nAttr, oppose(cmpOp));//on récupère les arêtes remplissant les conditions opposées à celles souhaitées pour ensuite les supprimer
   this->g->delEdges(*edges);
   
-  delete edges;
-  return this*;      
+  delete edges;      
 }
 
 /*cmpOp : EQUAL -> = , DIFFERENT -> != */
-Result * ResultImpl::where(string label, Attribute * attr[], int nAttr, int cmpOp){
+void ResultImpl::where(std::string label, Attribute * attr[], int nAttr, int cmpOp){
   if(pattern->isNode(label)){
     return filterNodes(label, attr, nAttr, cmpOp);
   }
