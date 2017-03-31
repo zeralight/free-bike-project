@@ -27,8 +27,8 @@ public:
 
   virtual void where(std::string label, Attribute * attr[], int nAttr, int cmpOp) =0;
 
-  template <class T>
-  virtual std::vector<T> get(
+  /* template <class T>
+     virtual std::vector<T> get(std::string label, T whatIsWantedToBeGet);*/
 };
 
 void delResult(Result * res);
