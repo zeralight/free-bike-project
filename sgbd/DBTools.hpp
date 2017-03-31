@@ -11,6 +11,10 @@
 #include <tulip/IntegerProperty.h>
 #include <tulip/BooleanProperty.h>
 
+/*Different or equal (*/
+#define EQUAL 0
+#define DIFFERENT 1
+
 /* List of acceptable types for the attributes */
 
 #define INT int
