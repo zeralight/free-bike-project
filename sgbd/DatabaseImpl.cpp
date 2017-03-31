@@ -186,7 +186,7 @@ void DatabaseImpl::save(const string &path) const {
 Relation * DatabaseImpl::getRelation(const string &name) {
   auto rPtr = relations.find(name);
   if (rPtr == relations.end())
-    throw string("ERROR: Relation " + name + " doesn't exist");
+    throw string("ERROR: Relation '" + name + "' doesn't exist");
 
   return (*rPtr).second;
 }
@@ -195,7 +195,7 @@ Relation * DatabaseImpl::getRelation(const string &name) {
 Entity * DatabaseImpl::getEntity(const string &name) {
   auto ePtr = entities.find(name);
   if (ePtr == entities.end())
-    throw string("ERROR: Entity " + name + " doesn't exist");
+    throw string("ERROR: Entity '" + name + "' doesn't exist");
 
   return (*ePtr).second;
 }
@@ -287,4 +287,9 @@ void DatabaseImpl::loadRelations(const string &path) {
   }
 
   file.close();
+}
+
+
+Graph * DatabaseImpl::newGraphResult(const std::string &name) {
+  return this->gResults->addSubGraph(name);
 }

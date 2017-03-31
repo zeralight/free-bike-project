@@ -7,9 +7,9 @@
 
 #ifndef DATABASE_HPP
 #include "Database.hpp"
+#include "DatabaseImpl.hpp"
 #include "Entity.hpp"
 #include "Relation.hpp"
-#include "DatabaseImpl.hpp"
 #endif //DATABASE_HPP
 
 #include "GraphWrite.hpp"
@@ -23,7 +23,7 @@ class ResultImpl : public GraphWriteAbstract, public Result {
   using GraphWriteAbstract::editEdges;
   
 public:
-  ResultImpl(const std::string &name, Graph *, DatabaseImpl *);
+  ResultImpl(const std::string &name, Graph * g, DatabaseImpl * db);
   ~ResultImpl();
   
   // opérations sur le edge vraiment utile ?

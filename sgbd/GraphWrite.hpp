@@ -14,7 +14,7 @@ using namespace tlp;
 class DatabaseImpl;
 
 
-class GraphWrite: public GraphRead {
+class GraphWrite  {
 public:
   virtual bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr) =0;
   virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;

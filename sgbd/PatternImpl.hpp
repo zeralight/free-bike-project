@@ -17,6 +17,8 @@
 #include "Relation.hpp"
 #include "Pattern.hpp"
 
+#define PROP_CHECKE
+
 using namespace tlp;
 
 class PatternImpl : public Pattern {
@@ -26,6 +28,7 @@ class PatternImpl : public Pattern {
   std::unordered_map<std::string, edge> edges;
   StringProperty * typeProp;
   BooleanProperty * checkedProp;
+  BooleanProperty * checkedDBProp;
 
 public:
   PatternImpl(DatabaseImpl * db);
@@ -43,11 +46,20 @@ public:
   bool isChecked(node n) const;
   bool isChecked(edge e) const;
 
+  bool isCheckedDB(node n);
+  bool isCheckedDB(edge e);  
+
   bool isNode(std::string label) const;
   bool isEdge(std::string label) const;
 
   bool isAvailable(std::string label) const;
-  
+
+  void match(Graph * gSrc, Graph * gDst);
+  bool matchRec(Graph * gSrc, Graph * gDst, node nPat, node n);
+
+  edge matchEdge(edge e, Iterator<edge> * potEdges);
+  void initProp();
+
   void debug() const;
 };
   

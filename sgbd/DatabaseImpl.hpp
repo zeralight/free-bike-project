@@ -47,6 +47,8 @@ public:
   Relation * getRelation(const std::string &name);
   Entity * getEntity(const std::string &name);
 
+  Graph * newGraphResult(const std::string &name);
+
 private:
   void loadEntities(const std::string &path);
   void loadRelations(const std::string &path);

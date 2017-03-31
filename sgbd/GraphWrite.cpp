@@ -6,6 +6,7 @@
 #include <tulip/Graph.h>
 
 #include "GraphWrite.hpp"
+#include "GraphRead.hpp"
 #include "DBTools.hpp"
 #include "DatabaseImpl.hpp"
 #include "Entity.hpp"

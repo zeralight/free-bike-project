@@ -170,6 +170,7 @@ sauvegarder uniquement l'arbre Data.
 - vérifier nom Entity/Relation
 
 - /!\ vérifier nom des propriétés, éviter de doubler les prop ou alors changer le nom pour <propName>-<entityName>
+  => penser propriété pattern
 
 %%% MAJ : pas trop utile vu qu'on extrait rapidement un itérateur d'un vecteur, et puis on a les tests au bornes
 - utilisation d'itérateurs plutot que des vecteurs en retour de fonction
@@ -241,3 +242,44 @@ Cond : objet supplémentaire ?
 - id_max users ne match pas le nombre d'entrées du csv
 - bordélique au niveau des dates, mauvais indices pour les tableaux.
 - ajouter les Root pour Date / Time
+
+
+============= Pattern
+
+- match()
+  -> propriété Tulip dans la database pour les labels des patterns
+  -> remettre a zéro cette propriété :
+     - dès que association avec nouveau pattern ou dissociation avec celui existant
+     - destruction d'un Pattern
+  -> lien a-un avec Pattern dans la classe Database (dans GraphRead plutot ?)
+  -> getter sur les éléments d'un pattern : vérifier que le label existe ?
+
+
+I. Objectif - bdd orientée graphe
+   qu'est-ce qu'une base de données orientée graphe ?
+   comment on l'a modélisée nous ?
+     -> notions d'Entité / Relation : éléments principaux
+     -> requetes en trois étapes inspirées de Cypher
+   implémentée de façon programmatiques
+
+II. Architecture
+   1. Schéma : diagramme de classes
+      idée dans cette architecture : découpage en classe selon le type d'accès (lecture / écriture)
+      	=> modularité / factorisation :
+	   - ex: Result et Database ont des fonctionnalités similaires
+	   - si on veut créer une classe extension qui reprend certaines fonctionnalités, c'est faisable, ex : on avait pensé à des "vues" (accès uniquement en lecture, et aucun impact sur le graphe de la bdd)  
+   2. explications sur le rôle de chaque classe, les interactions globales (logiques, i.e. sans trop rentrer dans le détail de l'implémentation), notamment :
+    - Entity / Relation : fonctionnement très proche, donc 2 en 1 faisable
+    - Result
+    - Pattern
+    - Attribute / Attr<T>
+
+IV. Utilisation
+   1. Exemple d'utilisation simple (ou que dans manuel ?)
+      + génération d'une biblio
+   2. Considération sur les performances ?
+
+III. "Bilan"
+   1. Problèmes rencontrés
+      qques problèmes techniques qui ont ralentit l'avancement, comment on les a résolus
+   2. Idées d'amélioration / ce qu'on a pas eu le temps de faire

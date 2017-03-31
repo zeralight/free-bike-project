@@ -7,6 +7,8 @@
 #include <tulip/Graph.h>
 
 #include "DBTools.hpp"
+#include "Pattern.hpp"
+#include "Result.hpp"
 //#include "Result.hpp"
 
 using namespace tlp;
@@ -15,9 +17,10 @@ class DatabaseImpl;
 
 
 class GraphRead {
+  virtual Result * match(Pattern * p) =0;
   /*
-  Result * getNodes(const std::string &entityName, Attribute * attr[] = NULL, int nAttr = 0) const;
-  Result * getEdges(const std::string &relationName, Attribute * attr[] = NULL, int nAttr = 0) const;
+   Result * getNodes(const std::string &entityName, Attribute * attr[] = NULL, int nAttr = 0) const;
+   Result * getEdges(const std::string &relationName, Attribute * attr[] = NULL, int nAttr = 0) const;
   */
 };
 
@@ -26,8 +29,11 @@ class GraphReadAbstract: public GraphRead {
 protected:
   Graph * g;
   DatabaseImpl * db;
-
-public: 
+  
+public:
+  // ne fonctionnera pas pour une foret de graphes
+  Result * match(Pattern * p);
+  
   std::vector<node> * getNodes(const std::string &entityName) const;
   std::vector<edge> * getEdges(const std::string &relationName) const;
   

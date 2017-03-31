@@ -3,6 +3,8 @@
 
 #include "GraphRead.hpp"
 #include "DatabaseImpl.hpp"
+#include "ResultImpl.hpp"
+#include "PatternImpl.hpp"
 #include "Entity.hpp"
 #include "Relation.hpp"
 
@@ -46,5 +48,15 @@ std::vector<edge> * GraphReadAbstract::getEdges(const std::string &relationName)
   else
     res = r->getInstance(this->g);
 
+  return res;
+}
+
+
+Result * GraphReadAbstract::match(Pattern * p) {
+  Graph * g = this->db->newGraphResult("");
+  ResultImpl * res = new ResultImpl("match", g, this->db);
+  
+  ((PatternImpl *) p)->match(this->g, g);
+  
   return res;
 }
