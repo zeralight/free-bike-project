@@ -1,6 +1,7 @@
 #include <tulip/Graph.h>
 
 #include "DatabaseImpl.hpp"
+#include "PatternImpl.hpp"
 #include "ResultImpl.hpp"
 
 
@@ -53,7 +54,7 @@ void ResultImpl::filterNodes(std::string entityName, Attribute * attr[], int nAt
   delete nodes;      
 }
 
-void ResultImpl::filterEdges(std::string RelationName, Attribute *attr[], int nAttr, int cmpOp){
+void ResultImpl::filterEdges(std::string relationName, Attribute *attr[], int nAttr, int cmpOp){
   Relation * r = this->db->getRelation(relationName);
   std::vector<edge> * edges = r->getInstance(attr, nAttr, oppose(cmpOp));//on récupère les arêtes remplissant les conditions opposées à celles souhaitées pour ensuite les supprimer
   this->g->delEdges(*edges);
@@ -71,7 +72,7 @@ void ResultImpl::where(std::string label, Attribute * attr[], int nAttr, int cmp
  }
 }
 
-int oppose(int cmpOp){
+int oppose(int cmpOp) {
   if (cmpOp == EQUAL)
     return DIFFERENT;
   return EQUAL;

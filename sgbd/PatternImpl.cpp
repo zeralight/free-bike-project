@@ -167,7 +167,7 @@ void PatternImpl::match(Graph * gSrc, Graph * gDst) {
   Graph * g = gSrc->addSubGraph("matchTmp");
   Entity * ent = getEntity(n);
   
-  std::vector<node> * gNodes = ent->getInstance(gSrc);
+  std::vector<node> * gNodes = ent->getInstance(gSrc, EQUAL);
 
   for (auto it = gNodes->begin() ; it != gNodes->end(); it++) {
     if (matchRec(gSrc, g, *it, n)) {

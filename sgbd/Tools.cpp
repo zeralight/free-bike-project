@@ -54,24 +54,23 @@ std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr, int
     hasMatchingAttr = true;
     
     for(int i = 0 ; i < nAttr ; i++) {
-      if (cmpOp == EQUAL){
+      if (cmpOp == EQUAL) {
 	if (!attr[i]->isEqual(n))
 	  hasMatchingAttr = false;
       }
-      
-      if (cmpOp == DIFFERENT){
+      else if (cmpOp == DIFFERENT) {
 	if (attr[i]->isEqual(n))
 	  hasMatchingAttr = false;
       }
     }
+    
     if (hasMatchingAttr)
       res->push_back(n);
-    
-    
-    delete it;
-    
-    return res;
   }
+  
+  delete it;
+  
+  return res; 
 }
   
 std::vector<edge> * getEdges(const Graph * g, const node &nA, const node &nB, Attribute * attr[], int nAttr, direction dir, int cmpOp) {
@@ -99,9 +98,9 @@ std::vector<edge> * getEdges(const Graph * g, const node &nA, const node &nB, At
     for(int i = 0 ; i < nAttr ; i++) {
       if (cmpOp == EQUAL){
 	if (!attr[i]->isEqual(*it))
-	hasMatchingAttr = false;
+	  hasMatchingAttr = false;
       }
-      if (cmpOp == DIFFERENT){
+      else if (cmpOp == DIFFERENT){
 	if (attr[i]->isEqual(*it))
 	  hasMatchingAttr = false;
       }
@@ -132,7 +131,7 @@ std::vector<edge> * getEdges(Iterator<edge> * it, Attribute * attr[], int nAttr,
 	  hasMatchingAttr = false;
       }
       if (cmpOp == DIFFERENT){
-	if (!attr[i]->isEqual(e))
+	if (attr[i]->isEqual(e))
 	  hasMatchingAttr = false;
       }
     }

@@ -12,6 +12,7 @@
 GraphReadAbstract::GraphReadAbstract(Graph * g, DatabaseImpl * db) {
   this->g = g;
   this->db = db;
+  this->pattern = NULL;
 }
 
 
@@ -31,9 +32,9 @@ std::vector<node> * GraphReadAbstract::getNodes(const std::string &entityName) c
   std::vector<node> * res;
   
   if (this == ((GraphReadAbstract *) this->db))
-    res = e->getInstance(NULL, 0);
+    res = e->getInstance(NULL, 0, EQUAL);
   else
-    res = e->getInstance(this->g);
+    res = e->getInstance(this->g, EQUAL);
 
   return res;
 }
@@ -44,9 +45,9 @@ std::vector<edge> * GraphReadAbstract::getEdges(const std::string &relationName)
   std::vector<edge> * res;
   
   if (this == ((GraphReadAbstract *) this->db))
-    res = r->getInstance(NULL, 0);
+    res = r->getInstance(NULL, 0, EQUAL);
   else
-    res = r->getInstance(this->g);
+    res = r->getInstance(this->g, EQUAL);
 
   return res;
 }

@@ -42,4 +42,6 @@ public:
   void addEdge(const edge &n);
 };
 
+int oppose(int cmpOp);
+
 #endif //RESULTIMPL_HPP

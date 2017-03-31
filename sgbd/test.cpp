@@ -94,7 +94,7 @@ int main() {
     for (int j = 0 ; j < N_NODE - 1 ; j++) {
       date = (i * 7) % 12 + 1;
       attrR[0]->setValue(&date);
-      
+
       rList[i * (N_NODE - 1) + j] = r->newInstance(nList[i % N_NODE], nList[(i + j + 1) % N_NODE], attrR, 1);
     }
   }

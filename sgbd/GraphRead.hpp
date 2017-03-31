@@ -14,6 +14,7 @@
 using namespace tlp;
 
 class DatabaseImpl;
+class PatternImpl;
 
 
 class GraphRead {
@@ -29,6 +30,7 @@ class GraphReadAbstract: public GraphRead {
 protected:
   Graph * g;
   DatabaseImpl * db;
+  PatternImpl * pattern;
   
 public:
   // ne fonctionnera pas pour une foret de graphes

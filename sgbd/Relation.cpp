@@ -1,9 +1,7 @@
 #include <iostream>
 #include <cstring>
-//#include <cstdlib>
 #include <unordered_map>
 #include <vector>
-//#include <iterator>    inutile vu qu'on utilise auto ?
 #include <fstream>
 
 #include <tulip/TlpTools.h>
