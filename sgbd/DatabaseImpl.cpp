@@ -84,6 +84,8 @@ Result * DatabaseImpl::newNode(const string &entityName, Attribute * attr[], int
   catch(const string &errMessage) {
      cerr << errMessage << endl;
   }
+
+  return NULL;
 }
 
 

@@ -6,8 +6,11 @@
 #include "DBTools.hpp"
 #include "Result.hpp"
 
+#include "import.hpp"
 #include "extraction.hpp"
 #include "dateInNodes.hpp"
+#include "entitiesCreation.hpp"
+#include "relationshipsCreation.hpp"
 
 #ifndef PATH_TO_FILES_DIRECTORY
   #define PATH_TO_FILES_DIRECTORY "./"
@@ -18,6 +21,7 @@
 #ifndef DB_NAME
   #define DB_NAME "chicagoDatabase"
 #endif
+
 using namespace std;
 
 void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
@@ -27,11 +31,11 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   
   // .csv files parsing process
   cout << "Parsing station file... ";
-  vector<vector<string> > stationsData = parseCSVFile(PATH_TO_FILES_DIRECTORY+"Divvy_Stations_2016_Q1Q2.csv");
+  vector<vector<string> > stationsData = parseCSVFile(string(PATH_TO_FILES_DIRECTORY)+"Divvy_Stations_2016_Q1Q2.csv");
   cout << "OK" << endl;
   
   cout << "Parsing trip file... ";
-  vector<vector<string> > tripsData = parseCSVFile(PATH_TO_FILES_DIRECTORY+"Divvy_Trips_2016_Q1.csv");
+  vector<vector<string> > tripsData = parseCSVFile(string(PATH_TO_FILES_DIRECTORY)+"Divvy_Trips_2016_Q1.csv");
   cout << "OK" << endl;
   
   // Creation of the database
@@ -58,10 +62,15 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   //// Gives the maximum id to declare the array of nodes correctly
   int max = -1;
   for (int i = 1; i < stationsData[0].size() ; i++) {
-    if (id = unserialize<INT>(stationsData[0][i]) > max)
+    if ((id = unserialize<INT>(stationsData[0][i])) > max)
       max = id;
   }
   Result * nodesStation[max+1] = {NULL};
+  
+  Attribute * attrStation[4] = {new Attr<INT>("id"),
+				new Attr<STRING>("name"),
+				new Attr<DOUBLE>("latitude"),
+				new Attr<DOUBLE>("longitude")};
   
   //// Nodes initialization
   for (int i = 1; i < stationsData[0].size() ; i++) {
@@ -83,13 +92,18 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   
   /// About dates and time
   
-  //// Needed variable
+  //// Needed variables
   INT nb;
+  
+  Attribute * attrYear[1] = {new Attr<INT>("value")};
+  Attribute * attrMonth[1] = {new Attr<INT>("value")};
+  Attribute * attrDay[1] = {new Attr<INT>("value")};
   
   //// Dates nodes creation
   Result * nodesDay[1][12][31] = {NULL};
   Result * nodesMonth[1][12] = {NULL};
   Result * nodesYear[1] = {NULL};
+  
   for (int i=0; i<1; i++) {
     nb = i+2016;
     attrYear[0]->setValue(&nb);
@@ -113,6 +127,10 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   //// Time nodes creation
   Result * nodesMinute[24][60] = {NULL};
   Result * nodesHour[24] = {NULL};
+
+  Attribute * attrMinute[1] = {new Attr<INT>("value")};
+  Attribute * attrHour[1] = {new Attr<INT>("value")};
+  
   for (int i=0; i<24; i++) {
     nb = i;
     attrHour[0]->setValue(&nb);
@@ -136,7 +154,8 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   INT type;
   
   Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
-  Attribute * attrUser[1] = {new Attr<INT>("value")};
+  Attribute * attrUser[2] = {new Attr<INT>("type"),
+			     new Attr<INT>("gender")};
   
   Result * nodeBike = NULL;
   Result * nodeUser = NULL;
@@ -154,13 +173,13 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
     nodeBike = database->newNode("Bike", attrBike, 1);
     
     ///// User node
-    if (tripsData[10][i] == "Male") gender = 1;
-    else if (tripsData[10][i] == "Female") gender = 2;
-    else gender = 0;
+    if (tripsData[10][i] == "Male") gender = GENDER_MALE;
+    else if (tripsData[10][i] == "Female") gender = GENDER_FEMALE;
+    else gender = GENDER_NO_INFO;
     
-    if (tripsData[9][i] == "Subscriber") type = 1;
-    else if (tripsData[9][i] == "Customer") type = 2;
-    else type = 0;
+    if (tripsData[9][i] == "Subscriber") type = TYPE_SUBSCRIBER;
+    else if (tripsData[9][i] == "Customer") type = TYPE_CUSTOMER;
+    else type = TYPE_NO_INFO;
     
     attrUser[0]->setValue(&gender);
     attrUser[1]->setValue(&type);
@@ -184,6 +203,7 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
     
     int idStart = stoi(tripsData[5][i]);
     int idArrival = stoi(tripsData[7][i]);
+    
     database->newEdge("takesPlace", nodesEvent[0], nodesStation[idStart], NULL, 0);
     database->newEdge("takesPlace", nodesEvent[1], nodesStation[idArrival], NULL, 0);
     
@@ -197,12 +217,13 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
   
   // Delete Attribute objects
   delAttr(attrBike, 1);
-  delAttr(attrUser, 1);
+  delAttr(attrUser, 2);
   
   // Delete Result objects
-  for (int i = 0 ; i < max+1; i++)
+  for (int i = 0 ; i < max+1; i++) {
     if (nodesStation[i])
       delResult(nodesStation[i]);
+  }
 
   delResult(nodeBike);
   delResult(nodeUser);
@@ -239,6 +260,5 @@ void importChicago() { // ON CHANGE LE PROTOTYPE OU PAS ? CAR A LA FIN, delDB !
  
   // ?
   delDB(database);
-
 }
   

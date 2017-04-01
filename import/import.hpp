@@ -1,6 +1,6 @@
 #ifndef IMPORT_HPP
 #define IMPORT_HPP
 
-int importChicago();
+void importChicago();
 
 #endif //IMPORT_HPP

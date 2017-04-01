@@ -14,8 +14,9 @@ void entitiesCreation(Database * database) {
   Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
   database->newEntity("Bike", attrBike, 1);
 
-  Attribute * attrUser[1] = {new Attr<INT>("value")};
-  database->newEntity("User", attrUser, 1);
+  Attribute * attrUser[2] = {new Attr<INT>("type"),
+			     new Attr<INT>("gender")};
+  database->newEntity("User", attrUser, 2);
 
   Attribute * attrDay[1] = {new Attr<INT>("value")};
   database->newEntity("Day", attrDay, 1);
@@ -39,8 +40,9 @@ void entitiesCreation(Database * database) {
   database->newEntity("RootDate", attrRootDate, 1);
 
   // Delete Attribute objects
+  delAttr(attrStation, 4);
   delAttr(attrBike, 1);
-  delAttr(attrUser, 1);
+  delAttr(attrUser, 2);
   delAttr(attrDay, 1);
   delAttr(attrMonth, 1);
   delAttr(attrYear, 1);
@@ -48,5 +50,4 @@ void entitiesCreation(Database * database) {
   delAttr(attrHour, 1);
   delAttr(attrRootHour, 1);
   delAttr(attrRootDate, 1);
-
 }
