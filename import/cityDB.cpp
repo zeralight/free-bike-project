@@ -15,12 +15,18 @@ CityDB::CityDB(string const& name, string const & scriptDir, string const & dirC
                vector<string const&> filesNames, CSVShape * shape) : name(name), scriptDir(scriptDir), dirCSV(dirCSV),
                 dirDB(dirDB), filesNames(filesNames), shape(shape){
     initDB();
-    database = newDB(name);
     struct stat buf;
-    stat(dirDB+name+".db",&buf);
-    entitiesCreation(database);
-    relationshipsCreation(database);
+    if( stat(dirDB+name+".db",&buf)){
+        database = newDB(name);
+        entitiesCreation(database);
+        relationshipsCreation(database);
+
+    }
     //pas finis
+}
+
+void maj(string const & file){
+    //mettre la maj de la bdd pour un fichier ici
 }
 
 Database * CityDB::activate(){

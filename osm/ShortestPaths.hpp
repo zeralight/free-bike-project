@@ -15,7 +15,7 @@ namespace osm {
  * @param src starting point
  * @param dest destination
  * @param dist distance between the points
- * @param nextHop the first intermediate point in the shortest path from src to dest
+ * @param elems vector of nodes defining the path
  */
 struct Path {
     size_t src;
@@ -34,29 +34,42 @@ using Paths = std::vector<Path>;
  */
 class AllShortestPaths {
     private:
-        struct AlgoInput {
-            Nodes nodes;
-            AdjacencyList edges;
-            size_t nbBicycleNodes;
-        };
-        static AdjacencyList const* pEdges;
-        static Nodes const* pNodes;
-        static std::vector<size_t> bicycleNodes;
-        static size_t nbBicycleNodes;
+        Nodes const& nodes;
+        AdjacencyList const& edges;
+        std::vector<size_t> bicycleNodes;
+        size_t nbBicycleNodes;
 
-        static Paths singleShortestPaths(size_t const& src);
-        static void mergePaths(Paths& allPaths, Paths const& singlePath);
-        static Paths singleThreadShortestPaths();
-        static Paths multiThreadShortestPaths();
+        void mergePaths(Paths& allPaths, Paths const& singlePath);
+        Paths singleThreadShortestPaths();
+        Paths multiThreadShortestPaths();
     public:
+       
+        /**
+         * @brief initialize the algorithm parameters
+         * @param nds list of nodes of the graph
+         * @param l adjacency list of the graph
+         */ 
+        AllShortestPaths(Nodes const& nds, AdjacencyList const& l);
+        
         /**
          * @brief the starting point of the algorithm
          * if you have concurrence enabled, the MapReduce implementation will be used.
-         * @param nodes vector of nodes of the graph
-         * @param adjList adjacency list of the graph
            @return list of paths describing shortests paths between every pair of bicycle parking nodes
          */
-        static Paths run(Nodes const& nodes, AdjacencyList const& adjList);
+        Paths run();
+        
+        /**
+        * @brief Shortest path on a single node
+        * It is required by Qt to be an operator()
+        * @param source the source point of the Shortest Path algorithm
+        * @return list of paths describing the shortest path from source to the other bicycle parkings
+        */
+        Paths operator()(size_t const& source) const;
+        
+        /**
+         * @brief A mandatory alias by Qt when using QtConcurrent::mapped
+         */
+        using result_type = Paths;
 };
 
 // utility functions to pipe results between processes

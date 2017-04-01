@@ -26,8 +26,7 @@ void Downloader::download(QString const& city) {
     QTextStream in(&f);
     QString str1, str2;
     std::vector<QString> polygonStrings;
-    // only "1" bounding polygon is supported
-    in >> str1; // polygon first line
+    in >> str1; // first line : "polygon"
     if (str1 != "polygon")
         throw std::logic_error("Parsing Error at Line 1: Expected polygon: " + city.toStdString());
     for(;;) {
@@ -60,14 +59,44 @@ void Downloader::request(QString const& fileName, std::vector<QString> const& po
 }
 
 QString Downloader::prepareRequest(std::vector<QString> const& polygonsStrings) {
+    std::vector<QString> const acceptedHighways = {
+        "motorway",
+        "motorway_link",
+        "trunk",
+        "trunk_link",
+        "primary",
+        "primary_link",
+        "secondary",
+        "secondary_link",
+        "residential",
+        "residential_link",
+        "service",
+        "tertiary",
+        "tertiary_link",
+        "road",
+        "unclassified",
+        "living_street",
+        // "private",
+        // "footway",
+        // "steps",
+        // "bridleway",
+        // "construction",
+        "cycleway",
+        "path",
+        // "bus_guideway"
+    };
+
+    QString highwaysQuery;
+    for (auto const& s: acceptedHighways)
+        highwaysQuery += "way[highway='"+s+"'](poly:'%1');";
+    
     auto querySinglePolygon = QString{} +
-        //"  node(poly:'" + polygonStr + "');\n" + // all nodes 
         "  node[amenity=bicycle_rental](poly:'%1');\n" + // bicycle nodes
         "  way[amenity=bicycle_rental](poly:'%1');\n" + // bicycle ways
-        "  way[highway](poly:'%1');\n" + // highways
-        "  way[junction](poly:'%1');\n"; // junctions
+        //"  way[highway](poly:'%1');\n"; // highways
+        highwaysQuery; // highways
+
     QString query = "((";
-    std::cerr << polygonsStrings.size() << '\n';
     for (auto const& str: polygonsStrings) {
         query += querySinglePolygon.arg(str);
     }
@@ -93,19 +122,14 @@ void Downloader::sendRequest(QString const& query, QString const& fileName){
     eventLoop.exec();
 
     if (reply->error() == QNetworkReply::NoError) {
-        qDebug() << "Success\n";
         QFile output(fileName);
-        qDebug() << "Success\n";
         output.open(QIODevice::WriteOnly | QIODevice::Text);
-        qDebug() << "Success\n";
         QTextStream ts(&output);
-        qDebug() << "Success\n";
-        //ts << reply->readAll();
+        //ts << reply->readAll(); // might consume a lot of memory
         while (reply->bytesAvailable() > 0) {
             ts << reply->read(10*1024*1024);
             std::cerr << "Read Data\n";
         }
-        qDebug() << "Success\n";
         output.close();
         qDebug() << "Output to " + fileName + '\n';
     }

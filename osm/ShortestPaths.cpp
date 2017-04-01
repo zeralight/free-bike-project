@@ -28,16 +28,9 @@ namespace osm {
     static long long notReachableRoutes = 0LL;
 #endif
 
-Nodes const* AllShortestPaths::pNodes = nullptr;
-AdjacencyList const* AllShortestPaths::pEdges = nullptr;
-std::vector<size_t> AllShortestPaths::bicycleNodes;
-size_t AllShortestPaths::nbBicycleNodes = 0;
-        
-Paths AllShortestPaths::run(Nodes const& nodes, AdjacencyList const& edges) {
-    nbBicycleNodes = 0;
-    bicycleNodes.clear();
-    pNodes = &nodes;
-    pEdges = &edges;
+
+AllShortestPaths::AllShortestPaths(Nodes const& _nodes, AdjacencyList const& _edges):
+                                nodes(_nodes), edges(_edges), nbBicycleNodes(0) {
     for (size_t i = 0; i < nodes.size(); ++i)
         if (nodes[i].isBicycleParking)
             ++nbBicycleNodes;
@@ -47,7 +40,9 @@ Paths AllShortestPaths::run(Nodes const& nodes, AdjacencyList const& edges) {
         if (n.isBicycleParking)
             bicycleNodes.push_back(i);
     }
-    nbBicycleNodes = bicycleNodes.size();
+}
+
+Paths AllShortestPaths::run() {
     Paths res;
 #ifndef QT_NO_CONCURRENT
 #warning "Using Multi-Thread Shortest Path"
@@ -60,6 +55,7 @@ Paths AllShortestPaths::run(Nodes const& nodes, AdjacencyList const& edges) {
     std::cerr << "Paths missing : " << notReachableRoutes << '/' << nbBicycleNodes*nbBicycleNodes-nbBicycleNodes << '\n';
 #endif
 
+    std::cerr << "Shortest Paths: " << res.size() << '\n';
     return res;
 }
 
@@ -70,10 +66,7 @@ void AllShortestPaths::mergePaths(Paths& allPaths, Paths const& singlePath) {
 #endif
 }
 
-std::vector<Path> AllShortestPaths::singleShortestPaths(size_t const& n) {
-    auto const& nodes = *pNodes;
-    auto const& edges = *pEdges;
-
+Paths AllShortestPaths::operator()(size_t const& n) const {
     std::vector<double> dist(nodes.size(), -1.);
     std::vector<size_t> prev(nodes.size());
     std::vector<bool> visited(nodes.size(), false);
@@ -126,6 +119,8 @@ std::vector<Path> AllShortestPaths::singleShortestPaths(size_t const& n) {
             newPath.src = n;
             newPath.dest = node;
             newPath.elems = completePath;
+            newPath.dist = dist[node];
+            res.push_back(std::move(newPath));
         }
 #if defined(DEBUG_VELO) || defined(DEBUG_MISSING_PATHS)
         else if (node != n) {
@@ -138,14 +133,13 @@ std::vector<Path> AllShortestPaths::singleShortestPaths(size_t const& n) {
 
 // Multi-Thread Shortest Paths implementation
 Paths AllShortestPaths::multiThreadShortestPaths() {
-    auto&& mapFunction = singleShortestPaths;
-    auto calculations = QtConcurrent::mapped(bicycleNodes, mapFunction);
+    //auto&& mapFunction = singleShortestPaths;
+    auto calculations = QtConcurrent::mapped(bicycleNodes, *this);
     calculations.waitForFinished();
 
     size_t nbTotalPaths = 0;
     for (auto const& chunk: calculations)
         nbTotalPaths += chunk.size();
-
     Paths res;
     res.reserve(nbTotalPaths);
     for (auto const& chunk: calculations) {
@@ -166,7 +160,7 @@ Paths AllShortestPaths::multiThreadShortestPaths() {
 Paths AllShortestPaths::singleThreadShortestPaths() {
     Paths res;
     for (auto const& n: bicycleNodes) {
-        auto path = singleShortestPaths(n);
+        auto path = operator()(n);
         mergePaths(res, path);
     }
     return res;

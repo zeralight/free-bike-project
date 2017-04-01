@@ -1,13 +1,14 @@
 #include "InternalWay.hpp"
 
 namespace osm {
-Way::Way(): _idRead(false), _id(0), _highwayKey(false),
+Way::Way(): _idRead(false), _id(0), _highwayKey(false), 
             _amenityKey(false), _bicycleParkingValue(false) {}
    
     void Way::setId(WayIndexType id) { _id = id; _idRead = true; }
 
     void Way::setHighwayKey() { _highwayKey = true; }
-    
+
+        
     void Way::setAmenityKey() { _amenityKey = true; }
     
     void Way::setBicycleParkingValue() { _bicycleParkingValue = true; }
@@ -21,6 +22,7 @@ Way::Way(): _idRead(false), _id(0), _highwayKey(false),
             _amenityKey = false;
             _bicycleParkingValue = false;
         }
+
     }
 
     void Way::reset() {
@@ -35,7 +37,7 @@ Way::Way(): _idRead(false), _id(0), _highwayKey(false),
 
     WayIndexType Way::id() const { return _id; }
 
-    bool Way::isHighway() const { return _highwayKey; }
+    bool Way::isHighway() const { return _highwayKey ; }
 
     bool Way::isBicycleParking() const {
         return _amenityKey 
