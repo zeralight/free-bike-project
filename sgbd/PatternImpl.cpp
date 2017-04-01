@@ -60,11 +60,14 @@ void PatternImpl::addEdge(const std::string &label, const std::string &relationN
   try {
     node nSrc = this->getNode(labelSrc);
     node nDst = this->getNode(labelDst);
+    Relation * rel;
     
     if (!isAvailable(label))
       throw std::string("ERROR: Label '" + label + "' already exists");
     
-    db->getRelation(relationName);
+    rel = db->getRelation(relationName);
+    if (!rel->verify(this->getEntity(labelSrc), this->getEntity(labelDst)))
+      throw std::string("ERROR: Wrong type for label '" + labelSrc + "' and/or '" + labelDst + "', here the definition of the relation " + rel->debug());
   }
   catch (std::string &errMessage){
     std::cerr << errMessage << std::endl;
@@ -86,12 +89,21 @@ Entity * PatternImpl::getEntity(node n) const {
 }
 
 
+Entity * PatternImpl::getEntity(std::string label) const {
+  return getEntity(getNode(label));
+}
+
+
 Relation * PatternImpl::getRelation(edge e) const {
   std::string name = typeProp->getEdgeValue(e);
   Relation * r = db->getRelation(name);
   return r;
 }
 
+
+Relation * PatternImpl::getRelation(std::string label) const {
+  return getRelation(getEdge(label));
+}
 
 node PatternImpl::getNode(std::string label) const {
   auto it = nodes.find(label);

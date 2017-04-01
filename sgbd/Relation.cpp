@@ -246,3 +246,15 @@ void Relation::print() {
     ((*it).second)->print(); 
 }
 
+
+std::string Relation::debug() {
+  std::string ret;
+  ret = "'" + this->name + "' : '" + this->entitySrc->getName() + "' -> '" + this->entityDst->getName() + "'";
+  return ret;
+}
+
+
+bool Relation::verify(const Entity * src, const Entity * dst) const {
+  return (this->entitySrc == src &&
+	  this->entityDst == dst);
+}

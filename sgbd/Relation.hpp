@@ -48,8 +48,10 @@ public:
   void write(std::fstream &file) const;
   void load(std::fstream &file, Graph * gSrc, std::unordered_map<std::string, Entity *> &entityList);
   void print();
+  std::string debug();
 
   bool isInstance(const edge &e) const;
+  bool verify(const Entity * src, const Entity * dst) const;
   
 private:
   bool isValid(Attribute * attr[], int nAttr) const;

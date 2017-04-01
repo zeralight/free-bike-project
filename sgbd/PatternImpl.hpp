@@ -17,8 +17,6 @@
 #include "Relation.hpp"
 #include "Pattern.hpp"
 
-#define PROP_CHECKE
-
 using namespace tlp;
 
 class PatternImpl : public Pattern {
@@ -38,7 +36,9 @@ public:
   void addEdge(const std::string &label, const std::string &relationName, const std::string labelSrc, const std::string labelDst);
 
   Entity * getEntity(node n) const;
+  Entity * getEntity(std::string label) const;
   Relation * getRelation(edge e) const;
+  Relation * getRelation(std::string label) const;
 
   node getNode(std::string label) const;
   edge getEdge(std::string label) const; 
