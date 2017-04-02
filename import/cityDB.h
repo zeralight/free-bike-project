@@ -13,9 +13,14 @@ using namespace std;
  * @struct This struct allows us to know in which column of the CSV files are the info we seek to use.
  **/
 struct CSVShape {
-    int genderPLace;
-    int StationStartIDPlace;
-    int StationEndIDPlace;
+    int stationStartIDPlace;
+    int stationEndIDPlace;
+    int stationStartNamePlace;
+    int stationEndNamePlace;
+    int stationStartLatitudePlace;
+    int stationStartLongitudePlace;
+    int stationEndLatitudePlace;
+    int stationEndLongitudePlace;
     int tripIDPlace;
     int tripDurationPlace;
     int userTypePlace;
@@ -23,6 +28,21 @@ struct CSVShape {
     int endTimePlace;
     int startDatePlace;
     int endDatePlace;
+    int genderPLace;
+    int birthYearPlace;
+    int bikeIDPlace;
+};
+
+enum values_gender {
+    GENDER_MALE,
+    GENDER_FEMALE,
+    GENDER_NO_INFO,
+};
+
+enum values_type {
+    TYPE_CUSTOMER,
+    TYPE_SUBSCRIBER,
+    TYPE_NO_INFO
 };
 
 /**
@@ -35,44 +55,68 @@ public:
      * It initializes all the attributes about the informations of a city with the values taken as parameters.
      *
      * @param name name of the city
-     * @param scriptDir ?
-     * @param dirCSV name of the directory which contains the CSV files (?)
-     * @param dirDB name of the directory which contains the database (?)
-     * @param filesNames file names
-     * @param shape ?
+     * @param scriptPath path to the downloading script of the city
+     * @param dirCSV path to the directory which contains the CSV files downloaded by the scripts
+     * @param dirDB path to the directory where we store the database for this city
+     * @param filesNames names of the different files we need to parse for the city
+     * @param shape describes the shape of the CSV files (which column contains which information)
+     * @param minYearData first year of data we have for the city
+     * @param maxYearData the last year of data we have for the city
      **/
-    CityDB(string const& name, string const & scriptDir, string const & dirCSV, string const & dirDB,
-           vector<string const&> filesNames, CSVShape * shape);
+    CityDB(string const& name, string const & scriptPath, string const & dirCSV, string const & dirDB,
+           vector<string const&> filesNames, CSVShape * shape, int minYearData, int maxYearData);
     /**
   * @fn Destructor of the class
   **/
     ~CityDB();
     string name;
-    string scriptDir;
+    string scriptPath;
     string dirCSV;
     string dirDB;
     vector<string> filesNames;
+    /**
+     * @var these two next attributes (maxYearData and minYearData) are giving us the info of the limits of the data we have upon time
+     */
+    int maxYearData;
+    int minYearData;
     CSVShape * shape;
     /**
-  * @var Pointer on the database containing all the information
+  * @var Pointer on the database of the city
   **/
     Database * database;
     /**
- * @var ?
+ * @var isActive is set to true if the database of the city is loaded on the memory and false if not
  **/
     bool isActive;
 
 
     /**
-     * @fn ?
+     * @fn Activate the database for the city by loading it from the disk or initializing it.
+     * @return The pointer on the databse
      **/
     Database * activate();
 
     /**
-     * @fn ?
+     * @fn Desactivate the database of the city by saving it on the disk and deleting it from the memory
      **/
     void desactivate();
 
+    /**
+     * @fn Initialise the Database from the CSV files known by their directory path (dirCSV) and their names (fileNames)
+     */
+    void DBInstanciation();
+
+    /**
+     * @fn Import one CSV file inside the database of the class (attribute database)
+     * @param file name of the file we want to import, the file must exist in the directory pointed by the dirCSV attribute
+     */
+    void importOneFile(string const & file);
+
+    /**
+     * @fn Launch the script for downloading the csv files
+     */
+
+     void download();
     /**
   * @fn Function parsing the data of a .csv file
   * All the data is extracted in a matrix to be inserted in the database later.
@@ -110,6 +154,48 @@ public:
      * @param the pointer on the database
      **/
     void relationshipsCreation(Database *);
+
+private :
+    /**
+     * @fn Search for the max value from two columns of a data matrix
+     * @param data a matrix of data from which we want to take the max from two columns
+     * @param first the first column in which we want the max
+     * @param second the second column in which we want the max
+     * @return the maximum value in the columns first and second of the data matrix
+     */
+    int getMaxID(vector<vector<string> > data, int first, int second);
+
+    /**
+     * @fn initialise a node station in the array nodesStation with the value in the data array and add it to the database
+     * @param data the array possessing all the infos for the station we want to initialise
+     * @param nodesStation the array in which the initialised node station will be stored
+     * @param idPlace the place in the data array of the ID
+     * @param namePlace the place in the data array of the name
+     * @param latitudePlace the place in the data array of the latitude
+     * @param longitudePlace the place in the data array of the longitude
+     */
+    void initialiseStationNode(vector<string> data, Result ** nodesStation,
+                               int idPlace, int namePlace, int latitudePlace, int longitudePlace);
+
+    /**
+     * @fn initialise a date node in the pointers given in parameters and add it to the database (if the nodes don't already exist)
+     * @param nodeDay where the node day should be initialised
+     * @param nodeMonth where the node month should be initialised
+     * @param nodeYear where the node year should be initialised
+     * @param year the year of the date we want to initialise (should be between minYearData et maxYearData)
+     * @param month the month of the date we want to initialise
+     * @param day the day of the date we want to initialise
+     */
+    void initialiseDateNode(Result * nodeDay, Result * nodeMonth, Result * nodeYear,int year, int month, int day);
+
+    /**
+     * @fn initialise an hour node inside the pointers given in parameters and add it to the database (if the nodes don't already exist)
+     * @param nodeHour where the node hour should be initialised
+     * @param nodeMinute where the minute node should be initialised
+     * @param hour value of the hour we want to initialise
+     * @param minute value of the minute we want to initialise
+     */
+    void initialiseHourNode(Result * nodeHour, Result * nodeMinute,int hour, int minute);
 };
 
 #endif //FREE_BIKE_PROJECT_REPOSITORY_CITYDB_H
