@@ -1,0 +1,59 @@
+29
+(relation isNextHour Hour Hour
+)
+(relation isLastHour RootHour Hour
+)
+(relation isFirstHour RootHour Hour
+)
+(relation isNextMinute Minute Minute
+)
+(relation does User Trip
+)
+(relation takesPlace Event Station
+)
+(relation isChildYear RootDate Year
+)
+(relation isFirstDay Month Day
+)
+(relation departs Trip Event
+)
+(relation timesFrom Event Minute
+)
+(relation arrives Trip Event
+)
+(relation isLastDay Month Day
+)
+(relation isChildDay Month Day
+)
+(relation isLastYear RootDate Year
+)
+(relation isBorn User Year
+)
+(relation datesFrom Event Day
+)
+(relation uses Trip Bike
+)
+(relation isNextDay Day Day
+)
+(relation isChildHour RootHour Hour
+)
+(relation isChildMonth Year Month
+)
+(relation links Station Station
+)
+(relation isFirstMonth Year Month
+)
+(relation isLastMonth Year Month
+)
+(relation isFirstYear RootDate Year
+)
+(relation isNextMonth Month Month
+)
+(relation isNextYear Year Year
+)
+(relation isChildMinute Hour Minute
+)
+(relation isFirstMinute Hour Minute
+)
+(relation isLastMinute Hour Minute
+)
