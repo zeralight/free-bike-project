@@ -9,7 +9,6 @@
 #include "DBTools.hpp"
 #include "Pattern.hpp"
 #include "Result.hpp"
-//#include "Result.hpp"
 
 using namespace tlp;
 
@@ -33,11 +32,13 @@ protected:
   PatternImpl * pattern;
   
 public:
-  // ne fonctionnera pas pour une foret de graphes
+  // /!\ ne fonctionnera pas pour une foret de graphes
   Result * match(Pattern * p);
   
   std::vector<node> * getNodes(const std::string &entityName) const;
   std::vector<edge> * getEdges(const std::string &relationName) const;
+
+  Graph * getGraph();
   
 protected:
   GraphReadAbstract(Graph * g, DatabaseImpl * db);

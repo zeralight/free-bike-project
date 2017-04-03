@@ -54,10 +54,24 @@ std::vector<edge> * GraphReadAbstract::getEdges(const std::string &relationName)
 
 
 Result * GraphReadAbstract::match(Pattern * p) {
+  PatternImpl * pi = ((PatternImpl *) p);
   Graph * g = this->db->newGraphResult("");
   ResultImpl * res = new ResultImpl("match", g, this->db);
+
+  try {
+    if (pi->getDB() != this->db)
+      throw std::string("ERROR: The pattern isn't associated with the database");
+  }
+  catch (std::string &errMessage) {
+    std::cerr << errMessage << std::endl;
+  }
   
-  ((PatternImpl *) p)->match(this->g, g);
+  pi->match(g);
   
   return res;
+}
+
+
+Graph * GraphReadAbstract::getGraph() {
+  return this->g;
 }

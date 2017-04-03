@@ -28,8 +28,8 @@ DatabaseImpl::DatabaseImpl(const string &name): GraphWriteAbstract(newGraph(), t
   this->gEntities = this->g->addSubGraph("Entities");
   this->gResults = this->g->addSubGraph("Results");
   this->name = name;
-  this->gEntities->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
-  this->gRelations->getLocalProperty<StringProperty>(PROP_RELATION_NAME);
+  this->g->getProperty<StringProperty>(PROP_ENTITY_NAME);
+  this->g->getProperty<StringProperty>(PROP_RELATION_NAME);
 }
 
 
@@ -111,6 +111,7 @@ void DatabaseImpl::newRelation(const std::string &name, const std::string &entit
 void DatabaseImpl::newEdge(const std::string &relationName, const Result * src, const Result * dst, Attribute * attr[], int nAttr) {
   node nSrc;
   node nDst;
+  edge e;
   Relation * r = getRelation(relationName);
   Iterator<node> * itSrc = ((const ResultImpl *) src)->getNodes();
   
@@ -120,7 +121,15 @@ void DatabaseImpl::newEdge(const std::string &relationName, const Result * src, 
     
     while(itDst->hasNext()) {
       nDst = itDst->next();
-      r->newInstance(nSrc, nDst, attr, nAttr);
+      e = r->newInstance(nSrc, nDst, attr, nAttr);
+
+      try {
+	if (!e.isValid())
+	  throw std::string("ERROR: impossible de to create an instance of " + relationName + ", the arguments don't match relation's definition, which is :\n" + r->debug(true));
+      }
+      catch (std::string &errMessage) {
+	std::cerr << errMessage << std::endl;
+      }
     }
 
     delete itDst;
@@ -294,4 +303,9 @@ void DatabaseImpl::loadRelations(const string &path) {
 
 Graph * DatabaseImpl::newGraphResult(const std::string &name) {
   return this->gResults->addSubGraph(name);
+}
+
+
+Result * DatabaseImpl::match(Pattern * p) {
+  return GraphWriteAbstract::match(p);
 }

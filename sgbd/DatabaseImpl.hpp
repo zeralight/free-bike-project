@@ -23,7 +23,7 @@ using namespace tlp;
  *          See this file for more details on its use.
  *
  **/
-class DatabaseImpl: public Database, GraphWriteAbstract {
+class DatabaseImpl: public Database, public GraphWriteAbstract {
 private:
   Graph * gRelations;
   Graph * gEntities;
@@ -46,6 +46,8 @@ public:
 
   Relation * getRelation(const std::string &name);
   Entity * getEntity(const std::string &name);
+
+  Result * match(Pattern * p);
 
   Graph * newGraphResult(const std::string &name);
 

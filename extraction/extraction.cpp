@@ -31,7 +31,7 @@ vector<vector<string> > parseCSVFile(const string &csv_file) {
 	  data.push_back(vector<string>(1, namesVarList[j])); // Creates as columns as fields in the table
 	}
       i=0; int j=1; character='\0'; // '\0' to avoid a falsifying '\n'
-      while (!file.eof() && file.get(character) ) // While it's not the end of the file
+      while (j < 10000 && !file.eof() && file.get(character) ) // While it's not the end of the file
 	{
 	  data[i].push_back(""); // Creates a value
 	  while (character != ',' && character != '\n' ) // While it is the same line and the same value

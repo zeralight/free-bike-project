@@ -12,16 +12,16 @@
 
 // pas sensé etre visible ?
 #define PROP_TYPE_NAME "ptType"
-//#define PROP_LABEL_NAME "ptLabel"
+#define PROP_LABEL_NAME "ptLabel"
 #define PROP_CHECKED_NAME "ptChecked"
-#define PROP_CHECKED_DB_NAME "ptCheckedDB"
+#define PROP_ALIAS_NAME "ptAlias"
 
 using namespace tlp;
 
 PatternImpl::PatternImpl(DatabaseImpl * db) {
   this->db = (DatabaseImpl *) db;
   this->g = newGraph();
-  //this->labelProp = this->g->addLocalProperty<StringProperty>(PROP_TYPE_NAME);
+  this->labelProp = this->g->getLocalProperty<StringProperty>(PROP_LABEL_NAME);
   this->typeProp = this->g->getLocalProperty<StringProperty>(PROP_TYPE_NAME);
   this->checkedProp = this->g->getLocalProperty<BooleanProperty>(PROP_CHECKED_NAME);
 }
@@ -48,7 +48,8 @@ void PatternImpl::addNode(const std::string &label, const std::string &entityNam
 
   n = this->g->addNode();
   nodes[label] = n;
-    
+
+  this->labelProp->setNodeValue(n, label);
   this->typeProp->setNodeValue(n, entityName);
   this->checkedProp->setNodeValue(n, false);
 }
@@ -67,7 +68,7 @@ void PatternImpl::addEdge(const std::string &label, const std::string &relationN
     
     rel = db->getRelation(relationName);
     if (!rel->verify(this->getEntity(labelSrc), this->getEntity(labelDst)))
-      throw std::string("ERROR: Wrong type for label '" + labelSrc + "' and/or '" + labelDst + "', here the definition of the relation " + rel->debug());
+      throw std::string("ERROR: Wrong type for label '" + labelSrc + "' and/or '" + labelDst + "', here is the definition of the relation : " + rel->debug(false));
   }
   catch (std::string &errMessage){
     std::cerr << errMessage << std::endl;
@@ -76,7 +77,8 @@ void PatternImpl::addEdge(const std::string &label, const std::string &relationN
 
   e = this->g->addEdge(nodes[labelSrc], nodes[labelDst]);
   edges[label] = e;
-  
+
+  this->labelProp->setEdgeValue(e, label);
   this->typeProp->setEdgeValue(e, relationName);
   this->checkedProp->setEdgeValue(e, false);
 }
@@ -162,101 +164,136 @@ void PatternImpl::debug() const {
 }
 
 
-// Contrainte : pour logique, 
-void PatternImpl::match(Graph * gSrc, Graph * gDst) {
+// Contrainte : pour logique, gDst doit etre sous-graphe du graphe gSrc
+// gSrc doit etre 
+void PatternImpl::match(Graph * gDst) {
   node n;
+  Graph * gSrc = this->db->getGraph();
   
-  if (!this->nodes.empty()) {
-    auto it = nodes.begin();
-    n = (*it).second;
-  }
-  else
+  if (this->nodes.empty())
     return;
 
-  this->checkedDBProp = gDst->getLocalProperty<BooleanProperty>(PROP_CHECKED_DB_NAME);
+  auto it = nodes.begin();
+  n = (*it).second;
+ 
+  this->aliasProp = gDst->getLocalProperty<StringProperty>(PROP_ALIAS_NAME);
   initProp();
   
   Graph * g = gSrc->addSubGraph("matchTmp");
   Entity * ent = getEntity(n);
   
-  std::vector<node> * gNodes = ent->getInstance(gSrc, EQUAL);
+  std::vector<node> * gNodes = ent->getInstance(NULL, 0, EQUAL);
 
   for (auto it = gNodes->begin() ; it != gNodes->end(); it++) {
-    if (matchRec(gSrc, g, *it, n)) {
-      copyToGraph(g, gDst);
-      g->clear();
+    this->checkedProp->setAllNodeValue(false);
+    this->checkedProp->setAllEdgeValue(false);
+
+    g->addNode(*it);
+    std::cout << ent->getName() << ": " << ent->getGraph()->getProperty<IntegerProperty>("id")->getNodeValue(*it) << std::endl;
+    
+    if (matchRec(g, n, *it)) {
+      std::cout << "\x1b[33;1mmatch\x1b[0m" << std::endl;
+      gDst->addNodes(g->getNodes());
+      gDst->addEdges(g->getEdges());
     }
+
+    g->clear();
   }
 
   delete gNodes;
-  delete g;
+  gSrc->delSubGraph(g);
 }
 
 
-bool PatternImpl::matchRec(Graph * gSrc, Graph * gDst, node nPat, node n) {
+bool PatternImpl::matchRec(Graph * gDst, node nPat, node n) {
   if (isChecked(nPat))
     return true;
 
+  this->checkedProp->setNodeValue(nPat, true);
+  this->aliasProp->setNodeValue(n, labelProp->getNodeValue(nPat));
+  
+  Graph * gSrc = this->db->getGraph();
   edge ePat, e;
   node nTargetPat, nTarget;
-  bool ret = true;
-  int nbToMatch;
+  Iterator<edge> * adjEdgesPat = this->g->getInOutEdges(nPat);
+  Iterator<edge> * adjEdges = gSrc->getInOutEdges(n);
   
-  gDst->addNode(n);
-  Iterator<edge> * outEdgesPat = this->g->getOutEdges(nPat);
-  Iterator<edge> * outEdges = gSrc->getOutEdges(n);
-  
-  while(outEdgesPat->hasNext()) {
-    ePat = outEdgesPat->next();
-    e = matchEdge(ePat, outEdges);
-    nTarget = gSrc->opposite(e, n);
+  while(adjEdgesPat->hasNext()) {
+    ePat = adjEdgesPat->next();
 
-    if (e.isValid() && !isCheckedDB(nTarget)) {
-      gDst->addNode(nTarget);
-      gDst->addEdge(e);
-
-      nTargetPat = this->g->opposite(ePat, nPat);
-
-      if (!matchRec(gSrc, gDst, nTargetPat, nTarget))
+    if (isChecked(ePat))
+      continue;
+    
+    do {
+      e = matchEdge(ePat, adjEdges, gDst);
+      
+      if (!e.isValid()) {
+	std::cout << "\x1b[31;1mno edge\x1b[0m" << std::endl;
 	return false;
-    }
-    else
+      }
+      
+      nTarget = gSrc->opposite(e, n);      
+      nTargetPat = this->g->opposite(ePat, nPat);
+    } while (!matchNode(nTargetPat, nTarget, gDst));
+    
+    gDst->addNode(nTarget);
+    gDst->addEdge(e);
+    
+    this->checkedProp->setEdgeValue(ePat, true);
+    this->aliasProp->setEdgeValue(e, labelProp->getEdgeValue(ePat));
+    
+    if (!matchRec(gDst, nTargetPat, nTarget)) {
+      std::cout << "\x1b[31;1mnon match\x1b[0m" << std::endl;
       return false;
+    }
   }
-
+  
   return true;
 }
 
 
-edge PatternImpl::matchEdge(edge e, Iterator<edge> * potEdges) {
-  edge tmp;
-
-  Relation * r = getRelation(e);
+edge PatternImpl::matchEdge(edge ePat, Iterator<edge> * potEdges, Graph * gDst) {
+  edge e;
+  Graph * gSrc = this->db->getGraph();
+  Relation * r = this->getRelation(ePat);
 
   while(potEdges->hasNext()) {
-    tmp = potEdges->next();
-
-    if (r->isInstance(tmp) && !isCheckedDB(e))
-      return tmp;
+    e = potEdges->next();
+    
+    // Check that e has the same type as ePat
+    if (r->isInstance(e) && !gDst->isElement(e))
+      return e;
   }
 
-  return tmp;
+  return edge();
+}
+
+
+bool PatternImpl::matchNode(node nPat, node n, Graph * gDst) {
+  std::string nLabel = this->labelProp->getNodeValue(nPat);
+
+  // Check that, if n already exists in gDst, n has the same label as nPat
+  if ((gDst->isElement(n) &&
+       nLabel != aliasProp->getNodeValue(n)))
+    return false;
+  /*    
+  if (!gDst->isElement(n))
+    this->aliasProp->setNodeValue(n, nLabel);
+  */
+  
+  return true;
 }
 
 
 void PatternImpl::initProp() {
-  this->checkedDBProp->setAllNodeValue(false);
-  this->checkedDBProp->setAllEdgeValue(false);
+  std::string emptyStr;
+  this->aliasProp->setAllNodeValue(emptyStr);
+  this->aliasProp->setAllEdgeValue(emptyStr);
   this->checkedProp->setAllNodeValue(false);
   this->checkedProp->setAllEdgeValue(false);
 }
 
 
-bool PatternImpl::isCheckedDB(node n) {
-  return this->checkedDBProp->getNodeValue(n);
-}
-
-
-bool PatternImpl::isCheckedDB(edge e) {
-  return this->checkedDBProp->getEdgeValue(e);
+DatabaseImpl * PatternImpl::getDB() {
+  return this->db;
 }

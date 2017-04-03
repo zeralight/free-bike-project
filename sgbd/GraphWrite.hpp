@@ -35,7 +35,7 @@ class GraphWriteAbstract: public GraphWrite, public GraphReadAbstract {
 public: 
   bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr);  
   bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr);
-
+  
 protected:
   GraphWriteAbstract(Graph * g, DatabaseImpl * db);
   ~GraphWriteAbstract();

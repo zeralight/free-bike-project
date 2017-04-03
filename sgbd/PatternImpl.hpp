@@ -26,7 +26,8 @@ class PatternImpl : public Pattern {
   std::unordered_map<std::string, edge> edges;
   StringProperty * typeProp;
   BooleanProperty * checkedProp;
-  BooleanProperty * checkedDBProp;
+  StringProperty * labelProp;
+  StringProperty * aliasProp;
 
 public:
   PatternImpl(DatabaseImpl * db);
@@ -46,20 +47,25 @@ public:
   bool isChecked(node n) const;
   bool isChecked(edge e) const;
 
-  bool isCheckedDB(node n);
-  bool isCheckedDB(edge e);  
-
+  /*
+   * bool isCheckedDB(node n);
+   * bool isCheckedDB(edge e);  
+   */
+  
   bool isNode(std::string label) const;
   bool isEdge(std::string label) const;
 
   bool isAvailable(std::string label) const;
 
-  void match(Graph * gSrc, Graph * gDst);
-  bool matchRec(Graph * gSrc, Graph * gDst, node nPat, node n);
+  void match(Graph * gDst);
+  bool matchRec(Graph * gDst, node nPat, node n);
 
-  edge matchEdge(edge e, Iterator<edge> * potEdges);
+  edge matchEdge(edge ePat, Iterator<edge> * potEdges, Graph * gDst);
+  bool matchNode(node nPat, node n, Graph * gDst);
   void initProp();
 
+  DatabaseImpl * getDB();
+  
   void debug() const;
 };
   

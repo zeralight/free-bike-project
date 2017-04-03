@@ -19,8 +19,8 @@ class DatabaseImpl;
 
 
 class ResultImpl : public GraphWriteAbstract, public Result {
-  using GraphWriteAbstract::editNodes;
-  using GraphWriteAbstract::editEdges;
+  //  using GraphWriteAbstract::editNodes;
+  //using GraphWriteAbstract::editEdges;
   
 public:
   ResultImpl(const std::string &name, Graph * g, DatabaseImpl * db);
@@ -31,12 +31,12 @@ public:
   Iterator<node> * getNodes() const;
   Iterator<edge> * getEdges() const;
   
-  bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr);  
+  bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr);
   bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr);
   void filterNodes(std::string entityName, Attribute * attr[], int nAttr, int cmpOp);
   void filterEdges(std::string relationName, Attribute * attr[], int nAttr, int cmpOp);
-  void where(std::string label, Attribute * attr[], int nAttr, int cmpOp);  
-
+  void where(std::string label, Attribute * attr[], int nAttr, int cmpOp);
+  
   // Plus haut dans la hiérarchie ?
   void addNode(const node &n);
   void addEdge(const edge &n);

@@ -43,6 +43,7 @@ public:
   void write(std::fstream &file) const;
   void load(std::fstream &file, Graph * gSrc);
   void print();
+  std::string debug(bool getArgs);
 
 private:
   bool isValid(Attribute * attr[], int nAttr) const;

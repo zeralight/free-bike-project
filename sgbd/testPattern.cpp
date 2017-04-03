@@ -9,6 +9,7 @@ int main () {
   Database * db = newDB("dbTestPattern");
 
   db->newEntity("Person", NULL, 0);
+  db->newEntity("Ninja", NULL, 0);
   db->newRelation("friendOf", "Person", "Person", NULL, 0);
   
   Pattern * p = newPattern(db);
@@ -17,10 +18,12 @@ int main () {
   p->addNode("pB", "Person");
   p->addNode("pA", "Person"); // erreur : pA existe 
   p->addNode("pC", "Doge"); // erreur : Doge n'existe pas
+  p->addNode("nA", "Ninja");
     
   p->addEdge("pB", "friendOf", "pA", "pB"); // erreur : pB existe
   p->addEdge("f1", "friendOf", "pA", "pC");  // erreur : pC n'existe pas
   p->addEdge("f1", "petOf", "pA", "pB");  // erreur : petOf n'existe pas
+  p->addEdge("g", "friendOf", "pA", "nA"); // erreur : friendOf entre deux Person et non entre Ninja et Person
   p->addEdge("f", "friendOf", "pA", "pB");
 
   std::cout << std::endl << "Pattern created with :" << std::endl;

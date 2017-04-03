@@ -32,8 +32,7 @@ Entity::Entity(const std::string &name, const Attribute * const attr[], int nAtt
   
   // Initialize nodes with entity's name
   this->name = name;
-  this->nameProp = this->g->getLocalProperty<StringProperty>(PROP_ENTITY_NAME);
-  this->nameProp->setAllNodeValue(name);
+  this->nameProp = this->g->getProperty<StringProperty>(PROP_ENTITY_NAME);
 
   // Creation of all properties
   this->nAttr = nAttr;
@@ -70,6 +69,7 @@ node Entity::newInstance(Attribute * attr[], int nAttr) {
 
   if (isValid(attr, nAttr)) {
     n = this->g->addNode();
+    this->nameProp->setNodeValue(n, this->name);
     
     for(int i = 0 ; i < nAttr ; i++)
       attr[i]->setNodeValue(n);
@@ -125,7 +125,7 @@ std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr, int cmpOp
 
 std::vector<node> * Entity::getInstance(Graph * g, int cmpOp) const {
   Attribute * name[1] = {new Attr<STRING>(PROP_ENTITY_NAME, this->name)};
-  name[0]->setProperty(nameProp);
+  name[0]->setProperty(g);
   std::vector<node> * nodes = getNodes(g, name, 1, cmpOp);
   return nodes;
 }
@@ -250,9 +250,20 @@ void Entity::load(std::fstream &file, Graph * gSrc) {
 
 
 void Entity::print() {
-  std::cout << "==== ent:" + name + " ====" << std::endl;
+  std::cout << debug(true) << std::endl;
+}
 
-  for (auto it = attr.begin() ; it != attr.end() ; it++)
-    ((*it).second)->print(); 
+
+std::string Entity::debug(bool getArgs) {
+  std::string ret;
+  ret = "ent:'" + this->name + "'";
+  
+  if (getArgs) {
+    ret += " :";
+    for (auto it = attr.begin() ; it != attr.end() ; it++)
+      ret += "\n" + ((*it).second)->debug();
+  }
+  
+  return ret;
 }
 

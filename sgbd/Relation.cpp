@@ -35,8 +35,7 @@ Relation::Relation(const std::string &name, Entity * src, Entity * dst, const At
   
   // Initialize edges with relation's name
   this->name = name;
-  this->nameProp = this->g->getLocalProperty<StringProperty>(PROP_RELATION_NAME);
-  this->nameProp->setAllEdgeValue(name);
+  this->nameProp = this->g->getProperty<StringProperty>(PROP_RELATION_NAME);
   
   // Creation of all properties
   this->nAttr = nAttr;
@@ -69,8 +68,9 @@ Graph * Relation::getGraph() const {
 edge Relation::newInstance(const node &src, const node &dst, Attribute * attr[], int nAttr) {
   edge e;
   
-  if (isValid(attr, nAttr)) {
+  if (isValid(attr, nAttr) && verify(src, dst)) {
     e = this->g->addEdge(src, dst);
+    this->nameProp->setEdgeValue(e, this->name);
       
     for(int i = 0 ; i < nAttr ; i++)
       attr[i]->setEdgeValue(e);
@@ -140,7 +140,7 @@ std::vector<edge> * Relation::getInstance(const node &n, Attribute * attr[], int
 
 std::vector<edge> * Relation::getInstance(Graph * g, int cmpOp) const {
   Attribute * name[1] = {new Attr<STRING>(PROP_RELATION_NAME, this->name)};
-  name[0]->setProperty(nameProp);
+  name[0]->setProperty(g);
   std::vector<edge> * edges = getEdges(g, name, 1, cmpOp);
   return edges;
 }
@@ -239,17 +239,20 @@ void Relation::load(std::fstream &file, Graph * gSrc, std::unordered_map<std::st
 
 
 void Relation::print() {
-  std::cout << "==== rel:" << name << " ====" << std::endl;
-  std::cout << entitySrc->getName() << " --> " << entityDst->getName() << std::endl;
-
-  for (auto it = attr.begin() ; it != attr.end() ; it++)
-    ((*it).second)->print(); 
+  std::cout << debug(true) << std::endl;
 }
 
 
-std::string Relation::debug() {
+std::string Relation::debug(bool getArgs) {
   std::string ret;
-  ret = "'" + this->name + "' : '" + this->entitySrc->getName() + "' -> '" + this->entityDst->getName() + "'";
+  ret = "rel:'" + this->name + "' : '" + this->entitySrc->getName() + "' -> '" + this->entityDst->getName() + "'";
+  
+  if (getArgs) {
+    ret += " :";
+    for (auto it = attr.begin() ; it != attr.end() ; it++)
+      ret += "\n" + ((*it).second)->debug();
+  }
+  
   return ret;
 }
 
@@ -257,4 +260,10 @@ std::string Relation::debug() {
 bool Relation::verify(const Entity * src, const Entity * dst) const {
   return (this->entitySrc == src &&
 	  this->entityDst == dst);
+}
+
+
+bool Relation::verify(const node &src, const node &dst) const {
+  return (this->g->isElement(src) &&
+	  this->g->isElement(dst));
 }

@@ -83,6 +83,7 @@ public:
   virtual bool isEqual(tlp::node &) const =0;
   virtual bool isEqual(tlp::edge &) const =0;
   virtual void print() const =0;
+  virtual std::string debug() const =0;
   void addConstraints(int);
 
   virtual Attribute * operator=(const Attribute *) =0;
@@ -123,6 +124,7 @@ public:
   bool isEqual(tlp::node &n) const;
   bool isEqual(tlp::edge &e) const;
   void print() const;
+  std::string debug() const;
 
   Attribute * operator=(const Attribute * attr);
 
@@ -266,14 +268,24 @@ bool Attr<T>::isEqual(tlp::edge &e) const {
 
 template <class T>
 void Attr<T>::print() const {
-  std::cout << this->label;
-  for (int i = 0 ; i < (32 - this->label.size()) ; i++)
-    std::cout << " ";
-  std::cout << this->typeName << "\t";
-  std::cout << "cstr:" << this->constraints << "\t";
-  std::cout << "val:";
-  std::cout << this->value;
-  std::cout << std::endl;
+  std::cout << debug() << std::endl;
 }
+
+
+template <class T>
+std::string Attr<T>::debug() const {
+  std::string ret;
+  
+  ret = this->label;
+  for (int i = 0 ; i < (32 - this->label.size()) ; i++)
+    ret += " ";
+  ret += this->typeName + "\t";
+  ret += "cstr:" + std::to_string(this->constraints) + "\t";
+  ret += "val:";
+  ret += this->value;
+  
+  return ret;
+}
+
 
 #endif //DBTOOLS_HPP

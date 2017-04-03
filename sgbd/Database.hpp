@@ -10,6 +10,7 @@
 //#include "Result.hpp"
 
 class Result;
+class Pattern;
 
 /**
  * @brief This class is the core of the Database Management System.
@@ -140,6 +141,9 @@ public:
    * @return Database * : a pointer to the loaded Database object
    **/
   virtual void load(const std::string &path) =0;
+
+
+  virtual Result * match(Pattern * p) =0;
 };
 
 

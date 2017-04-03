@@ -45,6 +45,7 @@ bool ResultImpl::editEdges(const std::string &relationName, Attribute * attr[], 
   GraphWriteAbstract::editEdges(relationName, attr, nAttr);
 }
 
+
 /* */
 void ResultImpl::filterNodes(std::string entityName, Attribute * attr[], int nAttr, int cmpOp){
   Entity * e = this->db->getEntity(entityName);
