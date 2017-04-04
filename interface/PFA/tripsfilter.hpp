@@ -7,19 +7,20 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
-
+#include "controllerInterface.hpp"
 class TripsFilter :  public QWidget
 {
     Q_OBJECT
 public:
-    TripsFilter(QWidget *parent = 0);
+    TripsFilter(ControllerInterface * controller, QWidget *parent = 0);
     QCheckBox * beginStation;
     QCheckBox * endStation;
     QSpinBox * minLengthTrip;
     QSpinBox * maxLengthTrip;
     QSpinBox * minDensityTrip;
     QSpinBox * maxDensityTrip;
-
+private:
+    ControllerInterface * controller;
 signals:
 
 public slots:

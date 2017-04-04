@@ -1,13 +1,22 @@
+
+#include <QWidget>
+#include <QDateTimeEdit>
+#include <QRadioButton>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <stdlib.h>
+#include "controllerInterface.hpp"
 #include "periodfilter.hpp"
 #include <stdio.h>
 
-#include "../controller/controllerInterface.h"
-PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),
+PeriodFilter::PeriodFilter(ControllerInterface * controller, QWidget *parent) : QWidget(parent),
     beginning(new QDateTimeEdit),
     end(new QDateTimeEdit),
     normal(new QRadioButton("Normale")),
     slot(new QRadioButton("Créneaux")),
-    slotsChoice(new QWidget)
+    slotsChoice(new QWidget),
+    controller(controller)
 {
     setWindowTitle("Filtre periode");
     resize(300,300);
@@ -53,7 +62,7 @@ void PeriodFilter::validation(){
     for(i;i++;i<24){
         slots[i] = this->hours[i]->isChecked();
     }
-    int returnPeriodFilter(beginning->date().day(),beginning->date().month(),beginning->date().year,beginning->time().hour(),beginning->time().minute(),
+    controller->returnPeriodFilter(beginning->date().day(),beginning->date().month(),beginning->date().year,beginning->time().hour(),beginning->time().minute(),
                            end->date().day(),end->date().month(),end->date().year,end->time().hour(),end->time().minute(),
-    normal->isChecked(), slots);
+                           normal->isChecked(), slots);
 }

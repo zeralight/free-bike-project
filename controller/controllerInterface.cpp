@@ -4,7 +4,7 @@
 
 ControllerInterface::ControllerInterface(){
     QApplication a(argc, argv);
-    MW = new MainWindow;
+    MW = new MainWindow(this);
     argc = 1;
     asprintf("Free bike project",&argv);
 }

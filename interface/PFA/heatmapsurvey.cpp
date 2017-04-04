@@ -1,8 +1,29 @@
+
+#include <QCheckBox>
+#include <QWidget>
+#include <QGroupBox>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include "periodfilter.hpp"
+#include "usersfilter.hpp"
+#include "tripsfilter.hpp"
+#include "densityfilter.hpp"
+
+#include "controllerInterface.hpp"
+
 #include "heatmapsurvey.hpp"
 
 
 
-    HeatMapSurvey::HeatMapSurvey(QWidget *parent) : QWidget(parent),periodFilter(new PeriodFilter),usersFilter(new UsersFilter),tripsFilter(new TripsFilter),densityFilter(new DensityFilter)
+    HeatMapSurvey::HeatMapSurvey(ControllerInterface * controller, QWidget *parent) : QWidget(parent),
+                                                                                      controller(controller),
+                                                                                      periodFilter(new PeriodFilter(controller)),
+                                                                                      usersFilter(new UsersFilter(controller)),
+                                                                                      tripsFilter(new TripsFilter(controller)),
+                                                                                      densityFilter(new DensityFilter(controller))
+
     {
     QGroupBox *groupbox = new QGroupBox("Recherche :", this);
     QComboBox *citiesList = new QComboBox(this);
