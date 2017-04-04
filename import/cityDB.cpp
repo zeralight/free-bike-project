@@ -326,15 +326,16 @@ void CityDB::importOneFile(string const & file){
 Database * CityDB::activate(){
     struct stat buf;
     if( stat(dirDB+name+".db",&buf)){
-        database = newDB(name);
+        this->database = newDB(this->name);
         entitiesCreation(database);
         relationshipsCreation(database);
-
+        DBInstanciation();
+    } else {
+        this->database = newDB(this->name);
+        this->database->load(dirDB + "/" + name + ".db");
+        this->isActive = true;
     }
-    this->database = newDB(this->name);
-    this->database->load(dirDB+"/"+name+".db");
-    this->isActive = true;
-    return this->database;
+        return this->database;
 }
 void CityDB::desactivate() {
     this->database->save(dirDB);

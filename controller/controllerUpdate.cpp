@@ -5,10 +5,31 @@
 
 
 ControllerUpdate::ControllerUpdate() : whichActive(NULL){
-    CSVShape * shapeChicago= new CSVShape; //à remplir
-    vector<string> filesChicago = new vector<string>; // à remplir
-    chicago = new CityDB("Chicago",SCRIPT_FILES_DL+"chicago",SCRIPT_FILES_DL+"chicago",DB_DIR,filesChicago,shapeChicago);
+    CSVShape * shapeChicago= new CSVShape;
+    shapeChicago->startTimePlace = 1;
+    shapeChicago->startDatePlace = 1;
+    shapeChicago->userTypePlace = 1;
+    shapeChicago->bikeIDPlace = 1;
+    shapeChicago->birthYearPlace = 1;
+    shapeChicago->endDatePlace = 1;
+    shapeChicago->endTimePlace = 1;
+    shapeChicago->genderPLace =1;
+    shapeChicago->stationEndIDPlace =1;
+    shapeChicago->stationStartIDPlace = 1;
+    shapeChicago->stationEndLatitudePlace=1;
+    shapeChicago->stationEndLongitudePlace =1;
+    shapeChicago->stationEndNamePlace =1;
+    shapeChicago->userTypePlace = 1;
+    shapeChicago->tripIDPlace=1;
+    shapeChicago->tripDurationPlace=1;
+    shapeChicago->stationStartNamePlace=1;
+    shapeChicago->stationStartLongitudePlace=1;
+    shapeChicago->stationStartLatitudePlace=1;
 
+    vector<string> filesChicago = new vector<string>; // à remplir
+    filesChicago.push_back("");
+    chicago = new CityDB("Chicago",SCRIPT_FILES_DL+"chicago",SCRIPT_FILES_DL+"chicago",DB_DIR,filesChicago,shapeChicago);
+/*
     CSVShape * shapesanFrancisco= new CSVShape; //à remplir
     vector<string> filessanFrancisco = new vector<string>; // à remplir
     sanFrancisco = new CityDB("sanFrancisco",SCRIPT_FILES_DL+"sanFrancisco",SCRIPT_FILES_DL+"sanFrancisco",DB_DIR,filessanFrancisco,shapesanFrancisco);
@@ -29,7 +50,7 @@ ControllerUpdate::ControllerUpdate() : whichActive(NULL){
     vector<string> fileschattanooga = new vector<string>; // à remplir
     chattanooga = new CityDB("chattanooga",SCRIPT_FILES_DL+"chattanooga",SCRIPT_FILES_DL+"chattanooga",DB_DIR,fileschattanooga,shapechattanooga);
 
-
+*/
 }
 
 void ControllerUpdate::activate(CityDB * city){
