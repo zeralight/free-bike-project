@@ -9,6 +9,17 @@
 #include "Result.hpp"
 
 using namespace std;
+
+/**
+ * @struct This struct allows us to store informations about date and time.
+ */
+struct dateAndTime{
+    int minute;
+    int hour;
+    int day;
+    int month;
+    int year;
+};
 /**
  * @struct This struct allows us to know in which column of the CSV files are the info we seek to use.
  **/
@@ -127,17 +138,15 @@ public:
   **/
     vector<vector<string> > parseCSVFile(const string &csv_file);
 
-    //the next methods are for the initialisation of the DB.
-
     /**
-     * @fn Function which parses a CSV date to create the nodes relating to the date later
-     * The function splits the date into 5 elements (year, month, day, hour, minute)
+     * @fn Function which parses two strings to store date and time infos inside a struct dateAndTime.
+     * The dateAndTime struct is allowed dynamically so a delete has to be called on the return value.
      *
-     * @param the date in its CSV format
-     *
-     * @return vector<int> : a dynamic array containing the 5 future nodes
+     * @param date string containing date infos (should be formated as this : month/day/year)
+     * @param time string containing hour infos (should be formated as this : hour:minute)
+     * @return a pointer to a dateAndTime struct which was allocated dynamically, this one has to be deleted
      **/
-    vector<int> dateInNodes(const string &);
+     dateAndTime * dateInNodes(const string & date, const string & time);
 
     /**
      * @fn Creates all the entities of the database
@@ -166,19 +175,19 @@ private :
     int getMaxID(vector<vector<string> > data, int first, int second);
 
     /**
-     * @fn initialise a node station in the array nodesStation with the value in the data array and add it to the database
-     * @param data the array possessing all the infos for the station we want to initialise
+     * @fn initialise a node station in the array nodesStation with given in parameters and add it to the database
+     * (if the node doesn't already exist)
      * @param nodesStation the array in which the initialised node station will be stored
-     * @param idPlace the place in the data array of the ID
-     * @param namePlace the place in the data array of the name
-     * @param latitudePlace the place in the data array of the latitude
-     * @param longitudePlace the place in the data array of the longitude
+     * @param id the ID of the station
+     * @param name the name of the station
+     * @param latitude the latitude of the station
+     * @param longitude the longitude of the station
      */
-    void initialiseStationNode(vector<string> data, Result ** nodesStation,
-                               int idPlace, int namePlace, int latitudePlace, int longitudePlace);
+    void initialiseStationNode(Result ** nodesStation, int id, string name, double latitude, double longitude);
 
     /**
-     * @fn initialise a date node in the pointers given in parameters and add it to the database (if the nodes don't already exist)
+     * @fn initialise a date node in the pointers given in parameters and add it to the database
+     * (if the node doesn't already exist)
      * @param nodeDay where the node day should be initialised
      * @param nodeMonth where the node month should be initialised
      * @param nodeYear where the node year should be initialised
@@ -189,7 +198,8 @@ private :
     void initialiseDateNode(Result * nodeDay, Result * nodeMonth, Result * nodeYear,int year, int month, int day);
 
     /**
-     * @fn initialise an hour node inside the pointers given in parameters and add it to the database (if the nodes don't already exist)
+     * @fn initialise an hour node inside the pointers given in parameters and add it to the database
+     * (if the node doesn't already exist)
      * @param nodeHour where the node hour should be initialised
      * @param nodeMinute where the minute node should be initialised
      * @param hour value of the hour we want to initialise

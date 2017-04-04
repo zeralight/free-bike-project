@@ -46,23 +46,18 @@ int CityDB::getMaxID(vector<vector<string> > data, int first, int second){
     }
     return max;
 }
-void CityDB::initialiseStationNode(vector<string> data, Result ** nodesStation, Attribute * attrStation[4],
-                                   int idPlace, int namePlace, int latitudePlace, int longitudePlace){
-
+void CityDB::initialiseStationNode(Result ** nodesStation, int id, string name, double latitude, double longitude){
     Attribute * attrStation[4] = {new Attr<INT>("id"),
                                   new Attr<STRING>("name"),
                                   new Attr<DOUBLE>("latitude"),
                                   new Attr<DOUBLE>("longitude")};
-    INT id = unserialize<INT>(data[idPlace]);
-    attrStation[0]->setValue(&id);
-    STRING name = unserialize<STRING>(data[namePlace]);
-    attrStation[1]->setValue(&name);
-    DOUBLE latitude = unserialize<DOUBLE>(data[latitudePlace]);
-    attrStation[2]->setValue(&latitude);
-    DOUBLE longitude = unserialize<DOUBLE>(data[longitudePlace]);
-    attrStation[3]->setValue(&longitude);
-    nodesStation[id] = this->database->newNode("Station", attrStation, 4);
-
+    if(nodesStation[id] == NULL) {
+        attrStation[0]->setValue(&id);
+        attrStation[1]->setValue(&name);
+        attrStation[2]->setValue(&latitude);
+        attrStation[3]->setValue(&longitude);
+        nodesStation[id] = this->database->newNode("Station", attrStation, 4);
+    }
     //// Delete Attribute object
     delAttr(attrStation, 4);
 
@@ -136,7 +131,7 @@ void CityDB::importOneFile(string const & file){
     /// About dates and time
 
     //// Dates nodes creation
-    Result * nodesDay[1][12][31] = {NULL};
+    Result * nodesDay[this->minYearData - this->maxYearData +1][12][31] = {NULL};
     Result * nodesMonth[1][12] = {NULL};
     Result * nodesYear[1] = {NULL};
 
@@ -149,6 +144,8 @@ void CityDB::importOneFile(string const & file){
     //// Needed variables
     INT gender;
     INT type;
+    string date;
+    string time;
 
     Attribute * attrBike[1] = {new Attr<INT>("id")}; // UNIQUE
     Attribute * attrUser[2] = {new Attr<INT>("type"),
@@ -159,25 +156,44 @@ void CityDB::importOneFile(string const & file){
     Result * nodeTrip = NULL;
     Result * nodesEvent[2] = {NULL};
 
-    vector<int> date;
+    DateAndTime * dateTime;
+
+    int idStart ;
+    int idArrival ;
 
     //// Nodes and edges creation loop
     for (int i = 1 ; i < data[0].size() ; i++) {
+        /////station initialisation
+        idStart = stoi(data[i][this->shape->stationStartIDPlace]);
+        intialiseStationNode(nodesStation[idStart],idStart,data[i][this->shape->stationStartNamePlace],unserialize<DOUBLE>(data[i][this->shape->stationStartLatitudePlace]),unserialize<DOUBLE>(data[i][this->shape->stationStartLongitudePlace]));
+        idArrival = stoi(data[i][this->shape->stationStartIDPlace]);
+        intialiseStationNode(nodesStation[idStart],idArrival,data[i][this->shape->stationEndNamePlace],unserialize<DOUBLE>(data[i][this->shape->stationEndLatitudePlace]),unserialize<DOUBLE>(data[i][this->shape->stationEndLongitudePlace]));
 
+        /////Date intialisation
+        initialiseDateNode(Result * nodeDay, Result * nodeMonth, Result * nodeYear, year, month, day);
         ///// Bike node
-        id = unserialize<INT>(tripsData[3][i]);
+        id = unserialize<INT>(data[this->shape->bikeIDPlace][i]);
         attrBike[0]->setValue(&id);
         nodeBike = database->newNode("Bike", attrBike, 1);
 
         ///// User node
-        if (tripsData[10][i] == "Male") gender = GENDER_MALE;
-        else if (tripsData[10][i] == "Female") gender = GENDER_FEMALE;
-        else gender = GENDER_NO_INFO;
+        if(this->shape->genderPLace != -1) {
+            if (data[this->shape->genderPLace][i] == "Male") gender = GENDER_MALE;
+            else if (data[this->shape->genderPLace][i] == "Female") gender = GENDER_FEMALE;
+            else gender = GENDER_NO_INFO;
+        }
+        else{
+            gender = GENDER_NO_INFO;
+        }
 
-        if (tripsData[9][i] == "Subscriber") type = TYPE_SUBSCRIBER;
-        else if (tripsData[9][i] == "Customer") type = TYPE_CUSTOMER;
-        else type = TYPE_NO_INFO;
-
+        if(this->shape->userTypePlace != -1) {
+            if (data[this->shape->userTypePlace][i] == "Subscriber") type = TYPE_SUBSCRIBER;
+            else if (data[this->shape->userTypePlace][i] == "Customer") type = TYPE_CUSTOMER;
+            else type = TYPE_NO_INFO;
+        }
+        else{
+            type = TYPE_NO_INFO;
+        }
         attrUser[0]->setValue(&gender);
         attrUser[1]->setValue(&type);
         nodeUser = database->newNode("User", attrUser, 2);
@@ -198,18 +214,71 @@ void CityDB::importOneFile(string const & file){
 
         database->newEdge("arrives", nodeTrip, nodesEvent[1], NULL, 0);
 
-        int idStart = stoi(tripsData[5][i]);
-        int idArrival = stoi(tripsData[7][i]);
-
         database->newEdge("takesPlace", nodesEvent[0], nodesStation[idStart], NULL, 0);
         database->newEdge("takesPlace", nodesEvent[1], nodesStation[idArrival], NULL, 0);
 
-        date = dateInNodes(tripsData[1][i]);
-        database->newEdge("datesFrom", nodesEvent[0], nodesDay[date[2]-2016][date[0]-1][date[1]-1], NULL, 0);
-        database->newEdge("timesFrom", nodesEvent[0], nodesMinute[date[3]][date[4]], NULL, 0);
-        date = dateInNodes(tripsData[2][i]);
-        database->newEdge("datesFrom", nodesEvent[1], nodesDay[date[2]-2016][date[0]-1][date[1]-1], NULL, 0);
-        database->newEdge("timesFrom", nodesEvent[1], nodesMinute[date[3]][date[4]], NULL, 0);
+        ///// extract date and time for the start of the trip
+
+        //In case date and time are found in the same place in the CSV
+        if(this->shape->startDatePlace == this->shape->startTimePlace){
+            int midPos = data[this->shape->startTimePlace][i].find(' ');
+            //when date is first
+            if(midPos > data[this->shape->startTimePlace][i].size()/2){
+                date = data[this->shape->startTimePlace][i].substr(0,midPos);
+                time = data[this->shape->startTimePlace][i].substr(midPos+1);
+            }
+            //when time is first
+            else{
+                time = data[this->shape->startTimePlace][i].substr(0,midPos);
+                date = data[this->shape->startTimePlace][i].substr(midPos+1);
+            }
+        }
+        //When date and time can be found in different places
+        else{
+            date = data[this->shape->startDatePlace][i];
+            time = data[this->shape->startTimePlace][i];
+        }
+
+        dateTime = dateInNodes(date,time);
+
+
+        initialiseDateNode(nodesDay[dateTime->year - this->maxYearData][dateTime->month-1][dateTime->day-1],
+                           nodesMonth[dateTime->year - this->maxYearData][dateTime->month-1],
+                           nodesYear[dateTime->year - this->maxYearData],dateTime->year,dateTime->month,dateTime->day);
+        initialiseHourNode(nodesHour[dateTime->hour-1],nodesMinute[dateTime->minute-1][dateTime->hour-1],dateTime->hour,dateTime->minute);
+        database->newEdge("datesFrom", nodesEvent[0], nodesDay[dateTime->year - this->maxYearData][dateTime->month-1][dateTime->day-1], NULL, 0);
+        database->newEdge("timesFrom", nodesEvent[0], nodesMinute[dateTime->minute-1][dateTime->hour-1], NULL, 0);
+
+        ///// extract date and time for the arrival of the trip
+
+        //In case date and time are found in the same place in the CSV
+        if(this->shape->endDatePlace == this->shape->endTimePlace){
+            int midPos = data[this->shape->endTimePlace][i].find(' ');
+            //when date is first
+            if(midPos > data[this->shape->endTimePlace][i].size()/2){
+                date = data[this->shape->endTimePlace][i].substr(0,midPos);
+                time = data[this->shape->endTimePlace][i].substr(midPos+1);
+            }
+                //when time is first
+            else{
+                time = data[this->shape->endTimePlace][i].substr(0,midPos);
+                date = data[this->shape->endTimePlace][i].substr(midPos+1);
+            }
+        }
+            //When date and time can be found in different places
+        else{
+            date = data[this->shape->endDatePlace][i];
+            time = data[this->shape->endTimePlace][i];
+        }
+        dateTime = dateInNodes(date,time);
+
+        initialiseDateNode(nodesDay[dateTime->year - this->maxYearData][dateTime->month-1][dateTime->day-1],
+                           nodesMonth[dateTime->year - this->maxYearData][dateTime->month-1],
+                           nodesYear[dateTime->year - this->maxYearData],dateTime->year,dateTime->month,dateTime->day);
+        initialiseHourNode(nodesHour[dateTime->hour-1],nodesMinute[dateTime->minute-1][dateTime->hour-1],dateTime->hour,dateTime->minute);
+        database->newEdge("datesFrom", nodesEvent[1], nodesDay[dateTime->year - this->maxYearData][dateTime->month-1][dateTime->day-1], NULL, 0);
+        database->newEdge("timesFrom", nodesEvent[1], nodesMinute[dateTime->minute-1][dateTime->hour-1], NULL, 0);
+
     }
 
     // Delete Attribute objects
@@ -326,22 +395,28 @@ void CityDB::entitiesCreation(Database * database) {
 
 
 
-vector<int> CityDB::dateInNodes(const string &csvDate) {
-    vector<string> tmpDateInNodes;
-    string tmpNode="";
-    for (int i=0; i<=csvDate.size(); ++i) {
-        if (csvDate[i]=='/' || csvDate[i]==':' || csvDate[i]==' ' || csvDate[i]=='\000') {
-            tmpDateInNodes.push_back(tmpNode);
-            tmpNode="";
-        }
-        else {
-            tmpNode+=csvDate[i];
-        }
-    }
-    vector<int> dateInNodes;
-    for (int i=0; i<5; ++i)
-        dateInNodes.push_back(stoi(tmpDateInNodes[i]));
-    return dateInNodes;
+dateAndTime * CityDB::dateInNodes(const string & date, const string & time) {
+    dateAndTime * dateTime = new(dateAndTime);
+    string token;
+
+    istringstream tmpStreamDate(date);
+
+    getline(tmpStreamDate, token, '/');
+    dateTime->month=stoi(token);
+    getline(tmpStream, token, '/');
+    getline(tmpStreamDate, token, '/');
+    dateTime->day=stoi(token);
+    getline(tmpStreamDate, token, '/');
+    dateTime->year=stoi(token);
+
+    istringstream tmpStreamTime(time);
+
+    getline(tmpStreamTime, token, ':');
+    dateTime->hour=stoi(token);
+    getline(tmpStreamTime, token, ':');
+    dateTime->minute=stoi(token);
+
+    return  dateTime;
 }
 
 
