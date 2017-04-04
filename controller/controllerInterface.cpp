@@ -1,8 +1,9 @@
 #include "controllerInterface.hpp"
-#include "../interface/PFA/mainwindow.hpp"
+#include "mainwindow.hpp"
 #include <QApplication>
+#include "controller.hpp"
 
-ControllerInterface::ControllerInterface(){
+ControllerInterface::ControllerInterface(Controller * controller):controller(controller){
     QApplication a(argc, argv);
     MW = new MainWindow(this);
     argc = 1;

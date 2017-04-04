@@ -1,10 +1,10 @@
 #include "controllerUpdate.hpp"
-#include "../import/import.hpp"
-
-#include "../import/cityDB.h"
 
 
-ControllerUpdate::ControllerUpdate() : whichActive(NULL){
+#include "cityDB.h"
+#include "controller.hpp"
+
+ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL), controller(controller){
     CSVShape * shapeChicago= new CSVShape;
     shapeChicago->startTimePlace = 1;
     shapeChicago->startDatePlace = 1;

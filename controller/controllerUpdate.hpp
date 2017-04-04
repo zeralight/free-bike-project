@@ -13,7 +13,7 @@
 #include "../import/cityDB.h"
 class ControllerUpdate{
 public :
-    ControllerUpdate();
+    ControllerUpdate(Controller * controller);
     ~ControllerUpdate();
     void cityUpdate(CityDB * city);
     void activate(CityDB * city);
@@ -24,6 +24,8 @@ public :
     CityDB * minneapolis;
     CityDB * chattanooga;
     CityDB * whichActive;
+private:
+    Controller * controller;
 };
 
 enum Cities{

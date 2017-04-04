@@ -2,7 +2,7 @@
 #include "controllerInterface.hpp"
 #include "controllerUpdate.hpp"
 #include "controllerOSM.hpp"
-Controller::Controller() : cI(new ControllerInterface), cDB(new ControllerDB), cU(new ControllerUpdate),cOSM(new ControllerOSM) {
+Controller::Controller() : cI(new ControllerInterface(this)), cU(new ControllerUpdate(this)),cOSM(new ControllerOSM(this)) {
 
 }
 

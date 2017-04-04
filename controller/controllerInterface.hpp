@@ -1,12 +1,13 @@
 #ifndef FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERINTERFACE_H
 #define FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERINTERFACE_H
 
-#include "../interface/PFA/mainwindow.hpp"
+#include "mainwindow.hpp"
 #include <QApplication>
+#include "controller.hpp"
 class ControllerInterface
 {
 public:
-    ControllerInterface();
+    ControllerInterface(ControllerInterface * controller);
     ~ControllerInterface();
     MainWindow * MW;
     QApplication * application;
@@ -23,6 +24,8 @@ public:
     int returnTripsFilter(int maxLength, int minLength, int maxDensity, int minDensity);
 
     int returnUsersFilter(bool men, bool women, int minAge, int maxAge, bool subscriber, bool nonSubscriber);
+private:
+    Controller * controller;
 };
 
 #endif //FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERINTERFACE_H
