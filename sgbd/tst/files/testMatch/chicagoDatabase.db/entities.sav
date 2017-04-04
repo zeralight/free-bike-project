@@ -1,0 +1,39 @@
+12
+(entity RootDate
+	(attr value int)
+)
+(entity RootHour
+	(attr value int)
+)
+(entity Bike
+	(attr id int)
+)
+(entity Trip
+)
+(entity Hour
+	(attr value int)
+)
+(entity Station
+	(attr longitude double)
+	(attr latitude double)
+	(attr name string)
+	(attr id int)
+)
+(entity User
+	(attr gender int)
+	(attr type int)
+)
+(entity Day
+	(attr value int)
+)
+(entity Month
+	(attr value int)
+)
+(entity Event
+)
+(entity Year
+	(attr value int)
+)
+(entity Minute
+	(attr value int)
+)
