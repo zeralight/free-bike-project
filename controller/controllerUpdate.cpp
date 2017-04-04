@@ -13,7 +13,7 @@ ControllerUpdate::ControllerUpdate() : whichActive(NULL){
     shapeChicago->birthYearPlace = 1;
     shapeChicago->endDatePlace = 1;
     shapeChicago->endTimePlace = 1;
-    shapeChicago->genderPLace =1;
+    shapeChicago->genderPlace =1;
     shapeChicago->stationEndIDPlace =1;
     shapeChicago->stationStartIDPlace = 1;
     shapeChicago->stationEndLatitudePlace=1;

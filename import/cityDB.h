@@ -39,7 +39,7 @@ struct CSVShape {
     int endTimePlace;
     int startDatePlace;
     int endDatePlace;
-    int genderPLace;
+    int genderPlace;
     int birthYearPlace;
     int bikeIDPlace;
 };

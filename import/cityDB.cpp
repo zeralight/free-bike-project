@@ -177,9 +177,9 @@ void CityDB::importOneFile(string const & file){
         nodeBike = database->newNode("Bike", attrBike, 1);
 
         ///// User node
-        if(this->shape->genderPLace != -1) {
-            if (data[this->shape->genderPLace][i] == "Male") gender = GENDER_MALE;
-            else if (data[this->shape->genderPLace][i] == "Female") gender = GENDER_FEMALE;
+        if(this->shape->genderPlace != -1) {
+            if (data[this->shape->genderPlace][i] == "Male") gender = GENDER_MALE;
+            else if (data[this->shape->genderPlace][i] == "Female") gender = GENDER_FEMALE;
             else gender = GENDER_NO_INFO;
         }
         else{
