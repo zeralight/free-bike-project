@@ -113,7 +113,7 @@ void CityDB::importOneFile(string const & file){
     cout << filesNames[i] << "OK" << endl;
 
     // Creation of the nodes and the edges
-    /// About stations
+    //// About stations
 
     //// Needed variables
     INT id;
@@ -128,7 +128,7 @@ void CityDB::importOneFile(string const & file){
 
 
 
-    /// About dates and time
+    //// About dates and time
 
     //// Dates nodes creation
     Result * nodesDay[this->minYearData - this->maxYearData +1][12][31] = {NULL};
@@ -139,7 +139,7 @@ void CityDB::importOneFile(string const & file){
     Result * nodesMinute[24][60] = {NULL};
     Result * nodesHour[24] = {NULL};
 
-    /// About data
+    //// About data
 
     //// Needed variables
     INT gender;

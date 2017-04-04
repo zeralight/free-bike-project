@@ -62,7 +62,7 @@ enum values_type {
 class CityDB {
 public:
     /**
-     * @fn Constructor of the class
+     * Constructor of the class
      * It initializes all the attributes about the informations of a city with the values taken as parameters.
      *
      * @param name name of the city
@@ -77,7 +77,7 @@ public:
     CityDB(string const& name, string const & scriptPath, string const & dirCSV, string const & dirDB,
            vector<string const&> filesNames, CSVShape * shape, int minYearData, int maxYearData);
     /**
-  * @fn Destructor of the class
+  * Destructor of the class
   **/
     ~CityDB();
     string name;
@@ -102,34 +102,34 @@ public:
 
 
     /**
-     * @fn Activate the database for the city by loading it from the disk or initializing it.
+     * Activate the database for the city by loading it from the disk or initializing it.
      * @return The pointer on the databse
      **/
     Database * activate();
 
     /**
-     * @fn Desactivate the database of the city by saving it on the disk and deleting it from the memory
+     * Desactivate the database of the city by saving it on the disk and deleting it from the memory
      **/
     void desactivate();
 
     /**
-     * @fn Initialise the Database from the CSV files known by their directory path (dirCSV) and their names (fileNames)
+     * Initialise the Database from the CSV files known by their directory path (dirCSV) and their names (fileNames)
      */
     void DBInstanciation();
 
     /**
-     * @fn Import one CSV file inside the database of the class (attribute database)
+     * Import one CSV file inside the database of the class (attribute database)
      * @param file name of the file we want to import, the file must exist in the directory pointed by the dirCSV attribute
      */
     void importOneFile(string const & file);
 
     /**
-     * @fn Launch the script for downloading the csv files
+     *  Launch the script for downloading the csv files
      */
 
      void download();
     /**
-  * @fn Function parsing the data of a .csv file
+  * Function parsing the data of a .csv file
   * All the data is extracted in a matrix to be inserted in the database later.
   *
   * @param csv_file the name of the .csv file
@@ -139,7 +139,7 @@ public:
     vector<vector<string> > parseCSVFile(const string &csv_file);
 
     /**
-     * @fn Function which parses two strings to store date and time infos inside a struct dateAndTime.
+     * Function which parses two strings to store date and time infos inside a struct dateAndTime.
      * The dateAndTime struct is allowed dynamically so a delete has to be called on the return value.
      *
      * @param date string containing date infos (should be formated as this : month/day/year)
@@ -149,7 +149,7 @@ public:
      dateAndTime * dateInNodes(const string & date, const string & time);
 
     /**
-     * @fn Creates all the entities of the database
+     * Creates all the entities of the database
      * It creates the entities with the method newEntity of the database's interface
      *
      * @param the pointer on the database
@@ -157,7 +157,7 @@ public:
     void entitiesCreation(Database *);
 
     /**
-     * @fn Creates all the relationships of the database
+     * Creates all the relationships of the database
      * It creates the relationships with the method newRelation of the database's interface
      *
      * @param the pointer on the database
@@ -166,7 +166,7 @@ public:
 
 private :
     /**
-     * @fn Search for the max value from two columns of a data matrix
+     * Search for the max value from two columns of a data matrix
      * @param data a matrix of data from which we want to take the max from two columns
      * @param first the first column in which we want the max
      * @param second the second column in which we want the max
@@ -175,7 +175,7 @@ private :
     int getMaxID(vector<vector<string> > data, int first, int second);
 
     /**
-     * @fn initialise a node station in the array nodesStation with given in parameters and add it to the database
+     * initialise a node station in the array nodesStation with given in parameters and add it to the database
      * (if the node doesn't already exist)
      * @param nodesStation the array in which the initialised node station will be stored
      * @param id the ID of the station
@@ -186,7 +186,7 @@ private :
     void initialiseStationNode(Result ** nodesStation, int id, string name, double latitude, double longitude);
 
     /**
-     * @fn initialise a date node in the pointers given in parameters and add it to the database
+     * initialise a date node in the pointers given in parameters and add it to the database
      * (if the node doesn't already exist)
      * @param nodeDay where the node day should be initialised
      * @param nodeMonth where the node month should be initialised
@@ -198,7 +198,7 @@ private :
     void initialiseDateNode(Result * nodeDay, Result * nodeMonth, Result * nodeYear,int year, int month, int day);
 
     /**
-     * @fn initialise an hour node inside the pointers given in parameters and add it to the database
+     * initialise an hour node inside the pointers given in parameters and add it to the database
      * (if the node doesn't already exist)
      * @param nodeHour where the node hour should be initialised
      * @param nodeMinute where the minute node should be initialised
