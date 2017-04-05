@@ -63,6 +63,12 @@ void ResultImpl::filterEdges(std::string relationName, Attribute *attr[], int nA
   delete edges;      
 }
 
+
+Result * ResultImpl::match(Pattern * p) {
+  return GraphWriteAbstract::match(p);
+}
+
+
 /*cmpOp : EQUAL -> = , DIFFERENT -> != */
 void ResultImpl::where(std::string label, Attribute * attr[], int nAttr, int cmpOp){
   if(pattern->isNode(label)){

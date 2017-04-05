@@ -1,6 +1,8 @@
 #ifndef PATTERNIMPL_HPP
 #define PATTERNIMPL_HPP
 
+///@cond USER
+
 #include <string>
 
 #include "Database.hpp"
@@ -14,5 +16,6 @@ public:
 Pattern * newPattern(Database * db);
 void delPattern(Pattern * p);
 
+///@endcond
 
 #endif //PATTERNIMPL_HPP

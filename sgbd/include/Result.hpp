@@ -1,6 +1,8 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
+///@cond USER
+
 #include <iostream>
 #include <string>
 
@@ -12,6 +14,7 @@
 #include <tulip/BooleanProperty.h>
 
 #include "DBTools.hpp"
+#include "Pattern.hpp"
 
 class Result {
 public:
@@ -25,13 +28,24 @@ public:
    */
   virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;
 
+  /**
+   * @copydoc Database::match(Pattern *)
+   **/
+  virtual Result * match(Pattern * p) =0;
+  
   virtual void where(std::string label, Attribute * attr[], int nAttr, int cmpOp) =0;
-
-  /* template <class T>
-     virtual std::vector<T> get(std::string label, T whatIsWantedToBeGet);*/
 };
 
+/**
+ * @brief Deletion of a Result object
+ *
+ * All associated resources are freeed, so the pointer res is invalidated.
+ * If res is NULL, nothing will be done.
+ *
+ * @param res pointer to the Result object to be deleted.
+ **/
 void delResult(Result * res);
 
-#endif //RESULT_HPP
+///@endcond
 
+#endif //RESULT_HPP

@@ -1,6 +1,8 @@
 #ifndef GRAPHREAD_HPP
 #define GRAPHREAD_HPP
 
+///@cond DEV
+
 #include <string>
 
 #include <tulip/TlpTools.h>
@@ -17,11 +19,10 @@ class PatternImpl;
 
 
 class GraphRead {
+  /**
+   * @copydoc Database::match(Pattern *)
+   **/
   virtual Result * match(Pattern * p) =0;
-  /*
-   Result * getNodes(const std::string &entityName, Attribute * attr[] = NULL, int nAttr = 0) const;
-   Result * getEdges(const std::string &relationName, Attribute * attr[] = NULL, int nAttr = 0) const;
-  */
 };
 
 
@@ -45,5 +46,6 @@ protected:
   virtual ~GraphReadAbstract();
 };
 
+///@endcond
 
 #endif //GRAPHREAD_HPP

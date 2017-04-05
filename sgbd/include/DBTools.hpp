@@ -1,6 +1,8 @@
 #ifndef DBTOOLS_HPP
 #define DBTOOLS_HPP
 
+///@cond USER
+
 #include <iostream>
 #include <string>
 
@@ -22,12 +24,14 @@
 #define BOOL bool
 #define STRING std::string
 
+/*
 union valContainer {
   INT _int;
   DOUBLE _double;
   BOOL _bool;
   STRING _string;
 };
+*/
 
 /* 
  * List of acceptable constraints for the attributes 
@@ -309,5 +313,6 @@ std::string Attr<T>::debug() const {
   return ret;
 }
 
+///@endcond
 
 #endif //DBTOOLS_HPP

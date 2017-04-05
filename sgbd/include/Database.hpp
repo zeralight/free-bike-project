@@ -1,6 +1,8 @@
 #ifndef DATABASE_HPP
 #define DATABASE_HPP
 
+///@cond USER
+
 #include <string>
 #include <tulip/Graph.h>
 #include <tulip/Node.h>
@@ -24,18 +26,18 @@ public:
   /**
    * @brief Creation of an entity.
    *
-   * This method creates a new entity in the database, i.e. a particular type of node in the graph.
+   * This method creates a new entity in the database, i.e. a particular type of node in the graph. \n
    * An entity has a name, and can have specific attributes. Its kind of a template for a node, it defines
-   what are the number, the labels and the types of the attributes.
+   what are the number, the labels and the types of the attributes. \n
    * For exemple, an entity 'Person' which has three attributes 'name', 'lastname' and 'age' can be created this way:
    * @code
    * Database * db = newDB("DB");
-   * AttrType tab[3] = {AttrType("name", STRING), AttrType("lastname", STRING), AttrType("age", INT)};
+   * Attribute * tab[3] = {new Attr<STRING>("name"), new Attr<STRING>("lastname"), new Attr<INT>("age")};
    * db->newEntity("Person", tab, 3);
    * @endcode
    *
    * @param name entity's name
-   * @param attributes list of couples (label, type) describing the attributes of the entity, could be NULL
+   * @param attributes list of Attribute objects describing the attributes of the entity, can be NULL
    * @param nAttr number of attributes
    *
    **/
@@ -45,13 +47,14 @@ public:
   /**
    * @brief Insertion of a new instance of an entity in the database.
    *
-   * The attributes indicated in the argument 'values' must correspond to the description of the entity used, i.e. the label and the type of the value.
+   * The attributes indicated in the argument 'attr' must correspond to the description of the entity used, i.e. the label and the type of the value. If one attribute doesn't correspond, the creation of the node will fail. \n
+   * Only the attributes for which a value is associated can be given. The other will be initialized with the default value corresponding to their type.
    *
    * @param entityName name of the entity which acts as a model
-   * @param values list of couples (label, value) describing the attributes of the node, could be NULL
-   * @param nVal number of filled attributes (size of 'value')
+   * @param attr list of Attribute object describing the attributes and the value which must be assigned to the node, can be NULL
+   * @param nVal number of filled attributes (size of 'attr')
    *
-   * @return const node * : a pointer to the newly created node in the database
+   * @return Result * : a pointer to a Result object containing the newly created node
    **/
   virtual Result * newNode(const std::string &entityName, Attribute * attr[], int nVal) =0;
 
@@ -59,21 +62,21 @@ public:
   /**
    * @brief Creation of a relation.
    *
-   * This method creates a new relation in the database, i.e. a particular type of edge in the graph.
-   * A relation has a name, a source entity, a destination entity and can have specific attributes.
-   * Its kind of a template for an edge, it defines what are the number of attributes and the labels and the types of them.
-   * Moreover a relation describes a directed edge, and the type of the source and destination nodes must be indicated.
-   * For exemple, an relation 'FriendOf' between two 'Person' which has one attribute 'meetingDate' can be created this way :
+   * This method creates a new relation in the database, i.e. a description of type of edge in the graph. \n
+   * A relation has a name, a source entity, a destination entity and can have specific attributes. \n
+   * It's kind of a template for an edge, it defines what are the number of attributes, their labels and their types. \n
+   * Moreover a relation describes a directed edge, and the type of the source and destination nodes must be indicated.\n
+   * For exemple, a relation 'FriendOf' between two 'Person' and which has one attribute 'meetingYear' can be created this way :
    * @code
    * Database * db = newDB("DB");
-   * AttrType tab[1] = {AttrType("meetingDate", DATE)};
+   * Attribute tab[1] = {new Attr<INT>("meetingDate")};
    * db->newRelation("FriendOf", "Person", "Person", tab, 1);
    * @endcode
    *
    * @param relationName relation's name
    * @param entitySrc name of source entity (must exist in the database)
    * @param entityDst name of destination entity (idem)
-   * @param attributes list of couples (label, type) describing the attributes of the relation, could be NULL
+   * @param attributes list of Attribute objects describing the attributes of the relation, can be NULL
    * @param nAttr number of attributes
    *
    **/
@@ -81,15 +84,17 @@ public:
 
 
   /**
-   * @brief Insertion in the database of a new edge shaped on an existing relation.
+   * @brief Insertion of a new instance of a relation in the database.
    *
-   * The attributes indicated in the argument 'values' must correspond to the description of the relation used, i.e. same labels and same types for the associated values.
+   * The attributes indicated in the argument 'attr' must correspond to the description of the relation used, i.e. same labels and same types for the associated values. \n
+   * Only the attributes for which a value is associated can be given. The other will be initialized with the default value corresponding to their type. \n
+   * For the source and/or the destination, a set of nodes can be given, since they are contained in a Result object. In this case, all nodes in the source set will be linked with all nodes in the destination set. 
    *
    * @param relationName name of the relation acting as the model
-   * @param src source node
-   * @param dst destination node
-   * @param values list of couples (label, value) describing the attributes' values of the edge, could be NULL
-   * @param nVal number of indicated attributes (size of 'values')
+   * @param src source node (or set of nodes) 
+   * @param dst destination node (or set of nodes)
+   * @param attr list of Attributes describing the attributes' values of the edge, can be NULL
+   * @param nAttr number of indicated attributes (size of 'attr')
    *
    **/
   virtual void newEdge(const std::string &relationName, const Result * src, const Result * dst, Attribute * attr[], int nAttr) =0;
@@ -98,7 +103,6 @@ public:
   /**
    * @brief Edition of nodes in the Database
    *
-   * 
    * This method edits the instances of the entity specified by 'entityName'. The new values with which they are modified are put in the Attribute elements of the array 'attr'. 
    * Only existing attributes for 'entityName' are accepted, if only one argument is incorrect, the method fails.
    *
@@ -160,7 +164,7 @@ public:
    * 
    * @return Result * : pointer to the %Result object which contains the the data matched.
    *
-   * @warning In the case of a Pattern formed by a forest of graphes, this function won't return a correct result. The graph of the pattern must be in one chunk, and may not contain isolated nodes.
+   * @warning In case a Pattern is formed by a forest of graphes, the behaviour of this function is unknown (but probably false). The graph of the pattern must be in one chunk, and may not contain isolated nodes.
    * 
    * @sa Pattern to know how to create a pattern \n
    * Result to know how to use a %Result object
@@ -170,9 +174,9 @@ public:
 
 
 /**
- * @brief Creation of a new database.
+ * @brief Creation of a new Database object.
  *
- * @param name name of the database
+ * @param name name of the database to cra
  *
  * @return Database * : pointer to the newly created Database object.
  **/
@@ -180,10 +184,12 @@ Database * newDB(const std::string &name);
 
 
 /**
- * @brief Deletion of a Database Object, all associated resources are freed.
+ * @brief Deletion of a Database object
  *
+ * All associated resources are freeed, so the pointer db is invalidated.
  * This function doesn't save the database before deleting the object.
- * One must ensure to have saved it with the saveDB() method before calling this function.
+ * One must ensure to have saved it with the Database::save() method before calling this function.
+ * If db is NULL, nothing will be done.
  *
  * @param db pointer to the Database object which must be deleted.
  **/
@@ -197,5 +203,6 @@ void delDB(Database * db);
  **/
 void initDB();
 
+///@endcond
 
 #endif
