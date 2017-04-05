@@ -38,9 +38,9 @@ public:
   void newEntity(const std::string &name, const Attribute * const attributes[], int nAttr);
   void newRelation(const std::string &name, const std::string &entitySrc, const std::string &entityDst, const Attribute * const attr[], int nAttr);
   Result * newNode(const std::string &entityName, Attribute * attr[], int nVal);
-  /*const Result * newNode(const Attribute * const attributes[], int nAttr) ;*/
   void newEdge(const std::string &relationName, const Result * src, const Result * dst, Attribute * attr[], int nAttr);
-  /*void newEdge(const std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr);*/
+  bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr);  
+  bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr);
   void load(const std::string &path);
   void save(const std::string &path) const;
 

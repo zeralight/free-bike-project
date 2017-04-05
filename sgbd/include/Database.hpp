@@ -15,12 +15,12 @@ class Pattern;
 /**
  * @brief This class is the core of the Database Management System.
  *
- * Remark : The file <DBTools.hpp> must be inserted in order to use certain data types like : Attr, AttrType and AttrValue.
- *          See this file for more details on its use.
+ * It describes all the functions used to create, delete, and more generally manipulate a graph database.
  *
  **/
 class Database {
 public:
+  
   /**
    * @brief Creation of an entity.
    *
@@ -54,19 +54,6 @@ public:
    * @return const node * : a pointer to the newly created node in the database
    **/
   virtual Result * newNode(const std::string &entityName, Attribute * attr[], int nVal) =0;
-
-
-  /**
-   * @brief Insertion of a new node in the database.
-   *
-   * This function can be used to insert a singular node which doesn't correspond to an existing entity.
-   *
-   * @param attributes list of triplets (label, type, value) describing the attributes of the node, cannot be NULL
-   * @param nAttr number of attributes
-   *
-   * @return const node * : a pointer to the newly created node in the database
-   **/
-  /*virtual const Result * newNode(const Attribute * const attributes[], int nAttr) =0;*/
 
 
   /**
@@ -107,20 +94,41 @@ public:
    **/
   virtual void newEdge(const std::string &relationName, const Result * src, const Result * dst, Attribute * attr[], int nAttr) =0;
 
-
+  
   /**
-   * @brief Insertion in the database of a new edge.
+   * @brief Edition of nodes in the Database
    *
-   * This function can be used to insert a singular edge which doesn't correspond to an existing relation.
+   * 
+   * This method edits the instances of the entity specified by 'entityName'. The new values with which they are modified are put in the Attribute elements of the array 'attr'. 
+   * Only existing attributes for 'entityName' are accepted, if only one argument is incorrect, the method fails.
    *
-   * @param name name of the edge
-   * @param src source node
-   * @param dst destination node
-   * @param attributes list of triplets (label, type, value) describing the attributes' values of the edge, could be NULL
-   * @param nAttr number of attributes
+   * @param entityName name of the edited nodes' entity 
+   * @param attr list of the attributes to modify and their new value
+   * @param nAttr size of attr
    *
+   * @return bool : whether the edition was successful or not
+   *
+   * @sa Attribute to know how to put a desired value in an Attribute object
    **/
-  //virtual void newEdge(const std::string name, const Result * src, const Result * dst, const Attribute * const attributes[], int nAttr) =0;
+  virtual bool editNodes(const std::string &entityName, Attribute * attr[], int nAttr) =0;
+
+  
+  /**
+   * @brief Edition of edges in the Database
+   *
+   *
+   * This method edits the instances of the relation specified by 'relationName'. The new values with which they are modified are put in the Attribute elements of the array 'attr'. 
+   * Only existing attributes for 'relationName' are accepted, if only one argument is incorrect, the method fails.
+   *
+   * @param entityName name of the edited nodes' entity 
+   * @param attr list of the attributes to modify and their new value
+   * @param nAttr size of attr
+   *
+   * @return bool : whether the edition was successful or not
+   *
+   * @sa Attribute to know how to put a desired value in an Attribute object
+   **/
+  virtual bool editEdges(const std::string &relationName, Attribute * attr[], int nAttr) =0;
 
 
   /**
@@ -128,21 +136,35 @@ public:
    *
    * @param path absolute path to the location where the database must be saved
    *
-   * @return
    **/
   virtual void save(const std::string &path) const =0;
 
 
   /**
-   * @brief Load a database from a specified location in a Database object.
+   * @brief Loads a database from a specified location in the Database object.
    *
+   * @warning the current database will be completely erased, be sure to save before loading a database. It might be prefered to create an empty Database object before loading an existing base.
+   * 
    * @param path absolute path to the location of the database
    *
-   * @return Database * : a pointer to the loaded Database object
    **/
   virtual void load(const std::string &path) =0;
 
-
+  
+  /**
+   * @brief Matching of pattern in the database 
+   *
+   * Finds in the database the elements which match the pattern passed in argument. All occurencies found are added to the returned result.
+   * 
+   * @param p the pattern which has to be matched in the database
+   * 
+   * @return Result * : pointer to the %Result object which contains the the data matched.
+   *
+   * @warning In the case of a Pattern formed by a forest of graphes, this function won't return a correct result. The graph of the pattern must be in one chunk, and may not contain isolated nodes.
+   * 
+   * @sa Pattern to know how to create a pattern \n
+   * Result to know how to use a %Result object
+   **/
   virtual Result * match(Pattern * p) =0;
 };
 
@@ -168,6 +190,11 @@ Database * newDB(const std::string &name);
 void delDB(Database * db);
 
 
+/**
+ * @brief Initialization of the Graph database library
+ *
+ * In order to correctly use the Graph database API, this function must be called before any other function from this API. 
+ **/
 void initDB();
 
 

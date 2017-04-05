@@ -139,6 +139,16 @@ void DatabaseImpl::newEdge(const std::string &relationName, const Result * src, 
 }
 
 
+bool DatabaseImpl::editNodes(const std::string &entityName, Attribute * attr[], int nAttr) {
+  return GraphWriteAbstract::editNodes(entityName, attr, nAttr);
+}
+
+
+bool DatabaseImpl::editEdges(const std::string &relationName, Attribute * attr[], int nAttr) {
+  return GraphWriteAbstract::editEdges(relationName, attr, nAttr);
+}
+
+
 void DatabaseImpl::load(const string &path){
   try {
     ifstream file(path.c_str());

@@ -40,6 +40,7 @@ public:
   std::vector<node> * getInstance(Graph * g, int cmpOp) const;
   bool isInstance(const node &n) const;
   std::string getName() const;
+  Attribute * getAttr(const std::string &name, node n);
   void write(std::fstream &file) const;
   void load(std::fstream &file, Graph * gSrc);
   void print();

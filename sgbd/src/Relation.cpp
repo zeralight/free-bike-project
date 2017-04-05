@@ -168,6 +168,20 @@ std::string Relation::getName() const{
 }
 
 
+Attribute * Relation::getAttr(const std::string &name, edge e) {
+  if (attr.find(name) == attr.end())
+    throw std::string("ERROR: the attribute '" + name + "' doesn't exist");
+
+  if (!this->isInstance(e))
+    throw std::string("ERROR: the node doesn't belong to the relation '" + this->name + "'");
+
+  Attribute * ret = attr[name]->clone();
+  ret->getEdgeValue(e);
+
+  return ret;
+}
+
+
 void Relation::write(std::fstream &file) const {
   std::string buff;
   Attribute * tmp;

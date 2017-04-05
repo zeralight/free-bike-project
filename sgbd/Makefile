@@ -3,6 +3,7 @@
 
 BIN_DIR = ./bin
 BUILD_DIR = ./build
+DOC_DIR = ./doc
 INCLUDE_DIR = ./include
 LIB_DIR = ./lib
 SRC_DIR = ./src
@@ -10,7 +11,7 @@ TST_DIR = ./tst
 TST_FILES_DIR = $(TST_DIR)/files
 TST_OUT_DIR = $(TST_DIR)/out
 
-EMACS_CLEAN_DIR = . $(SRC_DIR) $(TST_DIR) $(INCLUDE_DIR) $(TST_FILES_DIR)
+EMACS_CLEAN_DIR = . $(SRC_DIR) $(TST_DIR) $(INCLUDE_DIR) $(TST_FILES_DIR) $(DOC_DIR)
 
 
 # Compilation flags
@@ -62,12 +63,24 @@ test%: $(BIN_DIR)/test%
 
 test: testEntRel testDatabase testPattern testMatch
 
-clean:
-	rm -r -f $(addsuffix /*~, $(EMACS_CLEAN_DIR)) \#*\# $(BUILD_DIR)/*.o $(TST_OUT_DIR)/*	
+doc-user:
+	doxygen $(DOC_DIR)/doc_user.doxyfile
+
+doc-dev:
+	doxygen $(DOC_DIR)/doc_dev.doxyfile
+
+clean: clean-emacs
+	rm -r -f $(BUILD_DIR)/*.o $(TST_OUT_DIR)/*	
 
 clean-bin:
 	rm -f $(BIN_DIR)/*
 
-.PHONY: clean clean-bin	lib
+clean-doc:
+	rm -r -f $(DOC_DIR)/user/* $(DOC_DIR)/dev/*
+
+clean-emacs:
+	rm -r -f $(addsuffix /*~, $(EMACS_CLEAN_DIR)) \#*\#
+
+.PHONY: clean clean-bin	clean-doc clean-emacs lib
 
 .SECONDARY:

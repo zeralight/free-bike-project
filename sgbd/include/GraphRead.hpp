@@ -42,7 +42,7 @@ public:
   
 protected:
   GraphReadAbstract(Graph * g, DatabaseImpl * db);
-  ~GraphReadAbstract();
+  virtual ~GraphReadAbstract();
 };
 
 

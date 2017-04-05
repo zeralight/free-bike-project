@@ -37,12 +37,12 @@ void ResultImpl::addEdge(const edge &e) {
 
 
 bool ResultImpl::editNodes(const std::string &entityName, Attribute * attr[], int nAttr) {
-  GraphWriteAbstract::editNodes(entityName, attr, nAttr);
+  return GraphWriteAbstract::editNodes(entityName, attr, nAttr);
 }
 
 
 bool ResultImpl::editEdges(const std::string &relationName, Attribute * attr[], int nAttr) {
-  GraphWriteAbstract::editEdges(relationName, attr, nAttr);
+  return GraphWriteAbstract::editEdges(relationName, attr, nAttr);
 }
 
 

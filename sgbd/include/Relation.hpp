@@ -44,6 +44,7 @@ public:
   std::vector<edge> * getInstance(const node &nA, const node &nB, Attribute * attr[], int Attr, direction dir, int cmpOp) const;
   std::vector<edge> * getInstance(Graph * g, int cmpOp) const;
   std::string getName() const;
+  Attribute * getAttr(const std::string &name, edge e);
   
   void write(std::fstream &file) const;
   void load(std::fstream &file, Graph * gSrc, std::unordered_map<std::string, Entity *> &entityList);

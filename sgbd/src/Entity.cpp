@@ -144,13 +144,30 @@ bool Entity::isValid(Attribute * attr[], int nAttr) const {
   return true;
 }
 
+
 bool Entity::isInstance(const node &n) const {
   return this->g->isElement(n);
 }
 
+
 std::string Entity::getName() const{
   return name;
 }
+
+
+Attribute * Entity::getAttr(const std::string &name, node n) {
+  if (attr.find(name) == attr.end())
+    throw std::string("ERROR: the attribute" + name + "doesn't exist");
+
+  if (!this->isInstance(n))
+    throw std::string("ERROR: the node doesn't belong to the entity '" + this->name + "'");
+
+  Attribute * ret = attr[name]->clone();
+  ret->getNodeValue(n);
+
+  return ret;
+}
+
 
 void Entity::write(std::fstream &file) const {
   std::string buff;

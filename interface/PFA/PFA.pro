@@ -20,9 +20,9 @@ SOURCES += main.cpp\
     heatmapsurvey.cpp \
     densityfilter.cpp
 
-HEADERS  += mainwindow.h \
-    periodfilter.h \
-    usersfilter.h \
-    tripsfilter.h \
-    heatmapsurvey.h \
-    densityfilter.h
+HEADERS  += mainwindow.hpp \
+    periodfilter.hpp \
+    usersfilter.hpp \
+    tripsfilter.hpp \
+    heatmapsurvey.hpp \
+    densityfilter.hpp

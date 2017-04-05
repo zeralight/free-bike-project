@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <stdlib.h>
-#include "../controller/controllerInterface.h"
+#include "../../controller/controllerInterface.hpp"
 
 class DensityFilter : public QWidget
 {

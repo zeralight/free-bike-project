@@ -43,6 +43,20 @@ int main () {
   Graph * sav = ((ResultImpl *) res)->getGraph();
   saveGraph(sav, S_OUTPATH("testMatch.tlp"));
 
+  // Quick test for getAttr function
+  DatabaseImpl * dbi = ((DatabaseImpl *) db);
+  Entity * e = dbi->getEntity("Station");
+  std::vector<node> * stations = e->getInstance(sav, EQUAL);
+
+  std::cout << "\x1b[1mStations :\x1b[0m" << stations->size() << std::endl; 
+  for (auto it = stations->begin() ; it != stations->end() ; it++) {
+    Attribute * attr;
+    INT id;
+    attr = e->getAttr("id", *it);
+    attr->getValue(&id);
+    std::cout << "id :\t" << id << std::endl;
+  }
+  
   delPattern(p);
   delResult(res);
   delDB(db);

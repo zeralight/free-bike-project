@@ -38,7 +38,7 @@ public:
   
 protected:
   GraphWriteAbstract(Graph * g, DatabaseImpl * db);
-  ~GraphWriteAbstract();
+  virtual ~GraphWriteAbstract();
 };
 
 

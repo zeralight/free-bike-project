@@ -31,7 +31,7 @@ class PatternImpl : public Pattern {
 
 public:
   PatternImpl(DatabaseImpl * db);
-  ~PatternImpl();
+  virtual ~PatternImpl();
 
   void addNode(const std::string &label, const std::string &entityName);
   void addEdge(const std::string &label, const std::string &relationName, const std::string labelSrc, const std::string labelDst);

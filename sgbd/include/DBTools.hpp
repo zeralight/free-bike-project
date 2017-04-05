@@ -21,7 +21,13 @@
 #define DOUBLE double
 #define BOOL bool
 #define STRING std::string
-//#define DATE struct tm
+
+union valContainer {
+  INT _int;
+  DOUBLE _double;
+  BOOL _bool;
+  STRING _string;
+};
 
 /* 
  * List of acceptable constraints for the attributes 
@@ -95,6 +101,8 @@ protected:
   virtual void setProperty(tlp::Graph *) =0;
   virtual void setNodeValue(tlp::node &) const =0;
   virtual void setEdgeValue(tlp::edge &) const =0;
+  virtual void getNodeValue(tlp::node &) =0;
+  virtual void getEdgeValue(tlp::edge &) =0;
   virtual void set(const void *) =0;
 };
 
@@ -134,6 +142,8 @@ private:
   void setProperty(tlp::Graph * g);
   void setNodeValue(tlp::node &n) const ;
   void setEdgeValue(tlp::edge &e) const ;
+  void getNodeValue(tlp::node &n);
+  void getEdgeValue(tlp::edge &e);
   void set(const void * value);
   
   void init();
@@ -227,6 +237,17 @@ void Attr<T>::setEdgeValue(tlp::edge &e) const {
 }
 
 template <class T>
+void Attr<T>::getNodeValue(tlp::node &n) {
+  this->value = this->prop->getNodeValue(n);
+}
+
+template <class T>
+void Attr<T>::getEdgeValue(tlp::edge &e) {
+  this->value = this->prop->getEdgeValue(e);
+}
+
+
+template <class T>
 void Attr<T>::setProperty(const void * prop) {
   this->prop = (typename TlpProp<T>::type *) prop;
 }
@@ -238,7 +259,7 @@ void Attr<T>::setProperty(const Attribute * attr) {
 
 template <class T>
 void Attr<T>::setProperty(tlp::Graph * g) {
-  this->prop = g->getLocalProperty<typename TlpProp<T>::type>(this->label);
+  this->prop = g->getProperty<typename TlpProp<T>::type>(this->label);
 }
 
 template <class T>
@@ -253,6 +274,7 @@ Attribute * Attr<T>::clone() const {
   tmp->setConstraints(this->constraints);
   tmp->setTypeName(this->typeName);
   tmp->setValue(&(this->value));
+  tmp->setProperty(this->prop);
   return tmp;
 }
 

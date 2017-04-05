@@ -1,7 +1,8 @@
 #include "periodfilter.hpp"
 #include <stdio.h>
 
-#include "../controller/controllerInterface.h"
+#include "../controller/controllerInterface.hpp"
+
 PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),
     beginning(new QDateTimeEdit),
     end(new QDateTimeEdit),
@@ -12,9 +13,9 @@ PeriodFilter::PeriodFilter(QWidget *parent) : QWidget(parent),
     setWindowTitle("Filtre periode");
     resize(300,300);
     QGridLayout * lay = new QGridLayout;
-    lay->addWidget(new QLabel("Selectionnez la date et l'heure de début de pèriode :"),0,0,1,2);
+    lay->addWidget(new QLabel("Selectionnez la date et l'heure de début de période :"),0,0,1,2);
     lay->addWidget(beginning,1,0);
-    lay->addWidget(new QLabel("Selectionnez la date et l'heure de fin de pèriode :"),2,0,1,2);
+    lay->addWidget(new QLabel("Selectionnez la date et l'heure de fin de période :"),2,0,1,2);
     lay->addWidget(end,3,0);
     lay->addWidget(new QLabel("Selectionnez le type de pèriode que vous souhaitez :"),4,0,1,2);
     lay->addWidget(normal,5,0);

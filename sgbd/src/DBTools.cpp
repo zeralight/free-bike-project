@@ -107,6 +107,8 @@ Attribute * newAttr(const std::string &label, const std::string &typeName) {
     return new Attr<BOOL>(label);
   else if (typeName == "string")
     return new Attr<STRING>(label);
+  else
+    return NULL;
 }
 
 
