@@ -36,6 +36,7 @@ public:
   void filterNodes(std::string entityName, Attribute * attr[], int nAttr, int cmpOp);
   void filterEdges(std::string relationName, Attribute * attr[], int nAttr, int cmpOp);
   void where(std::string label, Attribute * attr[], int nAttr, int cmpOp);
+  std::vector<Attribute*> get(std::string labelPattern, std::string attributeName);
   
   // Plus haut dans la hiérarchie ?
   void addNode(const node &n);

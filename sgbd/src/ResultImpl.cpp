@@ -73,6 +73,25 @@ void ResultImpl::where(std::string label, Attribute * attr[], int nAttr, int cmp
  }
 }
 
+std::vector<Attribute*> ResultImpl::get(std::string labelPattern, std::string attributeName){
+  std::vector<Attribute*> res;
+  if (this->pattern->isNode(labelPattern)){
+    Entity * e = this->pattern->getEntity(labelPattern);
+    std::vector<node> * nodes = e->getInstance(this->g, EQUAL);
+    for(std::vector<node>::iterator it=nodes->begin(); it!=nodes->end(); it++){
+      res.push_back(e->getAttr(attributeName, *it));
+    }
+  }
+  else if (this->pattern->isEdge(labelPattern)){
+    Relation * r = this->pattern->getRelation(labelPattern);
+    std::vector<edge> * edges = r->getInstance(this->g, EQUAL);
+    for(std::vector<edge>::iterator it=edges->begin(); it!=edges->end(); it++){
+      res.push_back(r->getAttr(attributeName, *it));
+    }
+  } 
+  return res;
+};
+
 int oppose(int cmpOp) {
   if (cmpOp == EQUAL)
     return DIFFERENT;
