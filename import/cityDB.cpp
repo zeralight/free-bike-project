@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <wrappy/wrappy.h>
+
+
 using namespace std;
 
 CityDB::CityDB(string const& name, string const & scriptPath, string const & dirCSV, string const & dirDB,
@@ -22,14 +24,6 @@ void CityDB::download() {
     wrappy::call(scriptPath);
 }
 
-void CityDB::DBInstanciation() {
-
-    // .csv files parsing process
-    int i = 0;
-    for (i; i++; i < filesNames.size()) {
-        importOneFile(filesNames[i]);
-    }
-}
 int CityDB::getMaxID(vector<vector<string> > data, int first, int second){
     int temp1;
     int temp2;
@@ -106,9 +100,60 @@ void CityDB::initialiseHourNode(Result * nodeHour, Result * nodeMinute,int hour,
 
 };
 
-void CityDB::importOneFile(string const & file){
 
-    cout << "Parsing station file... " << endl;
+void CityDB::DBInstanciation() {
+
+    // .csv files parsing process
+    int i = 0;
+    vector<Result*> nodesStation(1,NULL);
+    //// Dates nodes creation
+    Result * nodesDay[this->maxYearData - this->minYearData +1][12][31] = {NULL};
+    Result * nodesMonth[this->maxYearData - this->minYearData +1][12] = {NULL};
+    Result * nodesYear[this->maxYearData - this->minYearData +1] = {NULL};
+
+    //// Time nodes creation
+    Result * nodesMinute[24][60] = {NULL};
+    Result * nodesHour[24] = {NULL};
+
+    for (i; i++; i < filesNames.size()) {
+        importOneFile(filesNames[i], nodesStation, nodesDay,nodesMonth,nodesYear,nodesMinute,nodesHour);
+    }
+    // Delete Result objects
+    for (int i = 0 ; i < max+1; i++) {
+        if (nodesStation[i]!=NULL)
+            delResult(nodesStation[i]);
+    }
+
+    for (int i = 0 ; i < this->maxYearData - this->minYearData +1; i++)
+        for (int j = 0 ; j < 12; j++)
+            for (int k = 0 ; k < 31; k++)
+                if (nodesDay[i][j][k]!=NULL)
+                    delResult(nodesDay[i][j][k]);
+
+    for (int i = 0 ; i < this->maxYearData - this->minYearData +1; i++)
+        for (int j = 0 ; j < 12; j++)
+            if (nodesMonth[i][j]!=NULL)
+                delResult(nodesMonth[i][j]);
+
+    for (int i = 0 ; i < this->maxYearData - this->minYearData +1; i++)
+        if (nodesYear[i]!=NULL)
+            delResult(nodesYear[i]);
+
+    for (int i = 0 ; i < 24; i++)
+        for (int j = 0 ; j < 60; j++)
+            if (nodesMinute[i][j]!=NULL)
+                delResult(nodesMinute[i][j]);
+
+    for (int i = 0 ; i < 24; i++)
+        if (nodesHour[i]!=NULL)
+            delResult(nodesHour[i]);
+
+}
+
+void CityDB::importOneFile(string const & file, vector<Result *> nodesStation, Result **** nodesDay, Result *** nodesMonth,
+                           Result ** nodesYear, Result *** nodesMinute, Result ** nodesHour){
+
+    cout << "Parsing station file... " << file << endl;
     vector<vector<string> > data = parseCSVFile(dirCSV+file);
     cout << filesNames[i] << "OK" << endl;
 
@@ -123,21 +168,10 @@ void CityDB::importOneFile(string const & file){
 
     //// Gives the maximum id to declare the array of nodes correctly
     int max = getMaxID(data,shape->stationEndIDPlace,shape->stationStartIDPlace);
+    if(max > nodesStation.size() -1 ){
+        nodesStation.resize(max+1,NULL);
+    }
 
-    Result * nodesStation[max+1] = {NULL};
-
-
-
-    //// About dates and time
-
-    //// Dates nodes creation
-    Result * nodesDay[this->minYearData - this->maxYearData +1][12][31] = {NULL};
-    Result * nodesMonth[1][12] = {NULL};
-    Result * nodesYear[1] = {NULL};
-
-    //// Time nodes creation
-    Result * nodesMinute[24][60] = {NULL};
-    Result * nodesHour[24] = {NULL};
 
     //// About data
 
@@ -282,44 +316,21 @@ void CityDB::importOneFile(string const & file){
     }
 
     // Delete Attribute objects
-    delAttr(attrBike, 1);
-    delAttr(attrUser, 2);
+    if(attrBike!=NULL)
+        delAttr(attrBike, 1);
+    if(attrUser!=NULL)
+        delAttr(attrUser, 2);
 
-    // Delete Result objects
-    for (int i = 0 ; i < max+1; i++) {
-        if (nodesStation[i])
-            delResult(nodesStation[i]);
-    }
-
-    delResult(nodeBike);
-    delResult(nodeUser);
-    delResult(nodeTrip);
-    delResult(nodesEvent[0]);
-    delResult(nodesEvent[1]);
-
-    for (int i = 0 ; i < 1; i++)
-        for (int j = 0 ; j < 12; j++)
-            for (int k = 0 ; k < 31; k++)
-                if (nodesDay[i])
-                    delResult(nodesDay[i][j][k]);
-
-    for (int i = 0 ; i < 1; i++)
-        for (int j = 0 ; j < 12; j++)
-            if (nodesMonth[i])
-                delResult(nodesMonth[i][j]);
-
-    for (int i = 0 ; i < 1; i++)
-        if (nodesYear[i])
-            delResult(nodesYear[i]);
-
-    for (int i = 0 ; i < 24; i++)
-        for (int j = 0 ; j < 60; j++)
-            if (nodesMinute[i])
-                delResult(nodesMinute[i][j]);
-
-    for (int i = 0 ; i < 24; i++)
-        if (nodesHour[i])
-            delResult(nodesHour[i]);
+    if(nodeBike!=NULL)
+        delResult(nodeBike);
+    if(nodeUser!=NULL)
+        delResult(nodeUser);
+    if(nodeTrip!=NULL)
+        delResult(nodeTrip);
+    if(nodesEvent[0]!=NULL)
+        delResult(nodesEvent[0]);
+    if(nodesEvent[1]!=NULL)
+        delResult(nodesEvent[1]);
 
 }
 
@@ -329,6 +340,7 @@ Database * CityDB::activate(){
         this->database = newDB(this->name);
         entitiesCreation(database);
         relationshipsCreation(database);
+        download();
         DBInstanciation();
     } else {
         this->database = newDB(this->name);
