@@ -17,7 +17,7 @@
 
 
 
-    HeatMapSurvey::HeatMapSurvey(ControllerInterface * controller, QWidget *parent) : QWidget(parent),
+HeatMapSurvey::HeatMapSurvey(ControllerInterface * controller, QWidget *parent) : QWidget(parent),
                                                                                       controller(controller),
                                                                                       periodFilter(new PeriodFilter(controller)),
                                                                                       usersFilter(new UsersFilter(controller)),
@@ -34,6 +34,9 @@
     citiesList->addItem("Chattanooga");
     citiesList->addItem("Chicago");
     citiesList->addItem("Minneapolis");
+
+    QObject::connect(citiesList, SIGNAL(activated(const QString &)), this, SLOT(cityChanged(const QString &)));
+
     QPushButton *period = new QPushButton("Periode");
     QObject::connect(period, SIGNAL(clicked(bool)), periodFilter, SLOT(show())) ;
     QPushButton *users = new QPushButton("Utilisateurs");
@@ -52,4 +55,7 @@
 
     groupbox->setLayout(vbox);
 
+}
+void HeatMapSurvey::cityChanged(const QString & cityName){
+    controller->cityChanged(cityName->toStdString());
 }

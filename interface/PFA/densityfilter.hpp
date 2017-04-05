@@ -28,6 +28,7 @@ private:
     signals:
 
 public slots:
-    void validation();};
+    void validation();
+};
 
 #endif // DENSITYFILTER_H

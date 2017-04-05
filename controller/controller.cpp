@@ -10,5 +10,8 @@ Controller::~Controller() {
     delete cU;
     delete cOSM;
     delete cI;
-    delete cDB;
+}
+
+void Controller::activateCity(enum Cities city){
+    cU->activate(toActivate);
 }

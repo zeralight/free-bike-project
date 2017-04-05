@@ -4,6 +4,7 @@
 #include "mainwindow.hpp"
 #include <QApplication>
 #include "controller.hpp"
+using namespace std;
 class ControllerInterface
 {
 public:
@@ -24,6 +25,8 @@ public:
     int returnTripsFilter(int maxLength, int minLength, int maxDensity, int minDensity);
 
     int returnUsersFilter(bool men, bool women, int minAge, int maxAge, bool subscriber, bool nonSubscriber);
+
+    void cityChanged(const string &);
 private:
     Controller * controller;
 };
