@@ -1,10 +1,10 @@
 #include "controllerUpdate.hpp"
-#include "../import/import.hpp"
-
-#include "../import/cityDB.h"
 
 
-ControllerUpdate::ControllerUpdate() : whichActive(NULL){
+#include "cityDB.h"
+#include "controller.hpp"
+
+ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL), controller(controller){
     CSVShape * shapeChicago= new CSVShape;
     shapeChicago->startTimePlace = 1;
     shapeChicago->startDatePlace = 1;
@@ -13,7 +13,7 @@ ControllerUpdate::ControllerUpdate() : whichActive(NULL){
     shapeChicago->birthYearPlace = 1;
     shapeChicago->endDatePlace = 1;
     shapeChicago->endTimePlace = 1;
-    shapeChicago->genderPLace =1;
+    shapeChicago->genderPlace =1;
     shapeChicago->stationEndIDPlace =1;
     shapeChicago->stationStartIDPlace = 1;
     shapeChicago->stationEndLatitudePlace=1;
@@ -53,12 +53,27 @@ ControllerUpdate::ControllerUpdate() : whichActive(NULL){
 */
 }
 
-void ControllerUpdate::activate(CityDB * city){
+void ControllerUpdate::activate(enum Cities city){
+    CityDB * toActivate;
+    switch(city){
+        case sanfrancisco :
+            toActivate=sanFrancisco;
+        case minneapolis :
+            toActivate=minneapolis;
+        case chicago:
+            toActivate=chicago;
+        case chattanooga:
+            toActivate=chattanooga;
+        case newyork:
+            toActivate=newYork;
+        case washington:
+            toActivate=washington;
+    }
     if(whichActive != NULL){
         whichActive->desactivate();
     }
-    city->activate();
-    whichActive = city;
+    toActivate->activate();
+    whichActive = toActivate;
 }
 
 ControllerUpdate::~ControllerUpdate(){

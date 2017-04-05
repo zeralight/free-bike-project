@@ -1,12 +1,20 @@
+#include <QWidget>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include "controllerInterface.hpp"
 #include "tripsfilter.hpp"
 
-TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
+TripsFilter::TripsFilter(ControllerInterface * controller, QWidget * parent) : QWidget(parent),
     beginStation(new QCheckBox("Stations début à implémenter")),
     endStation(new QCheckBox("Stations arrivee à implémenter")),
     minLengthTrip(new QSpinBox),
     maxLengthTrip(new QSpinBox),
     minDensityTrip(new QSpinBox),
-    maxDensityTrip(new QSpinBox)
+    maxDensityTrip(new QSpinBox),
+    controller(controller)
 {
     setWindowTitle("Filtre trajets");
     resize(300,300);
@@ -43,7 +51,7 @@ TripsFilter::TripsFilter(QWidget * parent) : QWidget(parent),
 void TripsFilter::validation(){
 
     this->close();
-    returnTripsFilter(maxLengthTrip->value(),minLengthTrip->value(),maxDensityTrip->value(),minDensityTrip->value());
+    controller->returnTripsFilter(maxLengthTrip->value(),minLengthTrip->value(),maxDensityTrip->value(),minDensityTrip->value());
 }
 
 

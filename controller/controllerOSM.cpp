@@ -1,6 +1,6 @@
 #include "controllerOSM.hpp"
-
-ControllerOSM::ControllerOSM() {
+#include "controller.hpp"
+ControllerOSM::ControllerOSM(Controller * controller):controller(controller) {
 
 }
 

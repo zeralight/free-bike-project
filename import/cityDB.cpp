@@ -113,7 +113,7 @@ void CityDB::importOneFile(string const & file){
     cout << filesNames[i] << "OK" << endl;
 
     // Creation of the nodes and the edges
-    /// About stations
+    //// About stations
 
     //// Needed variables
     INT id;
@@ -128,7 +128,7 @@ void CityDB::importOneFile(string const & file){
 
 
 
-    /// About dates and time
+    //// About dates and time
 
     //// Dates nodes creation
     Result * nodesDay[this->minYearData - this->maxYearData +1][12][31] = {NULL};
@@ -139,7 +139,7 @@ void CityDB::importOneFile(string const & file){
     Result * nodesMinute[24][60] = {NULL};
     Result * nodesHour[24] = {NULL};
 
-    /// About data
+    //// About data
 
     //// Needed variables
     INT gender;
@@ -177,9 +177,9 @@ void CityDB::importOneFile(string const & file){
         nodeBike = database->newNode("Bike", attrBike, 1);
 
         ///// User node
-        if(this->shape->genderPLace != -1) {
-            if (data[this->shape->genderPLace][i] == "Male") gender = GENDER_MALE;
-            else if (data[this->shape->genderPLace][i] == "Female") gender = GENDER_FEMALE;
+        if(this->shape->genderPlace != -1) {
+            if (data[this->shape->genderPlace][i] == "Male") gender = GENDER_MALE;
+            else if (data[this->shape->genderPlace][i] == "Female") gender = GENDER_FEMALE;
             else gender = GENDER_NO_INFO;
         }
         else{

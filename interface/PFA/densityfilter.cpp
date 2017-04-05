@@ -1,12 +1,24 @@
 #include "densityfilter.hpp"
 
-DensityFilter::DensityFilter(QWidget *parent) : QWidget(parent),
+#include <QWidget>
+#include <QDateTimeEdit>
+#include <QRadioButton>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QSpinBox>
+#include <stdlib.h>
+#include "controllerInterface.h"
+
+DensityFilter::DensityFilter(ControllerInterface * controller,QWidget *parent, ControllerInterface * controller) : QWidget(parent),
     yes(new QRadioButton("Oui")),
     no(new QRadioButton("Non")),
     densityChoice(new QWidget),
     weaker(new QRadioButton("moins utilisés")),
     stronger(new QRadioButton("plus utilisés")),
-    percentage(new QSpinBox())
+    percentage(new QSpinBox()),
+    controller(controller)
+
   {
       setWindowTitle("Filtre de densité");
       resize(300,300);
@@ -42,6 +54,6 @@ DensityFilter::DensityFilter(QWidget *parent) : QWidget(parent),
   void DensityFilter::validation(){
 
       this->close();
-      returnDensityFilter(yes->isChecked(), weaker->isChecked(), percentage->value());
+      controller->returnDensityFilter(yes->isChecked(), weaker->isChecked(), percentage->value());
 
   }

@@ -13,10 +13,10 @@
 #include "../import/cityDB.h"
 class ControllerUpdate{
 public :
-    ControllerUpdate();
+    ControllerUpdate(Controller * controller);
     ~ControllerUpdate();
     void cityUpdate(CityDB * city);
-    void activate(CityDB * city);
+    void activate(enum Cities city);
     CityDB * chicago;
     CityDB * sanFrancisco;
     CityDB * washington;
@@ -24,14 +24,8 @@ public :
     CityDB * minneapolis;
     CityDB * chattanooga;
     CityDB * whichActive;
+private:
+    Controller * controller;
 };
 
-enum Cities{
-    sanfrancisco = "sanfrancisco",
-    washington= "washington",
-    newyork = "newyork",
-    chicago = "chicago",
-    minneapolis = "minneapolis",
-    chattanooga = "chattanooga"
-};
 #endif //FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERUPDATE_H

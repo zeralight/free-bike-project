@@ -5,7 +5,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-
+#include "controllerInterface.hpp"
 #include "heatmapsurvey.hpp"
 
 /*
@@ -16,11 +16,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
+    MainWindow(ControllerInterface * controller, QWidget *parent = 0);
     void createMenus();
     HeatMapSurvey *heatMapSurvey;
     QWidget * osm;
     ~MainWindow();
+
+private:
+    ControllerInterface * controller;
 };
 
 #endif // MAINWINDOW_H

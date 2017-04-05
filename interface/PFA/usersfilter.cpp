@@ -1,12 +1,21 @@
 #include "usersfilter.hpp"
+#include "controllerInterface.hpp"
 
-UsersFilter::UsersFilter(QWidget *parent) : QWidget(parent),
+#include <QWidget>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+
+UsersFilter::UsersFilter(ControllerInterface * controller, QWidget *parent) : QWidget(parent),
     men(new QCheckBox("Homme")),
     women(new QCheckBox("Femme")),
     minimumAge(new QSpinBox),
     maximumAge(new QSpinBox),
     subscriber(new QCheckBox("Abonnés")),
-    nonSubscriber(new QCheckBox("Non abonnés"))
+    nonSubscriber(new QCheckBox("Non abonnés")),
+    controller(controller)
 {
     setWindowTitle("Filtre utilisateurs");
     resize(300,300);
@@ -33,7 +42,9 @@ UsersFilter::UsersFilter(QWidget *parent) : QWidget(parent),
 
 void UsersFilter::validation(){
     this->close();
-    returnUsersFilter(men->isChecked(),women->isChecked(),minimumAge->value(), maximumAge->value(),subscriber->isChecked,nonSubscriber->isChecked());
+    controller->returnUsersFilter(men->isChecked(),women->isChecked(),minimumAge->value(), maximumAge->value(),subscriber->isChecked,nonSubscriber->isChecked());
+
 }
+
 
 

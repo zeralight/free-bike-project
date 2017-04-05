@@ -8,17 +8,20 @@
 #include <QLabel>
 #include <QPushButton>
 #include <stdlib.h>
+#include "controllerInterface.hpp"
 class PeriodFilter : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PeriodFilter(QWidget *parent = 0);
+    explicit PeriodFilter(ControllerInterface * controller, QWidget *parent = 0);
     QDateTimeEdit * beginning;
     QDateTimeEdit * end;
     QRadioButton * normal;
     QRadioButton * slot;
     QWidget * slotsChoice;
     QPushButton * hours [24];
+private:
+    ControllerInterface * controller;
 
 signals:
 

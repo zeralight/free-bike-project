@@ -1,7 +1,16 @@
 #include "mainwindow.hpp"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), heatMapSurvey(new HeatMapSurvey), osm(new QWidget)
+#include <QMenuBar>
+#include <QMainWindow>
+#include <QHBoxLayout>
+#include <QPushButton>
+
+#include "controllerInterface.hpp"
+MainWindow::MainWindow(ControllerInterface * controler,QWidget *parent)
+    : QMainWindow(parent),
+      controller(controller),
+      heatMapSurvey(new HeatMapSurvey(controller)),
+      osm(new QWidget)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF_8"));
     resize(600,300);
