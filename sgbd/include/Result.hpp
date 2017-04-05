@@ -34,6 +34,8 @@ public:
   virtual Result * match(Pattern * p) =0;
   
   virtual void where(std::string label, Attribute * attr[], int nAttr, int cmpOp) =0;
+
+  virtual std::vector<Attribute*> get(std::string labelPattern, std::string attributeName);
 };
 
 /**
