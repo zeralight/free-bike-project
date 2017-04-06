@@ -9,9 +9,12 @@ Controller::Controller() : cI(new ControllerInterface(this)), cU(new ControllerU
 Controller::~Controller() {
     delete cU;
     delete cOSM;
-    delete cI;
 }
 
 void Controller::activateCity(enum Cities city){
     cU->activate(city);
+}
+
+void Controller::runInterface(){
+  cI->runInterface();
 }

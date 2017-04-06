@@ -21,12 +21,18 @@ CityDB::CityDB(string const name, string const scriptPath, string const dirCSV, 
     //pas finis
 }
 CityDB::~CityDB(){
+    if(isActive){
+        this->database->save(dirDB);
+        delDB(this->database);
+    }
+    delete this->shape;
+    delete this->filesNames;
 }
 void CityDB::download() {
     wrappy::call(scriptPath);
 }
 
-int CityDB::getMaxID(vector<vector<string> > data, int first, int second){
+int CityDB::getMaxID(vector<vector<string>> data, int first, int second){
     int temp1;
     int temp2;
     int max=0;
