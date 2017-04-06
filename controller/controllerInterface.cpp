@@ -12,6 +12,7 @@ MW = new MainWindow(this);
 
 ControllerInterface::~ControllerInterface(){
     free(argv);
+    delete controller;
 
 }
 

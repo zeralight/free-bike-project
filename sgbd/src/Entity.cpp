@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-//#include <cstdlib>
 #include <unordered_map>
 #include <vector>
 #include <iterator>
@@ -123,10 +122,17 @@ std::vector<node> * Entity::getInstance(Attribute * attr[], int nAttr, int cmpOp
 }
 
 
-std::vector<node> * Entity::getInstance(Graph * g, int cmpOp) const {
-  Attribute * name[1] = {new Attr<STRING>(PROP_ENTITY_NAME, this->name)};
-  name[0]->setProperty(g);
-  std::vector<node> * nodes = getNodes(g, name, 1, cmpOp);
+std::vector<node> * Entity::getInstance(Graph * g, Attribute * attr[], int nAttr, int cmpOp) const {
+  std::vector<node> * nodes = getInstance(attr, nAttr, cmpOp);
+
+  for(auto it = nodes->begin() ; it != nodes->end() ; it++) {
+    if (!g->isElement(*it)) {
+      it = nodes->erase(it);
+      it--;
+    }
+    
+  }
+  
   return nodes;
 }
 

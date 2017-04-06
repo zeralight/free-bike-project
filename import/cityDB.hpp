@@ -28,7 +28,7 @@ struct dateAndTime{
 };
 /**
  * @struct This struct allows us to know in which column of the CSV files are the info we seek to use.
- * The place for infos not present in the CSV file should be initialised to 1.
+ * The place for infos not present in the CSV file should be initialised to -1.
  **/
 struct CSVShape {
     int stationStartIDPlace;

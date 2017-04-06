@@ -37,17 +37,16 @@ public:
   bool editInstance(std::vector<node> * nSet, Attribute * attr[], int nAttr);
   bool editInstance(node &n, Attribute * attr[], int nAttr);
   std::vector<node> * getInstance(Attribute * attr[], int nAttr, int cmpOp) const;
-  std::vector<node> * getInstance(Graph * g, int cmpOp) const;
+  std::vector<node> * getInstance(Graph * g, Attribute * attr[] = NULL, int nAttr = 0, int cmpOp = EQUAL) const;
+  bool isValid(Attribute * attr[], int nAttr) const;
   bool isInstance(const node &n) const;
   std::string getName() const;
   Attribute * getAttr(const std::string &name, node n);
   void write(std::fstream &file) const;
   void load(std::fstream &file, Graph * gSrc);
+  
   void print();
   std::string debug(bool getArgs);
-
-private:
-  bool isValid(Attribute * attr[], int nAttr) const;
 };
 
 std::string getWord(std::fstream &file);

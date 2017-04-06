@@ -69,7 +69,7 @@ def rm_same(links, content):
 
 def add_log(links,city, path_dir):
     """
-    Add lines in the file 'city'_log in the directory pointed by path_dir, each line is ont string in the list of string links.
+    Add lines in the file 'city'_log in the directory pointed by path_dir, each line is one string in the list of string links.
     """
     with open(path_dir+city+"_log",'a') as log :
         for link in links :

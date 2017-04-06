@@ -45,5 +45,5 @@ MainWindow::MainWindow(ControllerInterface * controller,QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-
+ delete controller;
 }

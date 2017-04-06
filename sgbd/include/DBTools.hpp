@@ -54,6 +54,7 @@ typedef directionValues direction;
 
 class Entity;
 class Relation;
+class PatternImpl;
 
 template <class T>
 struct TlpProp;
@@ -71,6 +72,8 @@ struct TlpProp;
 class Attribute {
   friend Entity;
   friend Relation;
+  friend PatternImpl;
+  friend void setAttrProperty(tlp::Graph *, Attribute *[], int);
 
 protected:
   std::string label;
@@ -161,7 +164,9 @@ template <class T>
 std::string serialize(const T &value);
 
 Attribute * newAttr(const std::string &label, const std::string &typeName);
+Attribute ** extendAttr(Attribute * attr[], int nAttrAct, int nAttrNew, bool dynAlloc);
 void delAttr(Attribute * attr[], int nAttr);
+void setAttrProperty(tlp::Graph * g, Attribute * attr[], int nAttr);
 
 /* Template Implementation */
 /**********************************************************************/
