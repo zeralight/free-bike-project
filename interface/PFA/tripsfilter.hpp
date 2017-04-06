@@ -1,6 +1,8 @@
 #ifndef TRIPSFILTER_H
 #define TRIPSFILTER_H
 
+class TripsFilter;
+
 #include <QWidget>
 #include <QCheckBox>
 #include <QSpinBox>

@@ -1,5 +1,6 @@
 #include "cityDB.hpp"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "Database.hpp"
@@ -18,6 +19,8 @@ CityDB::CityDB(string const name, string const scriptPath, string const dirCSV, 
                int maxYearData) : name(name), scriptPath(scriptPath), dirCSV(dirCSV), dirDB(dirDB),
                                   filesNames(filesNames), maxYearData(maxYearData), minYearData(minYearData), shape(shape) {
     //pas finis
+}
+CityDB::~CityDB(){
 }
 void CityDB::download() {
     wrappy::call(scriptPath);
@@ -39,17 +42,19 @@ int CityDB::getMaxID(vector<vector<string> > data, int first, int second){
     }
     return max;
 }
-void CityDB::initialiseStationNode(Result ** nodesStation, int id, string name, double latitude, double longitude){
+
+
+void CityDB::initialiseStationNode(Result * nodeStation, int id, string name, double latitude, double longitude){
     Attribute * attrStation[4] = {new Attr<INT>("id"),
                                   new Attr<STRING>("name"),
                                   new Attr<DOUBLE>("latitude"),
                                   new Attr<DOUBLE>("longitude")};
-    if(nodesStation[id] == NULL) {
+    if(nodeStation == NULL) {
         attrStation[0]->setValue(&id);
         attrStation[1]->setValue(&name);
         attrStation[2]->setValue(&latitude);
         attrStation[3]->setValue(&longitude);
-        nodesStation[id] = this->database->newNode("Station", attrStation, 4);
+        nodeStation = this->database->newNode("Station", attrStation, 4);
     }
     //// Delete Attribute object
     delAttr(attrStation, 4);
@@ -105,14 +110,24 @@ void CityDB::DBInstanciation() {
     int i = 0;
     vector<Result*> nodesStation(1,NULL);
     //// Dates nodes creation
+    vector<vector<vector<Result * > > > nodesDay(this->maxYearData - this->minYearData +1, vector<vector<Result *> >(12, vector<Result *>(31, NULL)));
+    
+    vector<vector<Result * > > nodesMonth(this->maxYearData - this->minYearData +1, vector<Result *> (12,  NULL));
+
+    vector<Result * > nodesYear(this->maxYearData - this->minYearData +1, NULL);
+
+    /*
     Result * nodesDay[MAXYEARGAP][12][31] = {NULL};
     Result * nodesMonth[MAXYEARGAP][12] = {NULL};
     Result * nodesYear[MAXYEARGAP] = {NULL};
-
+    */
     //// Time nodes creation
-    Result * nodesMinute[24][60] = {NULL};
+    vector<vector<Result * > > nodesMinute(24, vector<Result *>(60,  NULL));
+    vector<Result * > nodesHour(24, NULL);
+    /*Result * nodesMinute[24][60] = {NULL};
     Result * nodesHour[24] = {NULL};
-
+    */
+    
     for (i=0; i < filesNames->size(); i++) {
       importOneFile((*filesNames)[i], nodesStation, nodesDay,nodesMonth,nodesYear,nodesMinute,nodesHour);
     }
@@ -148,11 +163,16 @@ void CityDB::DBInstanciation() {
 
 }
 
-void CityDB::importOneFile(string const & file, vector<Result *> nodesStation,   Result * nodesDay[MAXYEARGAP][12][31], Result * nodesMonth[MAXYEARGAP][12], Result * nodesYear[MAXYEARGAP], Result * nodesMinute[24][60], Result * nodesHour[24]){
+void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  vector<vector<vector<Result * > > > nodesDay,
+		     vector<vector<Result * > > nodesMonth,
+		     vector<Result * > nodesYear,
+		     vector<vector<Result * > > nodesMinute,
+			   vector<Result * > nodesHour)
+{
 
     cout << "Parsing station file... " << file << endl;
     vector<vector<string> > data = parseCSVFile(dirCSV+file);
-    cout << filesNames[i] << "OK" << endl;
+    cout << file << "OK" << endl;
 
     // Creation of the nodes and the edges
     //// About stations
@@ -187,7 +207,7 @@ void CityDB::importOneFile(string const & file, vector<Result *> nodesStation,  
     Result * nodeTrip = NULL;
     Result * nodesEvent[2] = {NULL};
 
-    DateAndTime * dateTime;
+    dateAndTime * dateTime;
 
     int idStart ;
     int idArrival ;
@@ -196,12 +216,10 @@ void CityDB::importOneFile(string const & file, vector<Result *> nodesStation,  
     for (int i = 1 ; i < data[0].size() ; i++) {
         /////station initialisation
         idStart = stoi(data[i][this->shape->stationStartIDPlace]);
-        intialiseStationNode(nodesStation[idStart],idStart,data[i][this->shape->stationStartNamePlace],unserialize<DOUBLE>(data[i][this->shape->stationStartLatitudePlace]),unserialize<DOUBLE>(data[i][this->shape->stationStartLongitudePlace]));
-        idArrival = stoi(data[i][this->shape->stationStartIDPlace]);
-        intialiseStationNode(nodesStation[idStart],idArrival,data[i][this->shape->stationEndNamePlace],unserialize<DOUBLE>(data[i][this->shape->stationEndLatitudePlace]),unserialize<DOUBLE>(data[i][this->shape->stationEndLongitudePlace]));
+        initialiseStationNode(nodesStation[idStart],idStart,data[i][this->shape->stationStartNamePlace],unserialize<DOUBLE>(data[i][this->shape->stationStartLatitudePlace]),unserialize<DOUBLE>(data[i][this->shape->stationStartLongitudePlace]));
+        idArrival = stoi(data[i][this->shape->stationEndIDPlace]);
+        initialiseStationNode(nodesStation[idArrival],idArrival,data[i][this->shape->stationEndNamePlace],unserialize<DOUBLE>(data[i][this->shape->stationEndLatitudePlace]),unserialize<DOUBLE>(data[i][this->shape->stationEndLongitudePlace]));
 
-        /////Date intialisation
-        initialiseDateNode(Result * nodeDay, Result * nodeMonth, Result * nodeYear, year, month, day);
         ///// Bike node
         id = unserialize<INT>(data[this->shape->bikeIDPlace][i]);
         attrBike[0]->setValue(&id);
@@ -333,7 +351,7 @@ void CityDB::importOneFile(string const & file, vector<Result *> nodesStation,  
 
 Database * CityDB::activate(){
     struct stat buf;
-    if( stat(dirDB+name+".db",&buf)){
+    if( stat((dirDB+name+".db").c_str(),&buf)){
         this->database = newDB(this->name);
         entitiesCreation(database);
         relationshipsCreation(database);
@@ -413,7 +431,6 @@ dateAndTime * CityDB::dateInNodes(const string & date, const string & time) {
 
     getline(tmpStreamDate, token, '/');
     dateTime->month=stoi(token);
-    getline(tmpStream, token, '/');
     getline(tmpStreamDate, token, '/');
     dateTime->day=stoi(token);
     getline(tmpStreamDate, token, '/');

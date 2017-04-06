@@ -158,10 +158,10 @@ std::string Entity::getName() const{
 Attribute * Entity::getAttr(const std::string &name, node n) {
   if (attr.find(name) == attr.end())
     throw std::string("ERROR: the attribute" + name + "doesn't exist");
-
+  
   if (!this->isInstance(n))
     throw std::string("ERROR: the node doesn't belong to the entity '" + this->name + "'");
-
+  
   Attribute * ret = attr[name]->clone();
   ret->getNodeValue(n);
 

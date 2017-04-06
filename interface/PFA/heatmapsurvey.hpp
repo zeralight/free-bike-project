@@ -1,6 +1,8 @@
 #ifndef QUESTIONNAIRECHALEUR_H
 #define QUESTIONNAIRECHALEUR_H
 
+class HeatMapSurvey;
+
 #include <QCheckBox>
 #include <QWidget>
 #include <QGroupBox>
