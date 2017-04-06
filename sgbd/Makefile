@@ -23,8 +23,8 @@ FLAGS = -std=c++14 -g -Wall -fPIC
 FLAGS_LIB = -shared -fPIC
 LIBS =
 
-TLP_LIBS = `tulip-config-debug --libs` -L/home/raptapia/Documents/logiciels/tulip-4.10.0/install-debug/lib/ -lyajl-tulip-4.10 -ltess2-tulip-4.10
-TLP_FLAGS = `tulip-config-debug --cxxflags`
+TLP_LIBS = `tulip-config --libs`
+TLP_FLAGS = `tulip-config --cxxflags`
 
 TST_FLAGS = -DTST_FILES_PATH=\"$(TST_FILES_DIR)\" -DTST_OUT_PATH=\"$(TST_OUT_DIR)\" #relative to the BIN_DIR
 
@@ -70,7 +70,7 @@ doc-dev:
 	doxygen $(DOC_DIR)/doc_dev.doxyfile
 
 clean: clean-emacs
-	rm -r -f $(BUILD_DIR)/*.o $(TST_OUT_DIR)/*
+	rm -r -f $(BUILD_DIR)/*.o $(TST_OUT_DIR)/*	
 
 clean-bin:
 	rm -f $(BIN_DIR)/*

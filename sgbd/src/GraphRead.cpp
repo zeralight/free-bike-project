@@ -78,11 +78,10 @@ Result * GraphReadAbstract::match(Pattern * p) {
 std::vector<Attribute*> * GraphReadAbstract::get(const std::string &label, const std::string &attributeName) const {
   std::vector<Attribute *> * res = new std::vector<Attribute *>;
 
-  if (this->pattern == NULL)
-    return getElement(label, attributeName);
-
   try {
-    if (this->pattern->isNode(label)) {
+    if (this->pattern == NULL)
+      res = getElement(label, attributeName);
+    else if (this->pattern->isNode(label)) {
       Entity * e = this->pattern->getEntity(label);
       std::vector<node> * nodes = e->getInstance(this->g, EQUAL);
       
@@ -97,7 +96,7 @@ std::vector<Attribute*> * GraphReadAbstract::get(const std::string &label, const
 	res->push_back(r->getAttr(attributeName, *it));
     }
     else 
-      getElement(label, attributeName); 
+      res = getElement(label, attributeName); 
   }
   catch (std::string &errMessage) {
     std::cout << errMessage << std::endl;
@@ -112,10 +111,7 @@ std::vector<Attribute*> * GraphReadAbstract::getElement(const std::string &label
   
   if (this->db->isEntity(label)) {
     Entity * e = this->db->getEntity(label);
-    e->print();
     std::vector<node> * nodes = e->getInstance(this->g, EQUAL);
-
-    std::cout << "i am entity: " << nodes->size() << " : " << attributeName << std::endl;
     
     for(auto it = nodes->begin() ; it != nodes->end() ; it++)
       res->push_back(e->getAttr(attributeName, *it));
@@ -123,8 +119,6 @@ std::vector<Attribute*> * GraphReadAbstract::getElement(const std::string &label
   else if (this->db->isRelation(label)) {
     Relation * r = this->db->getRelation(label);
     std::vector<edge> * edges = r->getInstance(this->g, EQUAL);
-
-    std::cout << "i am relation" << std::endl;
     
     for(auto it = edges->begin() ; it != edges->end() ; it++)
       res->push_back(r->getAttr(attributeName, *it));

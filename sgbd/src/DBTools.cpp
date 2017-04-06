@@ -106,19 +106,22 @@ std::string serialize(const INT &value) {
 
 template <>
 std::string serialize(const DOUBLE &value) {
-
+  return std::to_string(value);
 }
 
 
 template <>
 std::string serialize(const STRING &value) {
-
+  return value;
 }
 
 
 template <>
 std::string serialize(const BOOL &value) {
+  if (value)
+    return "true";
 
+  return "false";
 }
 
 

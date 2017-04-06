@@ -164,7 +164,6 @@ Attribute * Entity::getAttr(const std::string &name, node n) {
   
   Attribute * ret = attr[name]->clone();
   ret->getNodeValue(n);
-  ret->print();
 
   return ret;
 }
