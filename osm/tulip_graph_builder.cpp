@@ -137,26 +137,6 @@ void run(char* const filePath) {
             for (size_t i = 0; i < v.size(); ++i) v[i] = destinations[i];
             nextHopProperty->setEdgeValue(tulipEdges[edgesMapper[edge]], v);
         }
-/*
-    heat map implementation
-    based on random values representing "frequency of path usage"
-*/
-        {
-            std::random_device rd;
-            std::mt19937 mt(rd());
-            std::uniform_real_distribution<double> dist(0., 1.);
-            auto colorProperty = tulipGraph->getLocalProperty<tlp::ColorProperty>("viewColor");
-            colorProperty->setAllNodeValue(tlp::Color(0, 255, 0, 255));
-            colorProperty->setAllEdgeValue(tlp::Color(128, 128, 128, 128));
-           
-            auto heatMap = tlp::ColorScale(std::vector<tlp::Color>{tlp::Color(0, 0, 255), tlp::Color(255, 0, 0)});
-            
-            for (auto const& edge: tulipEdges) {
-                if (!nextHopProperty->getEdgeValue(edge).empty()) {
-                    colorProperty->setEdgeValue(edge, heatMap.getColorAtPos(dist(mt)));
-                }
-            }
-        }
         
         // viewLayout property
         auto viewLayoutProperty = tulipGraph->getLocalProperty<tlp::LayoutProperty>("viewLayout");
