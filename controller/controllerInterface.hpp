@@ -1,26 +1,30 @@
 #ifndef FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERINTERFACE_H
 #define FREE_BIKE_PROJECT_REPOSITORY_CONTROLLERINTERFACE_H
 
+class ControllerInterface;
+
 #include "mainwindow.hpp"
 #include <QApplication>
 #include "controller.hpp"
+
 using namespace std;
+
 class ControllerInterface
 {
 public:
-    ControllerInterface(ControllerInterface * controller);
+    ControllerInterface(Controller * controller);
     ~ControllerInterface();
     MainWindow * MW;
     QApplication * application;
-    int argc;
-    char * argv;
+    int  argc;
+    char ** argv;
 
     void runInterface();
-    int returnDensityFilter(bool yes=0, bool weak = 1, int percentage);
+  int returnDensityFilter(int percentage, bool yes=0, bool weak = 1);
 
     int returnPeriodFilter(int dayBegin, int monthBegin, int yearBegin, int hourBegin, int minuteBegin,
                            int dayEnd, int monthEnd, int yearEnd, int hourEnd, int minuteEnd,
-                           bool normal = 1, bool slots[24]);
+                           bool slots[24],  bool normal = true);
 
     int returnTripsFilter(int maxLength, int minLength, int maxDensity, int minDensity);
 

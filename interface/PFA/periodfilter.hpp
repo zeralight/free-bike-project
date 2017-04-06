@@ -8,6 +8,9 @@
 #include <QLabel>
 #include <QPushButton>
 #include <stdlib.h>
+
+class PeriodFilter;
+
 #include "controllerInterface.hpp"
 class PeriodFilter : public QWidget
 {

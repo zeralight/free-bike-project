@@ -7,6 +7,9 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+
+class UsersFilter;
+
 #include "controllerInterface.hpp"
 class UsersFilter : public QWidget
 {

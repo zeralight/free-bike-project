@@ -1,9 +1,10 @@
 #include "controllerUpdate.hpp"
 
 
-#include "cityDB.h"
+#include "../import/cityDB.hpp"
 #include "controller.hpp"
-
+#include <string>
+using namespace std;
 ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL), controller(controller){
     CSVShape * shapeChicago= new CSVShape;
     shapeChicago->startTimePlace = 1;
@@ -26,29 +27,32 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
     shapeChicago->stationStartLongitudePlace=1;
     shapeChicago->stationStartLatitudePlace=1;
 
-    vector<string> filesChicago = new vector<string>; // à remplir
-    filesChicago.push_back("");
-    chicago = new CityDB("Chicago",SCRIPT_FILES_DL+"chicago",SCRIPT_FILES_DL+"chicago",DB_DIR,filesChicago,shapeChicago);
+    int minYear= 2013;
+    int maxYear = 2017;
+    
+    vector<string> * filesChicago = new vector<string>; // à remplir
+    filesChicago->push_back("");
+    chicago = new CityDB(string("Chicago"),string(SCRIPT_FILES_DL)+"chicago",string(SCRIPT_FILES_DL)+"chicago",string(DB_DIR),filesChicago,shapeChicago,minYear,maxYear);
 /*
     CSVShape * shapesanFrancisco= new CSVShape; //à remplir
-    vector<string> filessanFrancisco = new vector<string>; // à remplir
-    sanFrancisco = new CityDB("sanFrancisco",SCRIPT_FILES_DL+"sanFrancisco",SCRIPT_FILES_DL+"sanFrancisco",DB_DIR,filessanFrancisco,shapesanFrancisco);
+    vector<string> * filessanFrancisco = new vector<string>; // à remplir
+    sanFrancisco = new CityDB("sanFrancisco",string(SCRIPT_FILES_DL)+"sanFrancisco",string(SCRIPT_FILES_DL)+"sanFrancisco",DB_DIR,filessanFrancisco,shapesanFrancisco);
 
     CSVShape * shapewashington= new CSVShape; //à remplir
-    vector<string> fileswashington = new vector<string>; // à remplir
-    washington = new CityDB("washington",SCRIPT_FILES_DL+"washington",SCRIPT_FILES_DL+"washington",DB_DIR,fileswashington,shapewashington);
+    vector<string> * fileswashington = new vector<string>; // à remplir
+    washington = new CityDB("washington",string(SCRIPT_FILES_DL)+"washington",string(SCRIPT_FILES_DL)+"washington",DB_DIR,fileswashington,shapewashington);
 
     CSVShape * shapenewYork= new CSVShape; //à remplir
-    vector<string> filesnewYork = new vector<string>; // à remplir
-    newYork = new CityDB("newYork",SCRIPT_FILES_DL+"newYork",SCRIPT_FILES_DL+"newYork",DB_DIR,filesnewYork,shapenewYork);
+    vector<string> * filesnewYork = new vector<string>; // à remplir
+    newYork = new CityDB("newYork",string(SCRIPT_FILES_DL)+"newYork",string(SCRIPT_FILES_DL)+"newYork",DB_DIR,filesnewYork,shapenewYork);
 
     CSVShape * shapeminneapolis= new CSVShape; //à remplir
-    vector<string> filesminneapolis = new vector<string>; // à remplir
-    minneapolis = new CityDB("minneapolis",SCRIPT_FILES_DL+"minneapolis",SCRIPT_FILES_DL+"minneapolis",DB_DIR,filesminneapolis,shapeminneapolis);
+    vector<string> * filesminneapolis = new vector<string>; // à remplir
+    minneapolis = new CityDB("minneapolis",string(SCRIPT_FILES_DL)+"minneapolis",string(SCRIPT_FILES_DL)+"minneapolis",DB_DIR,filesminneapolis,shapeminneapolis);
 
     CSVShape * shapechattanooga= new CSVShape; //à remplir
-    vector<string> fileschattanooga = new vector<string>; // à remplir
-    chattanooga = new CityDB("chattanooga",SCRIPT_FILES_DL+"chattanooga",SCRIPT_FILES_DL+"chattanooga",DB_DIR,fileschattanooga,shapechattanooga);
+    vector<string> * fileschattanooga = new vector<string>; // à remplir
+    chattanooga = new CityDB("chattanooga",string(SCRIPT_FILES_DL)+"chattanooga",string(SCRIPT_FILES_DL)+"chattanooga",DB_DIR,fileschattanooga,shapechattanooga);
 
 */
 }
@@ -56,18 +60,18 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
 void ControllerUpdate::activate(enum Cities city){
     CityDB * toActivate;
     switch(city){
-        case sanfrancisco :
-            toActivate=sanFrancisco;
-        case minneapolis :
-            toActivate=minneapolis;
-        case chicago:
-            toActivate=chicago;
-        case chattanooga:
-            toActivate=chattanooga;
-        case newyork:
-            toActivate=newYork;
-        case washington:
-            toActivate=washington;
+        case SANFRANCISCO :
+            toActivate=this->sanFrancisco;
+        case MINNEAPOLIS :
+            toActivate=this->minneapolis;
+        case CHICAGO :
+            toActivate=this->chicago;
+        case CHATTANOOGA :
+            toActivate=this->chattanooga;
+        case NEWYORK :
+            toActivate=this->newYork;
+        case WASHINGTON :
+            toActivate=this->washington;
     }
     if(whichActive != NULL){
         whichActive->desactivate();

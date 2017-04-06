@@ -4,13 +4,14 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QTextCodec>
 
 #include "controllerInterface.hpp"
-MainWindow::MainWindow(ControllerInterface * controler,QWidget *parent)
+MainWindow::MainWindow(ControllerInterface * controller,QWidget *parent)
     : QMainWindow(parent),
-      controller(controller),
       heatMapSurvey(new HeatMapSurvey(controller)),
-      osm(new QWidget)
+      osm(new QWidget),
+      controller(controller)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF_8"));
     resize(600,300);

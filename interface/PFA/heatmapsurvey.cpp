@@ -18,13 +18,12 @@
 
 
 HeatMapSurvey::HeatMapSurvey(ControllerInterface * controller, QWidget *parent) : QWidget(parent),
-                                                                                      controller(controller),
                                                                                       periodFilter(new PeriodFilter(controller)),
                                                                                       usersFilter(new UsersFilter(controller)),
                                                                                       tripsFilter(new TripsFilter(controller)),
-                                                                                      densityFilter(new DensityFilter(controller))
-
-    {
+										  densityFilter(new DensityFilter(controller)),
+                                                                                     controller(controller)
+{
     QGroupBox *groupbox = new QGroupBox("Recherche :", this);
     QComboBox *citiesList = new QComboBox(this);
 
@@ -57,5 +56,5 @@ HeatMapSurvey::HeatMapSurvey(ControllerInterface * controller, QWidget *parent) 
 
 }
 void HeatMapSurvey::cityChanged(const QString & cityName){
-    controller->cityChanged(cityName->toStdString());
+    controller->cityChanged(cityName.toStdString());
 }

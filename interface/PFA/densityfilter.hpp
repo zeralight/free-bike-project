@@ -8,8 +8,11 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QSpinBox>
-#include <stdlib.h>
-#include "controllerInterface.h"
+#include <cstdlib>
+
+class DensityFilter;
+
+#include "controllerInterface.hpp"
 
 class DensityFilter : public QWidget
 {

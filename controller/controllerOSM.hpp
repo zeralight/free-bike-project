@@ -1,5 +1,8 @@
 #ifndef FREE_BIKE_PROJECT_REPOSITORY_CONTROLLEROSM_H
 #define FREE_BIKE_PROJECT_REPOSITORY_CONTROLLEROSM_H
+
+class ControllerOSM;
+
 #include "controller.hpp"
 class ControllerOSM{
 public:

@@ -7,10 +7,10 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QSpinBox>
-#include <stdlib.h>
-#include "controllerInterface.h"
+#include <cstdlib>
+#include "controllerInterface.hpp"
 
-DensityFilter::DensityFilter(ControllerInterface * controller,QWidget *parent, ControllerInterface * controller) : QWidget(parent),
+DensityFilter::DensityFilter(ControllerInterface * controller,QWidget *parent) : QWidget(parent),
     yes(new QRadioButton("Oui")),
     no(new QRadioButton("Non")),
     densityChoice(new QWidget),
@@ -30,8 +30,8 @@ DensityFilter::DensityFilter(ControllerInterface * controller,QWidget *parent, C
       lay->addWidget(new QLabel("Voulez-vous filtrer par densité ?"),2,0,1,5);
       lay->addWidget(yes,3,0);
       lay->addWidget(no,3,1);
-      QObject::connect(non, SIGNAL(clicked(bool)), densityChoice, SLOT(hide()));
-      QObject::connect(oui, SIGNAL(clicked(bool)), densityChoice, SLOT(show()));
+      QObject::connect(no, SIGNAL(clicked(bool)), densityChoice, SLOT(hide()));
+      QObject::connect(yes, SIGNAL(clicked(bool)), densityChoice, SLOT(show()));
       densityChoice->hide();
       lay->addWidget(densityChoice,4,0);
       QPushButton * validate = new QPushButton("Valider");
@@ -54,6 +54,6 @@ DensityFilter::DensityFilter(ControllerInterface * controller,QWidget *parent, C
   void DensityFilter::validation(){
 
       this->close();
-      controller->returnDensityFilter(yes->isChecked(), weaker->isChecked(), percentage->value());
+      controller->returnDensityFilter(percentage->value(), yes->isChecked(), weaker->isChecked());
 
   }

@@ -1,8 +1,7 @@
-#include "cityDB.h"
+#include "cityDB.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include "Database.hpp"
 #include "DBTools.hpp"
 #include "Result.hpp"
@@ -14,10 +13,10 @@
 
 using namespace std;
 
-CityDB::CityDB(string const& name, string const & scriptPath, string const & dirCSV, string const & dirDB,
-               vector<string const&> filesNames, CSVShape * shape, int minYearData,
+CityDB::CityDB(string const name, string const scriptPath, string const dirCSV, string const dirDB,
+               vector<string> * filesNames, CSVShape * shape, int minYearData,
                int maxYearData) : name(name), scriptPath(scriptPath), dirCSV(dirCSV), dirDB(dirDB),
-                                  filesNames(filesNames), shape(shape), minYearData(minYearData), maxYearData(maxYearData) {
+                                  filesNames(filesNames), maxYearData(maxYearData), minYearData(minYearData), shape(shape) {
     //pas finis
 }
 void CityDB::download() {
@@ -29,13 +28,13 @@ int CityDB::getMaxID(vector<vector<string> > data, int first, int second){
     int temp2;
     int max=0;
     for (int i = 1; i < data[0].size() ; i++) {
-        temp1 = unserialize<INT>(stationsData[first][i]);
-        temp2 = unserialize<INT>(stationsData[second][i]);
+        temp1 = unserialize<INT>(data[first][i]);
+        temp2 = unserialize<INT>(data[second][i]);
         if (temp1<temp2) {
             temp1 = temp2;
         }
         if(temp1>max){
-            max = id;
+            max = temp1;
         }
     }
     return max;
@@ -103,23 +102,22 @@ void CityDB::initialiseHourNode(Result * nodeHour, Result * nodeMinute,int hour,
 
 void CityDB::DBInstanciation() {
 
-    // .csv files parsing process
     int i = 0;
     vector<Result*> nodesStation(1,NULL);
     //// Dates nodes creation
-    Result * nodesDay[this->maxYearData - this->minYearData +1][12][31] = {NULL};
-    Result * nodesMonth[this->maxYearData - this->minYearData +1][12] = {NULL};
-    Result * nodesYear[this->maxYearData - this->minYearData +1] = {NULL};
+    Result * nodesDay[MAXYEARGAP][12][31] = {NULL};
+    Result * nodesMonth[MAXYEARGAP][12] = {NULL};
+    Result * nodesYear[MAXYEARGAP] = {NULL};
 
     //// Time nodes creation
     Result * nodesMinute[24][60] = {NULL};
     Result * nodesHour[24] = {NULL};
 
-    for (i; i++; i < filesNames.size()) {
-        importOneFile(filesNames[i], nodesStation, nodesDay,nodesMonth,nodesYear,nodesMinute,nodesHour);
+    for (i=0; i < filesNames->size(); i++) {
+      importOneFile((*filesNames)[i], nodesStation, nodesDay,nodesMonth,nodesYear,nodesMinute,nodesHour);
     }
     // Delete Result objects
-    for (int i = 0 ; i < max+1; i++) {
+    for (int i = 0 ; i < nodesStation.size(); i++) {
         if (nodesStation[i]!=NULL)
             delResult(nodesStation[i]);
     }
@@ -150,8 +148,7 @@ void CityDB::DBInstanciation() {
 
 }
 
-void CityDB::importOneFile(string const & file, vector<Result *> nodesStation, Result **** nodesDay, Result *** nodesMonth,
-                           Result ** nodesYear, Result *** nodesMinute, Result ** nodesHour){
+void CityDB::importOneFile(string const & file, vector<Result *> nodesStation,   Result * nodesDay[MAXYEARGAP][12][31], Result * nodesMonth[MAXYEARGAP][12], Result * nodesYear[MAXYEARGAP], Result * nodesMinute[24][60], Result * nodesHour[24]){
 
     cout << "Parsing station file... " << file << endl;
     vector<vector<string> > data = parseCSVFile(dirCSV+file);

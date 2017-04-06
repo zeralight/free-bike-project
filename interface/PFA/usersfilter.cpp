@@ -42,7 +42,7 @@ UsersFilter::UsersFilter(ControllerInterface * controller, QWidget *parent) : QW
 
 void UsersFilter::validation(){
     this->close();
-    controller->returnUsersFilter(men->isChecked(),women->isChecked(),minimumAge->value(), maximumAge->value(),subscriber->isChecked,nonSubscriber->isChecked());
+    //    controller->returnUsersFilter(men->isChecked(),women->isChecked(),minimumAge->value(), maximumAge->value(),subscriber->isChecked,nonSubscriber->isChecked());
 
 }
 

@@ -5,6 +5,8 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
+class MainWindow;
+
 #include "controllerInterface.hpp"
 #include "heatmapsurvey.hpp"
 

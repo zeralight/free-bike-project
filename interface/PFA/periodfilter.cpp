@@ -35,7 +35,6 @@ PeriodFilter::PeriodFilter(ControllerInterface * controller, QWidget *parent) : 
     QPushButton * validate = new QPushButton("Valider");
     lay->addWidget(validate,7,0);
     QObject::connect(validate, SIGNAL(clicked(bool)), this, SLOT(validation())) ;
-
     QGridLayout * laySlots = new QGridLayout;
     laySlots->setSpacing(0);
     //aySlots->setAlignement(Qt::AlignLeft);
@@ -56,13 +55,14 @@ PeriodFilter::PeriodFilter(ControllerInterface * controller, QWidget *parent) : 
 }
 
 void PeriodFilter::validation(){
-    this->close();
-    bool slots[24];
+    bool slot[24];
     int i = 0;
-    for(i;i++;i<24){
-        slots[i] = this->hours[i]->isChecked();
+    for(i=0;i<24;i++){
+        slot[i] = this->hours[i]->isChecked();
     }
-    controller->returnPeriodFilter(beginning->date().day(),beginning->date().month(),beginning->date().year,beginning->time().hour(),beginning->time().minute(),
-                           end->date().day(),end->date().month(),end->date().year,end->time().hour(),end->time().minute(),
-                           normal->isChecked(), slots);
+    this->close();
+    
+    //    controller->returnPeriodFilter(beginning->date().day(),beginning->date().month(),beginning->date().year,beginning->time().hour(),beginning->time().minute(),
+    //                   end->date().day(),end->date().month(),end->date().year,end->time().hour(),end->time().minute(),
+    //				   slot, this->normal->isChecked());
 }

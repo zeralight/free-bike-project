@@ -13,5 +13,5 @@ Controller::~Controller() {
 }
 
 void Controller::activateCity(enum Cities city){
-    cU->activate(toActivate);
+    cU->activate(city);
 }

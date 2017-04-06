@@ -1,8 +1,4 @@
-#include "mainwindow.hpp"
-#include "heatmapsurvey.hpp"
-#include <QApplication>
-#include <QTextCodec>
-#include "periodfilter.hpp"
+#include "controller.hpp"
 
 int main(int argc, char *argv[])
 {

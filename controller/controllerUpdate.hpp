@@ -8,14 +8,17 @@
 #ifndef DB_DIR
     #define DB_DIR "./"
 #endif
+
+class ControllerUpdate;
 #include <wrappy/wrappy.h>
 #include "controller.hpp"
-#include "../import/cityDB.h"
+#include "../import/cityDB.hpp"
+
 class ControllerUpdate{
 public :
     ControllerUpdate(Controller * controller);
     ~ControllerUpdate();
-    void cityUpdate(CityDB * city);
+    void cityUpdate(enum Cities city);
     void activate(enum Cities city);
     CityDB * chicago;
     CityDB * sanFrancisco;
