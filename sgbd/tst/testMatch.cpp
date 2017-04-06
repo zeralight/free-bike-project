@@ -47,7 +47,17 @@ int main () {
   DatabaseImpl * dbi = ((DatabaseImpl *) db);
   Entity * e = dbi->getEntity("Station");
   std::vector<node> * stations = e->getInstance(sav, EQUAL);
+  INT id;
 
+  std::vector<Attribute *> * resGet = res->get("S", "id");
+
+  std::cout << "\x1b[1mStations [get]:\x1b[0m " << resGet->size() << std::endl;
+  for (auto it = resGet->begin() ; it != resGet->end() ; it++) {
+    (*it)->getValue(&id);
+    std::cout << "id :\t" << id << std::endl;
+  }  
+  
+  /*
   std::cout << "\x1b[1mStations :\x1b[0m" << stations->size() << std::endl; 
   for (auto it = stations->begin() ; it != stations->end() ; it++) {
     Attribute * attr;
@@ -56,6 +66,7 @@ int main () {
     attr->getValue(&id);
     std::cout << "id :\t" << id << std::endl;
   }
+  */
   
   delPattern(p);
   delResult(res);
