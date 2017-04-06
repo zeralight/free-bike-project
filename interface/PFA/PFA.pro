@@ -26,7 +26,7 @@ SOURCES += main.cpp\
     heatmapsurvey.cpp \
     densityfilter.cpp \
     ../../controller/*.cpp \
-    ../../import/*.cpp
+    ../../import/cityDB.cpp
 
 HEADERS  += mainwindow.hpp \
     periodfilter.hpp \
@@ -35,9 +35,9 @@ HEADERS  += mainwindow.hpp \
     heatmapsurvey.hpp \
     densityfilter.hpp \
     ../../controller/*.hpp \
-    ../../import/*.hpp
+    ../../import/cityDB.hpp
 
 LIBS +=  `tulip-config-debug --libs` \
-	-L../sgbd/lib -lgraphdb \
+	-L../../sgbd/lib -lgraphdb \
 	-L/home/raptapia/Documents/logiciels/wrappy/build/ -lwrappy
 

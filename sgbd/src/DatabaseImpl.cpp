@@ -222,6 +222,16 @@ Entity * DatabaseImpl::getEntity(const string &name) {
 }
 
 
+bool DatabaseImpl::isEntity(const std::string &name) const {
+  return (entities.find(name) != entities.end());
+}
+
+
+bool DatabaseImpl::isRelation(const std::string &name) const {
+    return (relations.find(name) != relations.end());
+}
+
+
 void DatabaseImpl::saveEntities(const string &path) const {
   fstream file;
   string buff;

@@ -47,6 +47,9 @@ public:
   Relation * getRelation(const std::string &name);
   Entity * getEntity(const std::string &name);
 
+  bool isEntity(const std::string &name) const;
+  bool isRelation(const std::string &name) const;
+
   Result * match(Pattern * p);
 
   Graph * newGraphResult(const std::string &name);

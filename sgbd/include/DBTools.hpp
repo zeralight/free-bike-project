@@ -157,6 +157,9 @@ private:
 template <class T>
 T unserialize(const std::string &serializedValue, const std::string &format = "");
 
+template <class T>
+std::string serialize(const T &value);
+
 Attribute * newAttr(const std::string &label, const std::string &typeName);
 void delAttr(Attribute * attr[], int nAttr);
 
@@ -308,7 +311,7 @@ std::string Attr<T>::debug() const {
   ret += this->typeName + "\t";
   ret += "cstr:" + std::to_string(this->constraints) + "\t";
   ret += "val:";
-  ret += this->value;
+  ret += serialize(this->value);
   
   return ret;
 }

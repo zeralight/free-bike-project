@@ -38,6 +38,7 @@ public:
   virtual std::vector<Attribute *> * get(const std::string &label, const std::string &attributeName) const =0;
 };
 
+
 /**
  * @brief Deletion of a Result object
  *

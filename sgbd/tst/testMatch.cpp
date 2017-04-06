@@ -49,7 +49,11 @@ int main () {
   std::vector<node> * stations = e->getInstance(sav, EQUAL);
   INT id;
 
-  std::vector<Attribute *> * resGet = res->get("S", "id");
+  
+  //Attribute * attr[1] = {new Attr<INT>("id", 477)};
+  
+  std::vector<Attribute *> * resGet = res->get("Station", "id");
+  //res->where("S", attr, 1, EQUAL);
 
   std::cout << "\x1b[1mStations [get]:\x1b[0m " << resGet->size() << std::endl;
   for (auto it = resGet->begin() ; it != resGet->end() ; it++) {

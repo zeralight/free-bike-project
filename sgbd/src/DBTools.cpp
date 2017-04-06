@@ -98,6 +98,30 @@ STRING unserialize<STRING>(const std::string &serializedValue, const std::string
 }
 
 
+template <>
+std::string serialize(const INT &value) {
+  return std::to_string(value);
+}
+
+
+template <>
+std::string serialize(const DOUBLE &value) {
+
+}
+
+
+template <>
+std::string serialize(const STRING &value) {
+
+}
+
+
+template <>
+std::string serialize(const BOOL &value) {
+
+}
+
+
 Attribute * newAttr(const std::string &label, const std::string &typeName) {
   if (typeName == "int")
     return new Attr<INT>(label);

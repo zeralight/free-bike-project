@@ -90,5 +90,5 @@ ControllerUpdate::~ControllerUpdate(){
 }
 
 void ControllerUpdate::cityUpdate(enum Cities city){
-    //Maintenant il faut appeler l'import
+    //Mise à jour d'une ville non fonctionnelle
 }
