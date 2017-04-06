@@ -10,7 +10,6 @@
 
 using namespace tlp;
 
-
 // See DBTools.hpp for direction type definition
 
 //Iterator<edge> * getItEdges(const Graph * g, const node * nA, const node * nB, direction dir);

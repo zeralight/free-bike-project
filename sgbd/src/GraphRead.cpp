@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
 
@@ -65,13 +67,51 @@ Result * GraphReadAbstract::match(Pattern * p) {
   catch (std::string &errMessage) {
     std::cerr << errMessage << std::endl;
   }
-  
+
+  res->setPattern(pi);
   pi->match(g);
   
   return res;
 }
 
 
+std::vector<Attribute*> * GraphReadAbstract::get(const std::string &label, const std::string &attributeName) const {
+  std::vector<Attribute *> * res = new std::vector<Attribute *>;
+
+  if (this->pattern == NULL)
+    return getElement(label, attributeName);  
+  
+  if (this->pattern->isNode(label)) {
+    Entity * e = this->pattern->getEntity(label);
+    std::vector<node> * nodes = e->getInstance(this->g, EQUAL);
+    std::cout << "size nodes: " << nodes->size() << std::endl;
+    for(auto it = nodes->begin() ; it != nodes->end() ; it++)
+      res->push_back(e->getAttr(attributeName, *it));
+  }
+  else if (this->pattern->isEdge(label)) {
+    Relation * r = this->pattern->getRelation(label);
+    std::vector<edge> * edges = r->getInstance(this->g, EQUAL);
+    
+    for(auto it = edges->begin() ; it != edges->end() ; it++)
+      res->push_back(r->getAttr(attributeName, *it));
+  }
+  
+  return res;
+};
+
+
+std::vector<Attribute*> * GraphReadAbstract::getElement(const std::string &label, const std::string &attributeName) const {
+  std::vector<Attribute *> * res = new std::vector<Attribute *>;
+  std::cout << "banana " << std::endl;
+  return res;
+}
+
+
 Graph * GraphReadAbstract::getGraph() {
   return this->g;
+}
+
+
+void GraphReadAbstract::setPattern(PatternImpl * pi) {
+  this->pattern = pi;
 }

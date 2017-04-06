@@ -4,6 +4,7 @@
 ///@cond DEV
 
 #include <string>
+#include <vector>
 
 #include <tulip/TlpTools.h>
 #include <tulip/Graph.h>
@@ -23,6 +24,7 @@ class GraphRead {
    * @copydoc Database::match(Pattern *)
    **/
   virtual Result * match(Pattern * p) =0;
+  virtual std::vector<Attribute *> * get(const std::string &label, const std::string &attributeName) const =0;  
 };
 
 
@@ -39,7 +41,11 @@ public:
   std::vector<node> * getNodes(const std::string &entityName) const;
   std::vector<edge> * getEdges(const std::string &relationName) const;
 
+  std::vector<Attribute *> * get(const std::string &label, const std::string &attributeName) const;
+  std::vector<Attribute *> * getElement(const std::string &label, const std::string &attributeName) const;
+  
   Graph * getGraph();
+  void setPattern(PatternImpl * pi);
   
 protected:
   GraphReadAbstract(Graph * g, DatabaseImpl * db);
