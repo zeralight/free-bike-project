@@ -139,19 +139,16 @@ std::vector<edge> * Relation::getInstance(const node &n, Attribute * attr[], int
 
 
 std::vector<edge> * Relation::getInstance(Graph * g, Attribute * attr[], int nAttr, int cmpOp) const {
-  if (isValid(attr, nAttr)) {
-    attr = extendAttr(attr, nAttr, nAttr + 1, false);
-    attr[nAttr] = new Attr<STRING>(PROP_RELATION_NAME, this->name);
-    attr[nAttr]->setProperty(g);
-    
-    std::vector<edge> * edges = getEdges(g, attr, nAttr + 1, cmpOp);
-    
-    delete attr;
-    
-    return edges;
+  std::vector<edge> * edges = getInstance(attr, nAttr, cmpOp);
+  
+  for(auto it = edges->begin() ; it != edges->end() ; it++) {
+    if (!g->isElement(*it)) {
+      it = edges->erase(it);
+      it--;
+    }
   }
-  else
-    return new std::vector<edge>;
+  
+  return edges;
 }
 
 

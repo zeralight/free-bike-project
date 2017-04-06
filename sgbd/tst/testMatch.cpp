@@ -45,11 +45,12 @@ int main () {
 
   INT id;
   
-  //Attribute * attr[1] = {new Attr<INT>("id", 477)};
+  Attribute * attr[1] = {new Attr<INT>("id", 477)};
+
+  res->where("Station", attr, 1, EQUAL);
   
-  //std::vector<Attribute *> * resGet = res->get("Station", "id"); // test OK pour deuxième fonctionnalité du get
-  //res->where("Station", attr, 1, EQUAL);
   std::vector<Attribute *> * resGet = res->get("S", "id");
+  //std::vector<Attribute *> * resGet = res->get("Station", "id"); // test OK pour deuxième fonctionnalité du get
 
   std::cout << "\x1b[1mStations [get]:\x1b[0m " << resGet->size() << std::endl;
   for (auto it = resGet->begin() ; it != resGet->end() ; it++) {

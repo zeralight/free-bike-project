@@ -96,25 +96,23 @@ void ResultImpl::where(std::string label, Attribute * attr[], int nAttr, int cmp
 
   try {
     if (pattern != NULL) {
-      std::cout << "maybe i am a pattern" << std::endl;
       if(pattern->isNode(label))
         filterNodesPat(label, attr, nAttr, cmpOp);
       else if(pattern->isEdge(label))
         filterEdgesPat(label, attr, nAttr, cmpOp);
       else
 	lookForPatLabel = false;
-
-      std::cout << (lookForPatLabel ? "true" : "false") << std::endl;
     }
     else
       lookForPatLabel = false;
     
     if (!lookForPatLabel) {
-      std::cout << "i am a entity/relation" << std::endl;
-      if(db->isEntity(label))
+      if(db->isEntity(label)) {
 	filterNodes(label, attr, nAttr, cmpOp);
-      else if(db->isRelation(label))
+      }
+      else if(db->isRelation(label)) {
 	filterEdges(label, attr, nAttr, cmpOp);
+      }
     }
   }
   catch (std::string &errMessage) {

@@ -4,7 +4,11 @@
 #include <cstdlib>
 #include <array>
 
+#include <tulip/Graph.h>
+
 #include "DBTools.hpp"
+
+using namespace tlp;
 
 template <>
 void Attr<INT>::init() {
@@ -167,6 +171,12 @@ void delAttr(Attribute * attr[], int nAttr) {
     delete attr[i];
 }
 
+
+void setAttrProperty(Graph * g, Attribute * attr[], int nAttr) {
+  int i;
+  for (i = 0 ; i < nAttr ; i++)
+    attr[i]->setProperty(g);
+}
 
 /*
 template <>

@@ -73,6 +73,7 @@ class Attribute {
   friend Entity;
   friend Relation;
   friend PatternImpl;
+  friend void setAttrProperty(tlp::Graph *, Attribute *[], int);
 
 protected:
   std::string label;
@@ -165,6 +166,7 @@ std::string serialize(const T &value);
 Attribute * newAttr(const std::string &label, const std::string &typeName);
 Attribute ** extendAttr(Attribute * attr[], int nAttrAct, int nAttrNew, bool dynAlloc);
 void delAttr(Attribute * attr[], int nAttr);
+void setAttrProperty(tlp::Graph * g, Attribute * attr[], int nAttr);
 
 /* Template Implementation */
 /**********************************************************************/

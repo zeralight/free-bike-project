@@ -7,40 +7,6 @@
 
 using namespace tlp;
 
-/*
-Iterator<edge> * getItEdges(const Graph * g, const node * nA, const node * nB, direction dir) {
-  Iterator<edge> * ret = NULL;
-  
-  switch(dir) {
-  case IN:
-    if (nB)
-      ret = g->getInOutEdges(*nB, *nA, true);
-    else
-      ret = g->getInEdges(*nA);
-    break;
-    
-  case OUT:
-    if (nB)
-      ret = g->getEdges(*nA, *nB, true);
-    else
-      ret = g->getOutEdges(*nA);
-    break;
-    
-  case INOUT:
-    if (nB)
-      ret = g->getEdges(*nA, *nB, false);
-    else
-      ret = g->getInOutEdges(*nA);
-    break;
-    
-  default:
-    return ret;
-  };
-
-  return ret;
-}
-*/
-
 
 std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr, int cmpOp) {
   std::vector<node> * res = new std::vector<node>;
@@ -53,7 +19,7 @@ std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr, int
     n = it->next();
     hasMatchingAttr = true;
     
-    for(int i = 0 ; i < nAttr ; i++) {
+    for(int i = 0 ; i < nAttr && hasMatchingAttr; i++) {
       if (cmpOp == EQUAL) {
 	if (!attr[i]->isEqual(n))
 	  hasMatchingAttr = false;
@@ -72,7 +38,8 @@ std::vector<node> * getNodes(const Graph * g, Attribute * attr[], int nAttr, int
   
   return res; 
 }
-  
+
+
 std::vector<edge> * getEdges(const Graph * g, const node &nA, const node &nB, Attribute * attr[], int nAttr, direction dir, int cmpOp) {
   std::vector<edge> * res = new std::vector<edge>;
   bool hasMatchingAttr;
@@ -95,7 +62,7 @@ std::vector<edge> * getEdges(const Graph * g, const node &nA, const node &nB, At
   while(it != res->end()) {
     hasMatchingAttr = true;
     
-    for(int i = 0 ; i < nAttr ; i++) {
+    for(int i = 0 ; i < nAttr && hasMatchingAttr; i++) {
       if (cmpOp == EQUAL){
 	if (!attr[i]->isEqual(*it))
 	  hasMatchingAttr = false;
@@ -125,7 +92,7 @@ std::vector<edge> * getEdges(Iterator<edge> * it, Attribute * attr[], int nAttr,
     e = it->next();
     hasMatchingAttr = true;
     
-    for(int i = 0 ; i < nAttr ; i++) {
+    for(int i = 0 ; i < nAttr && hasMatchingAttr; i++) {
       if (cmpOp == EQUAL){
 	if (!attr[i]->isEqual(e))
 	  hasMatchingAttr = false;
