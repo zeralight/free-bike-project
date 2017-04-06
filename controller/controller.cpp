@@ -15,3 +15,7 @@ Controller::~Controller() {
 void Controller::activateCity(enum Cities city){
     cU->activate(city);
 }
+
+void Controller::runInterface(){
+  cI->runInterface();
+}

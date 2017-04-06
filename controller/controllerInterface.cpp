@@ -5,8 +5,8 @@
 using namespace std;
 ControllerInterface::ControllerInterface(Controller * controller):controller(controller){
     argc = 1;
-    asprintf(argv, "Free bike project");
-    application = new QApplication(argc,argv);
+    asprintf(&argv, "Free bike project");
+    application = new QApplication(argc,&argv);
 MW = new MainWindow(this);
     	    }
 
