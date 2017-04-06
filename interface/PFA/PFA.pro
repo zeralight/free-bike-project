@@ -13,10 +13,10 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++14
 
-INCLUDEPATH += /home/raptapia/Documents/logiciels/tulip-4.10.0/install-debug/include/ \
+INCLUDEPATH += /home/leo/Logiciels/tulip-4.10.0/install-release/include/ \
     ../../sgbd/include/ \
     ../../controller/ \
-    /home/raptapia/Documents/logiciels/wrappy/include/
+    /home/leo/Logiciels/wrappy/include/
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -37,7 +37,7 @@ HEADERS  += mainwindow.hpp \
     ../../controller/*.hpp \
     ../../import/*.hpp
 
-LIBS +=  `tulip-config-debug --libs` \
-	-L../sgbd/lib -lgraphdb \
-	-L/home/raptapia/Documents/logiciels/wrappy/build/ -lwrappy
+LIBS +=  `tulip-config --libs` \
+	-L../../sgbd/lib -lgraphdb \
+	-L/home/Logiciels/wrappy/build/ -lwrappy
 
