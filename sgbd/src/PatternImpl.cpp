@@ -8,6 +8,8 @@
 
 #include "PatternImpl.hpp"
 #include "DatabaseImpl.hpp"
+#include "DBTools.hpp"
+#include "Tools.hpp"
 
 
 // pas sensé etre visible ?
@@ -184,10 +186,8 @@ void PatternImpl::match(Graph * gDst) {
     this->checkedProp->setAllEdgeValue(false);
 
     g->addNode(*it);
-    std::cout << ent->getName() << ": " << ent->getGraph()->getProperty<IntegerProperty>("id")->getNodeValue(*it) << std::endl;
     
     if (matchRec(g, n, *it)) {
-      std::cout << "\x1b[33;1mmatch\x1b[0m" << std::endl;
       gDst->addNodes(g->getNodes());
       gDst->addEdges(g->getEdges());
     }
@@ -222,14 +222,13 @@ bool PatternImpl::matchRec(Graph * gDst, node nPat, node n) {
     do {
       e = matchEdge(ePat, adjEdges, gDst);
       
-      if (!e.isValid()) {
-	std::cout << "\x1b[31;1mno edge\x1b[0m" << std::endl;
+      if (!e.isValid())
 	return false;
-      }
       
       nTarget = gSrc->opposite(e, n);      
       nTargetPat = this->g->opposite(ePat, nPat);
-    } while (!matchNode(nTargetPat, nTarget, gDst));
+    }
+    while (!matchNode(nTargetPat, nTarget, gDst));
     
     gDst->addNode(nTarget);
     gDst->addEdge(e);
@@ -237,10 +236,8 @@ bool PatternImpl::matchRec(Graph * gDst, node nPat, node n) {
     this->checkedProp->setEdgeValue(ePat, true);
     this->aliasProp->setEdgeValue(e, labelProp->getEdgeValue(ePat));
     
-    if (!matchRec(gDst, nTargetPat, nTarget)) {
-      std::cout << "\x1b[31;1mnon match\x1b[0m" << std::endl;
+    if (!matchRec(gDst, nTargetPat, nTarget))
       return false;
-    }
   }
   
   return true;
@@ -285,6 +282,44 @@ void PatternImpl::initProp() {
   this->aliasProp->setAllEdgeValue(emptyStr);
   this->checkedProp->setAllNodeValue(false);
   this->checkedProp->setAllEdgeValue(false);
+}
+
+
+std::vector<node> * PatternImpl::getNodes(const std::string &label, Graph * g, Attribute * attr[], int nAttr, int cmpOp) const {
+  Entity * e = getEntity(label);
+  
+  if (e->isValid(attr, nAttr)) {
+    attr = extendAttr(attr, nAttr, nAttr + 1, false);
+    attr[nAttr] = new Attr<STRING>(PROP_ALIAS_NAME, label);
+    attr[nAttr]->setProperty(g);
+
+    std::vector<node> * nodes = ::getNodes(g, attr, nAttr + 1, cmpOp);
+   
+    delete attr;
+    
+    return nodes;
+  }
+  else
+    return new std::vector<node>;
+}
+  
+
+std::vector<edge> * PatternImpl::getEdges(const std::string &label, Graph * g, Attribute * attr[], int nAttr, int cmpOp) const {
+  Relation * r = getRelation(label);
+  
+  if (r->isValid(attr, nAttr)) {
+    attr = extendAttr(attr, nAttr, nAttr + 1, false);
+    attr[nAttr] = new Attr<STRING>(PROP_ALIAS_NAME, label);
+    attr[nAttr]->setProperty(g);
+    
+    std::vector<edge> * edges = ::getEdges(g, attr, nAttr + 1, cmpOp);
+    
+    delete attr;
+    
+    return edges;
+  }
+  else
+    return new std::vector<edge>;
 }
 
 

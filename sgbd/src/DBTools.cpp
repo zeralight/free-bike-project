@@ -139,6 +139,29 @@ Attribute * newAttr(const std::string &label, const std::string &typeName) {
 }
 
 
+Attribute ** extendAttr(Attribute * attr[], int nAttrAct, int nAttrNew, bool dynAlloc = true) {
+  Attribute ** ret;
+  int i;
+  int newSize = nAttrNew * sizeof(Attribute *);
+
+  if (nAttrNew <= nAttrAct)
+    return attr;
+  
+  if (dynAlloc)
+    ret = (Attribute **) realloc(attr, newSize);
+  else {
+    ret = (Attribute **) malloc(newSize);
+    for (i = 0 ; i < nAttrAct ; i++)
+      ret[i] = attr[i];
+  }
+
+  for (i = nAttrAct ; i < nAttrNew ; i++)
+    ret[i] = NULL;
+  
+  return ret;
+}
+
+
 void delAttr(Attribute * attr[], int nAttr) {
   for (int i = 0 ; i < nAttr ; i++)
     delete attr[i];

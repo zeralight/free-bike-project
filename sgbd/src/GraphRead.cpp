@@ -83,14 +83,14 @@ std::vector<Attribute*> * GraphReadAbstract::get(const std::string &label, const
       res = getElement(label, attributeName);
     else if (this->pattern->isNode(label)) {
       Entity * e = this->pattern->getEntity(label);
-      std::vector<node> * nodes = e->getInstance(this->g, EQUAL);
+      std::vector<node> * nodes = this->pattern->getNodes(label, this->g);
       
       for(auto it = nodes->begin() ; it != nodes->end() ; it++)
 	res->push_back(e->getAttr(attributeName, *it));
     }
     else if (this->pattern->isEdge(label)) {
       Relation * r = this->pattern->getRelation(label);
-      std::vector<edge> * edges = r->getInstance(this->g, EQUAL);
+      std::vector<edge> * edges = this->pattern->getEdges(label, this->g);
       
       for(auto it = edges->begin() ; it != edges->end() ; it++)
 	res->push_back(r->getAttr(attributeName, *it));
@@ -99,7 +99,7 @@ std::vector<Attribute*> * GraphReadAbstract::get(const std::string &label, const
       res = getElement(label, attributeName); 
   }
   catch (std::string &errMessage) {
-    std::cout << errMessage << std::endl;
+    std::cerr << errMessage << std::endl;
   }
   
   return res;

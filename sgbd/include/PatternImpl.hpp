@@ -42,16 +42,16 @@ public:
   Relation * getRelation(std::string label) const;
 
   node getNode(std::string label) const;
-  edge getEdge(std::string label) const; 
+  edge getEdge(std::string label) const;
 
+  std::vector<node> * getNodes(const std::string &label, Graph * g, Attribute * attr[] = NULL, int nAttr = 0, int cmpOp = EQUAL) const;
+  std::vector<edge> * getEdges(const std::string &label, Graph * g, Attribute * attr[] = NULL, int nAttr = 0, int cmpOp = EQUAL) const;
+
+  std::vector<node>  * getNodes(const std::string * label, Attribute * attr[], int nAttr, int cmpOp);
+ 
   bool isChecked(node n) const;
   bool isChecked(edge e) const;
 
-  /*
-   * bool isCheckedDB(node n);
-   * bool isCheckedDB(edge e);  
-   */
-  
   bool isNode(std::string label) const;
   bool isEdge(std::string label) const;
 

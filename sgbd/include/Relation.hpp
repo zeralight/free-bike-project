@@ -40,9 +40,9 @@ public:
   bool editInstance(std::vector<edge> * eSet, Attribute * attr[], int nAttr);
   bool editInstance(edge &e, Attribute * attr[], int nAttr);
   std::vector<edge> * getInstance(Attribute * attr[], int Attr, int cmpOp) const;
+  std::vector<edge> * getInstance(Graph * g, Attribute * attr[] = NULL, int nAttr = 0, int cmpOp = EQUAL) const;
   std::vector<edge> * getInstance(const node &n, Attribute * attr[], int Attr, direction dir, int cmpOp) const;
   std::vector<edge> * getInstance(const node &nA, const node &nB, Attribute * attr[], int Attr, direction dir, int cmpOp) const;
-  std::vector<edge> * getInstance(Graph * g, int cmpOp) const;
   std::string getName() const;
   Attribute * getAttr(const std::string &name, edge e);
   
@@ -52,11 +52,10 @@ public:
   std::string debug(bool getArgs);
 
   bool isInstance(const edge &e) const;
+  bool isValid(Attribute * attr[], int nAttr) const;
+  
   bool verify(const Entity * src, const Entity * dst) const;
   bool verify(const node &src, const node &dst) const;
-  
-private:
-  bool isValid(Attribute * attr[], int nAttr) const;
 };
 
 #endif
