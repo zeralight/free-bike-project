@@ -358,18 +358,16 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 Database * CityDB::activate(){
     struct stat buf;
     if( stat((dirDB+name+".db").c_str(),&buf)){
-      cout << "stat rater" << endl;
+
       this->database = newDB(this->name);
-      cout << "new DB" << endl;
+
       entitiesCreation(database);
-      cout << "entities created" << endl;
+
       relationshipsCreation(database);
 
-      cout << "relations creatednew DB" << endl;
-      //      download();
-cout << "CSV downloaded" << endl;
+
+      download();
       DBInstanciation();
-      cout << "db instanciated"<<endl;
     } else {
         this->database = newDB(this->name);
         this->database->load(dirDB + "/" + name + ".db");
@@ -507,8 +505,7 @@ void CityDB::relationshipsCreation(Database * database) {
 }
 
 vector<vector<string> > CityDB::parseCSVFile(const string &csv_file) {
-    ifstream file(dirCSV+csv_file, ios::in); // Read-only .csv file opening
-    cout << file << endl;
+    ifstream file(csv_file, ios::in); // Read-only .csv file opening
     if (file) // If the opening succeeded
     {
         vector<string> namesVarList; // Dynamic array declaration

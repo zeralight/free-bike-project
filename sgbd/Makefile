@@ -19,7 +19,7 @@ EMACS_CLEAN_DIR = . $(SRC_DIR) $(TST_DIR) $(INCLUDE_DIR) $(TST_FILES_DIR) $(DOC_
 
 CC = g++
 
-FLAGS = -std=c++14 -g -Wall -fPIC
+FLAGS = -std=c++14 -g -Wall -fPIC -DNDEBUG
 FLAGS_LIB = -shared -fPIC
 LIBS =
 
