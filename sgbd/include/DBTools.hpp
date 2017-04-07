@@ -99,23 +99,83 @@ protected:
   
 public:
   virtual ~Attribute();
+  /**
+   *@brief Fontction to get the label attribute of the object Attribute
+   *
+   **/
   std::string getLabel() const;
+
+  /**
+   *@brief Fontction to get the constraints attribute of the object Attribute
+   *
+   **/
   int getConstraints() const;
+  
+  /**
+   *@brief Fontction to get the typeName attribute of the object Attribute
+   *
+   **/
   std::string getTypeName() const;
+
+  /**
+   * @brief Fonction to get the Tulip property corresponding to the Attribute.
+   * 
+   * @parm void** will contain the Tulip property 
+   **/
   virtual void getProperty(void **) const =0;
+
+  /**
+   * @brief Fonction to get the value of the Attribute
+   * @param void* will contain the value
+   **/
   virtual void getValue(void *) const =0;
 
+  /**
+   * @brief Fonction to set the label attribute.
+   * @param label to be set
+   **/
   void setLabel(const std::string &);
+  
+  /**
+   * @brief Fonction to set the constraint attribute
+   * @param int constraint to be set
+   **/
   void setConstraints(int);
+
+  /**
+   * @brief Fonction to set the value attribute of the Attribute
+   * @param void* contain the value to be set
+   **/
   virtual void setValue(const void *) =0;
  
+  /**
+   * @brief Fonction to give a copy of the object Attribute
+   **/
   virtual Attribute * clone() const =0;
+
+  /**
+   * @brief Fonction to test the equality between an Attribute and a Tulip node attribute
+   * @param node node where the comparison is made
+   **/
   virtual bool isEqual(tlp::node &) const =0;
+
+  /**
+   * @brief Fonction to test the equality between an Attribute and a Tulip edge attribute
+   * @param edge edge where the comparison is made
+   **/
   virtual bool isEqual(tlp::edge &) const =0;
   virtual void print() const =0;
   virtual std::string debug() const =0;
+
+  /**
+   * @brief Fonction to add a constraint 
+   * @param int constraint added
+   **/
   void addConstraints(int);
 
+  /**
+   * @brief affectation operator
+   **/
   virtual Attribute * operator=(const Attribute *) =0;
   
 protected:
