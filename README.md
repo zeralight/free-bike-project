@@ -1,7 +1,10 @@
 # Main README
 Project developers : Mélanie Bochu, Léo Dupouy, 
                      Hédi Ghédiri, Gabriel Hernando, 
-                     Jean-Marie Oillarburu, Raphaël Tapia, Johan Vitrat
+		     Jean-Marie Oillarburu, Raphaël Tapia, Johan Vitrat
+
+L'archive PFA_free_bike_project.tar est le rendu du projet.
+
 ##Directory arborescence
 
 This project is separated in different modules which are in different subdirectories. Each subdirectories contains their own README file giving some infos.
@@ -41,4 +44,5 @@ This project needs different libraries
 
     You should have received a copy of the GNU General Public License
     along with free_bike_project.  If not, see <http://www.gnu.org/licenses/>.
+
 
