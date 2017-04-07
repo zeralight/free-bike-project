@@ -11,6 +11,9 @@
 class UsersFilter;
 
 #include "controllerInterface.hpp"
+/**
+ * This class is a small window offering the possibility to the user to fill a survey to filter the trips with the users data.
+ */
 class UsersFilter : public QWidget
 {
     Q_OBJECT

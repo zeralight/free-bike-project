@@ -12,6 +12,9 @@
 class PeriodFilter;
 
 #include "controllerInterface.hpp"
+/**
+ * This class is a small window offering the possibility to the user to fill a survey to filter the trips with the period.
+ */
 class PeriodFilter : public QWidget
 {
     Q_OBJECT

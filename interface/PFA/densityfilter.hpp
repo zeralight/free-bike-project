@@ -13,7 +13,9 @@
 class DensityFilter;
 
 #include "controllerInterface.hpp"
-
+/**
+ * This class is a small window offering the possibility to the user to fill a survey to filter the trips with the density.
+ */
 class DensityFilter : public QWidget
 {
     Q_OBJECT
