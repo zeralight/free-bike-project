@@ -10,6 +10,9 @@ class TripsFilter;
 #include <QLabel>
 #include <QPushButton>
 #include "controllerInterface.hpp"
+/**
+ * This class is a small window offering the possibility to the user to fill a survey to filter the trips with the trips data.
+ */
 class TripsFilter :  public QWidget
 {
     Q_OBJECT

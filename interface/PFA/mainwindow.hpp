@@ -10,7 +10,7 @@ class MainWindow;
 #include "controllerInterface.hpp"
 #include "heatmapsurvey.hpp"
 
-/*
+/**
  * @brief This class is a widget creating the main window of the software.
  */
 class MainWindow : public QMainWindow

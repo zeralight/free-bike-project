@@ -29,7 +29,7 @@ there is a **PFA.pro** file which is giving the needed parameters to execute
 a ***qmake*** command which will generate a Makefile.
 
 ##Library dependencies
-This project needs different libraries
+This project needs different libraries wrappy, tulip, doxygen, python.
 
 ##Project licence
     Free_bike_project is free software: you can redistribute it and/or modify
@@ -43,6 +43,10 @@ This project needs different libraries
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
     along with free_bike_project.  If not, see <http://www.gnu.org/licenses/>.
 
 
+=======
+    along with free_bike_project.  If not, see <http://www.gnu.org/licenses/>.
+>>>>>>> 5b79295569501812756e3a37ba7a570720010d35
