@@ -1,6 +1,0 @@
-ytrip_id,starttime,stoptime,bikeid,tripduration,from_station_id,from_station_name,to_station_id,to_station_name,usertype,gender,birthyear
-10426657,6/30/2016 23:59,7/1/2016 0:02,1508,190,93,Sheffield Ave & Willow St,113,Bissell St & Armitage Ave,Subscriber,Male,1993
-10426656,6/30/2016 23:58,7/1/2016 0:14,1858,967,90,Millennium Park,90,Millennium Park,Customer,,
-10426655,6/30/2016 23:58,7/1/2016 0:16,3076,1082,36,Franklin St & Jackson Blvd,69,Damen Ave & Pierce Ave,Subscriber,Male,1992
-10426654,6/30/2016 23:58,7/1/2016 0:22,4031,1445,258,Logan Blvd & Elston Ave,251,Clarendon Ave & Leland Ave,Customer,,
-10426653,6/30/2016 23:58,7/1/2016 0:14,4199,974,90,Millennium Park,90,Millennium Park,Customer,,
