@@ -13,8 +13,14 @@
 #include <tulip/IntegerProperty.h>
 #include <tulip/BooleanProperty.h>
 
-/*Different or equal (*/
+/**
+ * @brief Operator =
+ **/
 #define EQUAL 0
+
+/**
+ * @brief Operator !=
+ **/
 #define DIFFERENT 1
 
 /* List of acceptable types for the attributes */
@@ -59,7 +65,7 @@ class PatternImpl;
 template <class T>
 struct TlpProp;
 
-/*
+/**
  * @brief This class is an interface for the use of Attribute objects. 
  * It provides a type / subtype relation between Attribute / Attr. 
  * It may necessarily be used in order to manipulate arrays of Attr objects.
@@ -68,7 +74,7 @@ struct TlpProp;
  * @code
  * Attribute * tab[2] = {new Attr("firstname"), new Attr("name")};
  * @endcode
- */
+ **/
 class Attribute {
   friend Entity;
   friend Relation;
@@ -76,8 +82,19 @@ class Attribute {
   friend void setAttrProperty(tlp::Graph *, Attribute *[], int);
 
 protected:
+  /** 
+   * @brief Attribute's id
+   **/
   std::string label;
+
+  /**
+   * @brief Constraint on the Attribute, UNIQUE for instance
+   **/
   int constraints;
+
+  /**
+   * @brief Type of the Attribute
+   **/
   std::string typeName;
   
 public:
@@ -113,12 +130,12 @@ protected:
   virtual void set(const void *) =0;
 };
 
-/*
+/**
  * Example of instanciation
  * @code
  * Attribute * attr = new Attr<INT>("age", 42);
  * @endcode
- */
+ **/
 template <class T>
 class Attr : public Attribute {
   T value;
