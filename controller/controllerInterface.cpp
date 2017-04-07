@@ -52,7 +52,7 @@ void ControllerInterface::cityChanged(const string & cityName){
             city = WASHINGTON;
 	  }
     if(!cityName.compare("Chattanooga")){
-		city = CHATTANOOGA;
+      city = CHATTANOOGA;
 	      }
     if(!cityName.compare("Chicago")){
             city = CHICAGO;

@@ -11,7 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = PFA
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += -std=c++14 \
+-DNDEBUG
 
 INCLUDEPATH += /home/leo/Logiciels/tulip-4.10.0/install-release/include/ \
     ../../sgbd/include/ \
@@ -37,13 +38,6 @@ HEADERS  += mainwindow.hpp \
     ../../controller/*.hpp \
     ../../import/cityDB.hpp
 
-<<<<<<< HEAD
 LIBS +=  `tulip-config --libs` \
 	-L../../sgbd/lib -lgraphdb \
-	-L/home/Logiciels/wrappy/build/ -lwrappy
-=======
-LIBS +=  `tulip-config-debug --libs` \
-	-L../../sgbd/lib -lgraphdb \
-	-L/home/raptapia/Documents/logiciels/wrappy/build/ -lwrappy
->>>>>>> 5036dc850b611a679c8f24f147590454eab52c14
-
+	-L/home/leo/Logiciels/wrappy/build/ -lwrappy

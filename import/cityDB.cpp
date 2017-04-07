@@ -176,7 +176,7 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 			   vector<Result * > nodesHour)
 {
 
-    cout << "Parsing station file... " << file << endl;
+    cout << "Parsing station file... " << dirCSV+file << endl;
     vector<vector<string> > data = parseCSVFile(dirCSV+file);
     cout << file << "OK" << endl;
 
@@ -358,11 +358,16 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 Database * CityDB::activate(){
     struct stat buf;
     if( stat((dirDB+name+".db").c_str(),&buf)){
-        this->database = newDB(this->name);
-        entitiesCreation(database);
-        relationshipsCreation(database);
-        download();
-        DBInstanciation();
+
+      this->database = newDB(this->name);
+
+      entitiesCreation(database);
+
+      relationshipsCreation(database);
+
+
+      download();
+      DBInstanciation();
     } else {
         this->database = newDB(this->name);
         this->database->load(dirDB + "/" + name + ".db");

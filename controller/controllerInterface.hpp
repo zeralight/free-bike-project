@@ -17,7 +17,7 @@ public:
     MainWindow * MW;
     QApplication * application;
     int  argc;
-    char ** argv;
+    char * argv;
 
     void runInterface();
   int returnDensityFilter(int percentage, bool yes=0, bool weak = 1);
