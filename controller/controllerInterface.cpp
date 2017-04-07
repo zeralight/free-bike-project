@@ -5,13 +5,14 @@
 using namespace std;
 ControllerInterface::ControllerInterface(Controller * controller):controller(controller){
     argc = 1;
-    asprintf(argv, "Free bike project");
-    application = new QApplication(argc,argv);
+    asprintf(&argv, "Free bike project");
+    application = new QApplication(argc,&argv);
 MW = new MainWindow(this);
     	    }
 
 ControllerInterface::~ControllerInterface(){
     free(argv);
+    delete controller;
 
 }
 
@@ -51,7 +52,7 @@ void ControllerInterface::cityChanged(const string & cityName){
             city = WASHINGTON;
 	  }
     if(!cityName.compare("Chattanooga")){
-		city = CHATTANOOGA;
+      city = CHATTANOOGA;
 	      }
     if(!cityName.compare("Chicago")){
             city = CHICAGO;

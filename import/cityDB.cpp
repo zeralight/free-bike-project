@@ -21,12 +21,18 @@ CityDB::CityDB(string const name, string const scriptPath, string const dirCSV, 
     //pas finis
 }
 CityDB::~CityDB(){
+    if(isActive){
+        this->database->save(dirDB);
+        delDB(this->database);
+    }
+    delete this->shape;
+    delete this->filesNames;
 }
 void CityDB::download() {
     wrappy::call(scriptPath);
 }
 
-int CityDB::getMaxID(vector<vector<string> > data, int first, int second){
+int CityDB::getMaxID(vector<vector<string>> data, int first, int second){
     int temp1;
     int temp2;
     int max=0;
@@ -170,7 +176,7 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 			   vector<Result * > nodesHour)
 {
 
-    cout << "Parsing station file... " << file << endl;
+    cout << "Parsing station file... " << dirCSV+file << endl;
     vector<vector<string> > data = parseCSVFile(dirCSV+file);
     cout << file << "OK" << endl;
 
@@ -352,11 +358,16 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 Database * CityDB::activate(){
     struct stat buf;
     if( stat((dirDB+name+".db").c_str(),&buf)){
-        this->database = newDB(this->name);
-        entitiesCreation(database);
-        relationshipsCreation(database);
-        download();
-        DBInstanciation();
+
+      this->database = newDB(this->name);
+
+      entitiesCreation(database);
+
+      relationshipsCreation(database);
+
+
+      download();
+      DBInstanciation();
     } else {
         this->database = newDB(this->name);
         this->database->load(dirDB + "/" + name + ".db");
