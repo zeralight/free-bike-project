@@ -142,7 +142,7 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
     fileswashington->push_back("2016-Q3-Trips-History-Data-2.csv");
     fileswashington->push_back("2016-Q4-Trips-History-Data.csv");
 
-    washington = new CityDB("washington",string(SCRIPT_FILES_DL)+"washington",string(SCRIPT_FILES_DL)+"washington",DB_DIR,fileswashington,shapewashington,minYear,maxYear);
+    washington = new CityDB("washington",string(SCRIPT_FILES_DL)+"washington/",string(SCRIPT_FILES_DL)+"washington/",DB_DIR,fileswashington,shapewashington,minYear,maxYear);
 
 
 
@@ -166,8 +166,8 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
     shapenewYork->stationStartNamePlace=5;
     shapenewYork->stationStartLongitudePlace=7;
     shapenewYork->stationStartLatitudePlace=6;
-    int minYear= 2013;
-    int maxYear = 2016;
+    minYear= 2013;
+    maxYear = 2016;
     vector<string> * filesnewYork = new vector<string>;
     filesnewYork->push_back("2013-07 - Citi Bike trip data.csv");
     filesnewYork->push_back("2013-08 - Citi Bike trip data.csv");
@@ -215,7 +215,7 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
 
 
 
-    newYork = new CityDB("newYork",string(SCRIPT_FILES_DL)+"newYork",string(SCRIPT_FILES_DL)+"newYork",DB_DIR,filesnewYork,shapenewYork,minYear,maxYear);
+    newYork = new CityDB("newYork",string(SCRIPT_FILES_DL)+"newYork/",string(SCRIPT_FILES_DL)+"newYork/",DB_DIR,filesnewYork,shapenewYork,minYear,maxYear);
 
 
     CSVShape * shapechattanooga= new CSVShape;
@@ -237,32 +237,38 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
     shapechattanooga->stationStartNamePlace=8;
     shapechattanooga->stationStartLongitudePlace=-1;
     shapechattanooga->stationStartLatitudePlace=-1;
-    int minYear= 2012;
-    int maxYear = 2015;
+    minYear= 2012;
+    maxYear = 2015;
     vector<string> * fileschattanooga = new vector<string>;
     fileschattanooga->push_back("Bike_Chattanooga_Trip_Data.csv");
-    chattanooga = new CityDB("chattanooga",string(SCRIPT_FILES_DL)+"chattanooga",string(SCRIPT_FILES_DL)+"chattanooga",DB_DIR,fileschattanooga,shapechattanooga,minYear,maxYear);
+    chattanooga = new CityDB("chattanooga",string(SCRIPT_FILES_DL)+"chattanooga/",string(SCRIPT_FILES_DL)+"chattanooga/",DB_DIR,fileschattanooga,shapechattanooga,minYear,maxYear);
 
 
 }
 
-}
+
 
 void ControllerUpdate::activate(enum Cities city){
     CityDB * toActivate;
     switch(city){
-        case SANFRANCISCO :
-            toActivate=this->sanFrancisco;
-        case MINNEAPOLIS :
-            toActivate=this->minneapolis;
-        case CHICAGO :
-            toActivate=this->chicago;
-        case CHATTANOOGA :
-            toActivate=this->chattanooga;
-        case NEWYORK :
-            toActivate=this->newYork;
-        case WASHINGTON :
-            toActivate=this->washington;
+    case SANFRANCISCO :
+      toActivate=this->sanFrancisco;
+      break;
+    case MINNEAPOLIS :
+      toActivate=this->minneapolis;
+      break;
+    case CHICAGO :
+      toActivate=this->chicago;
+      break;
+    case CHATTANOOGA :
+      toActivate=this->chattanooga;
+      break;
+    case NEWYORK :
+      toActivate=this->newYork;
+      break;
+    case WASHINGTON :
+      toActivate=this->washington;
+      break;
     }
     if(whichActive != NULL){
         whichActive->desactivate();

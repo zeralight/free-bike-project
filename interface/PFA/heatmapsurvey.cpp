@@ -56,5 +56,5 @@ HeatMapSurvey::HeatMapSurvey(ControllerInterface * controller, QWidget *parent) 
 
 }
 void HeatMapSurvey::cityChanged(const QString & cityName){
-    controller->cityChanged(cityName.toStdString());
+  controller->cityChanged(cityName.toStdString());
 }

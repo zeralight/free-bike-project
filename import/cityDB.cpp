@@ -176,7 +176,7 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 			   vector<Result * > nodesHour)
 {
 
-    cout << "Parsing station file... " << file << endl;
+    cout << "Parsing station file... " << dirCSV+file << endl;
     vector<vector<string> > data = parseCSVFile(dirCSV+file);
     cout << file << "OK" << endl;
 
@@ -358,11 +358,18 @@ void CityDB::importOneFile(string const file, vector<Result *> nodesStation,  ve
 Database * CityDB::activate(){
     struct stat buf;
     if( stat((dirDB+name+".db").c_str(),&buf)){
-        this->database = newDB(this->name);
-        entitiesCreation(database);
-        relationshipsCreation(database);
-        download();
-        DBInstanciation();
+      cout << "stat rater" << endl;
+      this->database = newDB(this->name);
+      cout << "new DB" << endl;
+      entitiesCreation(database);
+      cout << "entities created" << endl;
+      relationshipsCreation(database);
+
+      cout << "relations creatednew DB" << endl;
+      //      download();
+cout << "CSV downloaded" << endl;
+      DBInstanciation();
+      cout << "db instanciated"<<endl;
     } else {
         this->database = newDB(this->name);
         this->database->load(dirDB + "/" + name + ".db");
@@ -500,7 +507,8 @@ void CityDB::relationshipsCreation(Database * database) {
 }
 
 vector<vector<string> > CityDB::parseCSVFile(const string &csv_file) {
-    ifstream file(csv_file, ios::in); // Read-only .csv file opening
+    ifstream file(dirCSV+csv_file, ios::in); // Read-only .csv file opening
+    cout << file << endl;
     if (file) // If the opening succeeded
     {
         vector<string> namesVarList; // Dynamic array declaration
