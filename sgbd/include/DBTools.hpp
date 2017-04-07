@@ -290,15 +290,18 @@ Attribute * Attr<T>::clone() const {
   return tmp;
 }
 
+
 template <class T>
 bool Attr<T>::isEqual(tlp::node &n) const {
   return (this->value == this->prop->getNodeValue(n));
 }
 
+
 template <class T>
 bool Attr<T>::isEqual(tlp::edge &e) const {
   return (this->value == this->prop->getEdgeValue(e));
 }
+
 
 template <class T>
 void Attr<T>::print() const {

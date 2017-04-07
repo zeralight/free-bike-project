@@ -21,7 +21,7 @@ GraphWriteAbstract::~GraphWriteAbstract() {}
 
 bool GraphWriteAbstract::editNodes(const std::string &entityName, Attribute * attr[], int nAttr){
   Entity * e = this->db->getEntity(entityName);
-  std::vector<node> * nodes = this->getNodes(entityName);
+  std::vector<node> * nodes = e->getInstance(this->g);
   bool res = e->editInstance(nodes, attr, nAttr);
   return res;
 }
@@ -29,7 +29,7 @@ bool GraphWriteAbstract::editNodes(const std::string &entityName, Attribute * at
 
 bool GraphWriteAbstract::editEdges(const std::string &relationName, Attribute * attr[], int nAttr){
   Relation * r = this->db->getRelation(relationName);
-  std::vector<edge> * edges = this->getEdges(relationName);
+  std::vector<edge> * edges = r->getInstance(this->g);
   bool res = r->editInstance(edges, attr, nAttr);
   return res;
 }
