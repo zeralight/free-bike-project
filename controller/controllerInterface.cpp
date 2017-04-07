@@ -20,22 +20,22 @@ void ControllerInterface::runInterface() {
     MW->show();
     application->exec();
 }
-int ControllerInterface::returnDensityFilter(int percentage, bool yes, bool weak){
+void ControllerInterface::returnDensityFilter(int percentage, bool yes, bool weak){
 
     return 1;
 }
 
-int ControllerInterface::returnPeriodFilter(int dayBegin, int monthBegin, int yearBegin, int hourBegin, int minuteBegin,
+void ControllerInterface::returnPeriodFilter(int dayBegin, int monthBegin, int yearBegin, int hourBegin, int minuteBegin,
                        int dayEnd, int monthEnd, int yearEnd, int hourEnd, int minuteEnd,
 		       bool slots[24], bool normal){
     return 1;
 }
 
-int ControllerInterface::returnTripsFilter(int maxLength, int minLength, int maxDensity, int minDensity){
+void ControllerInterface::returnTripsFilter(int maxLength, int minLength, int maxDensity, int minDensity){
     return 1;
 }
 
-int ControllerInterface::returnUsersFilter(bool men, bool women, int minAge, int maxAge, bool subscriber, bool nonSubscriber){
+void ControllerInterface::returnUsersFilter(bool men, bool women, int minAge, int maxAge, bool subscriber, bool nonSubscriber){
 
     return 1;
 }

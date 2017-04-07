@@ -86,7 +86,6 @@ ControllerUpdate::ControllerUpdate(Controller * controller) : whichActive(NULL),
    minneapolis = new CityDB("minneapolis",string(SCRIPT_FILES_DL)+"minneapolis",string(SCRIPT_FILES_DL)+"minneapolis",DB_DIR,filesminneapolis,shapeminneapolis,minYear,maxYear);
    */
 
-
     CSVShape * shapewashington= new CSVShape;
     shapewashington->startTimePlace = 2;
     shapewashington->startDatePlace = 2;
@@ -269,6 +268,9 @@ void ControllerUpdate::activate(enum Cities city){
     case WASHINGTON :
       toActivate=this->washington;
       break;
+    }
+    if(whichActive == toActivate) {
+        return;
     }
     if(whichActive != NULL){
         whichActive->desactivate();

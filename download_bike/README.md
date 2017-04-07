@@ -1,6 +1,12 @@
-Pour exécuter chacun des scripts il faut d'abord ajouter le fichier lib_scrapper.py dans votre PYTHONPATH puis se rendre dans le dossier d'une ville pour lancer le script.
+#Download's scripts' README
 
-Ah et pour que ça marche faut plein de librairies
-Bon courage
-(selenium pour commencer c'est pas mal en pip install je crois)
+The arborescence of this part is simple, the root possess the library used in the script.
+Each script is for a city so the name of the sub-directories indicate which script we will find inside.
 
+The library *lib_scrapper.py* is commented to make it understandable.
+
+##PYTHONPATH
+To execute those scripts it's important to first add the path to the library *lib_scrapper.py* into your **PYTHONPATH** var.
+
+##Libraries required
+Those scripts requires the selenium wedriver library to be installed.
