@@ -1,24 +1,43 @@
-# The Graph Database Management System
+# Main README
+Project developers : Mélanie Bochu, Léo Dupouy, 
+                     Hédi Ghédiri, Gabriel Hernando, 
+                     Jean-Marie Oillarburu, Raphaël Tapia, Johan Vitrat
+##Directory arborescence
 
-## Prerequesties
+This project is separated in different modules which are in different subdirectories. Each subdirectories contains their own README file giving some infos.
 
-The installation of tulip may normally generate a 'tulip-config' executable. If it is unreachable from the $PATH environment variable, update it with the good path. 
+The **sgbd** we developed is in the *sgbd* directory.
 
-## Arborescence
+The **download scripts** for bikes data are located in the *download_bike* directory.
 
-**src** : sources of the library
+The **interface** classes using Qt to make an user interface are located in the *interface* directory.
 
-**include** :
+The **CityDB** class which deals with the import and the saving of the city databse is located in the *import* directory.
 
-**lib** :
+The **controllers** classes which articulate each different modules the ones with the others are located in the *controller* directory.
 
-**bin** :
+The **OSM** classes dealing with the download, the saving and the display of the OpenStreetMap maps are located in the *osm* directory.
 
-**build** :
+The **HeatMap** class permitting us to display a heat map graph with tulip is located in the *visualisations* directory.
 
-**doc** :
+##Project compilation
+The stuff permitting us to ompile the project is located in the directory interface/PFA, 
+there is a **PFA.pro** file which is giving the needed parameters to execute 
+a ***qmake*** command which will generate a Makefile.
 
-## Building
+##Library dependencies
+This project needs different libraries wrappy, tulip, doxygen, python.
 
+##Project licence
+    Free_bike_project is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    Free_bike_project is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
+    You should have received a copy of the GNU General Public License
+    along with free_bike_project.  If not, see <http://www.gnu.org/licenses/>.
